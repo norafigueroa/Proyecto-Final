@@ -1,13 +1,16 @@
 import React from 'react'
 import Inicio from '../components/Inicio/Inicio'
+import Menu from '../components/Menu/Menu'
 import Header from '../components/Header/Header'
 import Footer from '../components/Footer/Footer'
 
 function Home() {
   return (
     <div>
-      <Inicio/>
       <Header/>
+      <Menu/>
+      <Inicio/>
+    
       <Footer/>
     </div>
   )

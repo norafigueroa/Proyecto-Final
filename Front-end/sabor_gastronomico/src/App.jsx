@@ -1,11 +1,13 @@
-import './App.css'
+import {  } from 'react'
+import Routing from './routes/Routing';
+
 
 function App() {
 
   return (
     <>
       <div>
-    
+        <Routing/>
       </div>
     </>
   )
