@@ -1,0 +1,330 @@
+/* Centrar el buscador */
+.search-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom, #f5f5f5, #e8e2d8);
+  font-family: 'Georgia', serif;
+  text-align: center;
+  padding: 1rem;
+}
+
+.title{
+    font-size: 50px ;
+}
+/* Título principal */
+.search-title {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: orangered;
+}
+
+/* Subtítulo */
+.search-subtitle {
+  font-size:23px;
+  color: #444;
+  margin-bottom: 1.5rem;
+}
+
+/* 🔹 Botones de categorías */
+.categoria-botones {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.categoria-btn {
+  background-color: #fff;
+  border: 1px solid orangered;
+  color: orangered;
+  padding: 0.6rem 1.2rem;
+  border-radius: 25px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.categoria-btn:hover {
+  background-color: orangered;
+  color: white;
+}
+
+.categoria-btn.activo {
+  background-color: orangered;
+  color: white;
+  font-weight: bold;
+}
+
+/* Buscador centrado */
+.busqueda-contenedor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.busqueda-box {
+  width: 80%;
+  max-width: 500px;
+}
+
+.busqueda-box input {
+  width: 100%;
+  padding: 0.8rem 1.2rem;
+  border-radius: 30px;
+  border: 1px solid #aaa;
+  font-size: 20px;
+  outline: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.busqueda-box input:focus {
+  border-color: orangered;
+  box-shadow: 0 0 5px rgba(0, 105, 148, 0.4);
+}
+
+/* Botón de la lupa */
+.busqueda-btn {
+  background-color: orangered;
+  border: none;
+  color: white;
+  font-size: 20px;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.busqueda-btn:hover {
+  background-color: orangered;
+  transform: scale(1.05);
+}
+
+/* Lista de resultados */
+.busqueda-lista {
+  list-style: none;
+  padding: 0;
+  margin-top: 1.5rem;
+  width: 80%;
+  max-width: 500px;
+}
+
+/* Cada resultado */
+.busqueda-item {
+  background: white;
+  margin-bottom: 0.6rem;
+  padding: 0.9rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.busqueda-item:hover {
+  background: #f0f8ff;
+  transform: translateY(-2px);
+}
+
+/* Mensaje sin resultados */
+.busqueda-msg {
+  color: #555;
+  font-style: italic;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+/* ///////////////////////////// EXPLORA ///////////////////////////// */
+
+.categorias-section {
+  text-align: center;
+  padding: 2rem;
+}
+
+.categorias-titulo {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #1e1e1e;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.categorias-titulo .resaltado {
+  color: orangered;
+}
+
+/* ====== GRID DE CATEGORÍAS ====== */
+.categorias-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* ====== TARJETAS ====== */
+
+.categoria-card {
+  background-color: #fff9e6;
+  border-radius: 20px;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.categoria-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.categoria-icono {
+  font-size: 30px;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.categoria-card h3 {
+  color: orangered;
+  font-size: 25px;
+  margin-bottom: 0.5rem;
+}
+
+.categoria-card p {
+  color: #333;
+  font-size: 20px;
+  line-height: 1.4;
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 768px) {
+  .categorias-section {
+    padding: 3rem 1rem;
+  }
+
+  .categoria-card {
+    padding: 1.5rem;
+  }
+
+  .categorias-titulo {
+    font-size: 1.6rem;
+  }
+}
+
+
+/* ///////////////////////////// Restaurantes destacados ///////////////////////////// */
+
+.destacados-section {
+  margin-top: 4rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+.destacados-titulo {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.destacados-grid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.destacado-card {
+  background: #fff8e1;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  padding: 1.5rem;
+  text-align: left;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.destacado-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.destacado-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.destacado-card h3 {
+  color: #333;
+  margin-bottom: 0.3rem;
+}
+
+.destacado-card p {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* ====== PIE DE SECCIÓN ====== */
+.destacados-footer {
+  margin-top: 3rem;
+  background-color: #fff8e1;
+  padding: 2rem;
+  border-radius: 10px;
+}
+
+.destacados-footer h3 {
+  font-size: 30px;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.destacados-footer p {
+  font-size: 20px;
+  color: #555;
+  max-width: 700px;
+  margin: 0 auto 1.5rem;
+  padding: 5px;
+}
+
+.botones-footer {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.btn-registrar {
+  background-color: orangered;
+  color: #fff;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.btn-beneficios {
+  background-color: #224242;
+  color: #fff;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.btn-registrar:hover,
+.btn-beneficios:hover {
+  opacity: 0.9;
+}
