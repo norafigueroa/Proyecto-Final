@@ -146,7 +146,7 @@ function InfoRestaurantes() {
             
             {/* ====== BOTONES DE CATEGORÍAS ====== */}
             <section className="categoria-section">
-              <h2 className="categorias-titulo">
+              <h2 className="categorias-titulo-Res">
                 Nuestro Menú
               </h2>
 
@@ -179,7 +179,48 @@ function InfoRestaurantes() {
               ))}
             </div>
 
+            <section className="testimonios-section">
+              <h2 className="testimonios-titulo">Lo Que Dicen Nuestros Clientes</h2>
+              <p className="testimonios-subtitulo">Experiencias reales de quienes nos visitaron</p>
 
+              <div className="testimonios-grid">
+                <div className="testimonio-card">
+                  <div className="testimonio-header">
+                    <div className="testimonio-avatar">MG</div>
+                    <div className="testimonio-nombre">María González</div>
+                  </div>
+                  <p className="testimonio-texto">
+                    El mejor ceviche que he probado en toda mi vida. Fresco, delicioso y con la cantidad perfecta de limón.
+                    El ambiente es familiar y el servicio es excelente. ¡Totalmente recomendado!
+                  </p>
+                  <p className="testimonio-fecha">Hace 2 días</p>
+                </div>
+
+                <div className="testimonio-card">
+                  <div className="testimonio-header">
+                    <div className="testimonio-avatar">CM</div>
+                    <div className="testimonio-nombre">Carlos Méndez</div>
+                  </div>
+                  <p className="testimonio-texto">
+                    Vine desde San José solo para probar su pescado frito y valió totalmente la pena.
+                    Perfectamente cocinado, crujiente por fuera y jugoso por dentro. Los precios son muy justos.
+                  </p>
+                  <p className="testimonio-fecha">Hace 1 semana</p>
+                </div>
+
+                <div className="testimonio-card">
+                  <div className="testimonio-header">
+                    <div className="testimonio-avatar">PL</div>
+                    <div className="testimonio-nombre">Patricia López</div>
+                  </div>
+                  <p className="testimonio-texto">
+                    Celebramos nuestro aniversario aquí y todo estuvo perfecto. El arroz con mariscos es espectacular y las
+                    porciones son generosas. El personal es muy atento y amable.
+                  </p>
+                  <p className="testimonio-fecha">Hace 2 semanas</p>
+                </div>
+              </div>
+            </section>
 
             
         </div>

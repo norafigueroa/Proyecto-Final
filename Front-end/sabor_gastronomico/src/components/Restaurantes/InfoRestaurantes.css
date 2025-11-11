@@ -66,6 +66,14 @@
     font-size: 25px;
 }
 
+.categorias-titulo-Res{
+  font-size: 50px;
+  font-weight: bold;
+  color: #1c2b47;
+  margin-bottom: 2rem;
+  text-align: center;
+
+}
 
 /* === CONTENEDOR DE LAS CAJAS === */
 .info-cajas {
@@ -132,4 +140,102 @@
   background-color: #e55300;
   transform: scale(1.05);
 }
+
+
+
+/* ////////////////////////////////// Lo que dicen los clientes ////////////////////////////////// */
+.testimonios-section {
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.testimonios-titulo {
+  font-size: 45px;
+  font-weight: 700;
+  color: #1c2b47;
+  margin-bottom: 0.5rem;
+}
+
+.testimonios-subtitulo {
+  font-size: 25px;
+  color: black;
+  margin-bottom: 3rem;
+}
+
+.testimonios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  justify-items: center;
+}
+
+/* Cada tarjeta */
+.testimonio-card {
+  background-color: #fff9da;
+  border-radius: 15px;
+  padding: 1.5rem;
+  max-width: 350px;
+  text-align: left;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.testimonio-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Avatar circular con iniciales */
+.testimonio-avatar {
+  width: 50px;
+  height: 50px;
+  background-color: #ff7f00;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+
+/* Nombre del cliente */
+.testimonio-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.testimonio-nombre {
+  font-weight: 600;
+  color: #1c2b47;
+  font-size: 22px;
+}
+
+/* Texto del comentario */
+.testimonio-texto {
+  color: #333;
+  font-size: 17px;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+/* Fecha */
+.testimonio-fecha {
+  color: #777;
+  font-size: 16px;
+  margin-top: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .testimonios-section {
+    padding: 2rem 1rem;
+  }
+
+  .testimonio-card {
+    max-width: 100%;
+  }
+}
+
 
