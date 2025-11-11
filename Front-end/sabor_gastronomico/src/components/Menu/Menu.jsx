@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import "./Menu.css";
 
 function Menu() {
@@ -7,6 +7,16 @@ function Menu() {
     const [menuOpen, setMenuOpen] = useState(false);
     const containerRef = useRef(null);
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const links = [
+      { name: "Inicio", path: "/" },
+      { name: "Restaurantes", path: "/Restaurantes" },
+      { name: "Cultura", path: "/Cultura" },
+      { name: "Turismo", path: "/Turismo" },
+      { name: "Contáctanos", path: "/Contactanos" },
+      { name: "Iniciar Sesión", path: "/Register" },
+    ];
 
     // Cierra el menú al hacer clic fuera
     useEffect(() => {
@@ -16,9 +26,7 @@ function Menu() {
         }
       }
       document.addEventListener("mousedown", handleClickOutside);
-      return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-      };
+      return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     // Oculta el menú al agrandar la pantalla
@@ -33,44 +41,48 @@ function Menu() {
     }, []);
 
       const handleNavigate = (path) => {
-          navigate(path);
-          setMenuOpen(false);
+        navigate(path);
+        setMenuOpen(false);
     };
 
 
   return (
     <div>
-      <div>
-          {/* Navegación escritorio */}
-          <nav className="menuInicio">
-              <span onClick={() => handleNavigate("/")}>Inicio</span>
-              <span onClick={() => handleNavigate("/Restaurantes")}>Restaurantes</span>
-              <span onClick={() => handleNavigate("/Cultura")}>Cultura</span>
-              <span onClick={() => handleNavigate("/Turismo")}>Turismo</span>
-              <span onClick={() => handleNavigate("/Contáctanos")}>Contáctanos</span>
-              <span onClick={() => handleNavigate("/Iniciar Sesión")}>Iniciar Sesión</span>
-          </nav>
+      <div className='menu-container' ref={containerRef}>
+        {/* Navegación escritorio */}
 
-          {/* Botón menú móvil */}
-          <button className="menu-btn" onClick={() => setMenuOpen(!menuOpen)}>☰</button>
-      </div>
+        <nav className='manuInicio'>
+          {links.map((link) => (
+            <span className={location.pathname === link.path ? "active" : ""} key={link.path} onClick={() => handleNavigate(link.path)}>
+              {link.name}
+            </span>
+          ))}
+        </nav>
 
-      <div
+        {/* Botón menú móvil */}
+
+        <button className='manu-btn' onClick={() => setMenuOpen(!menuOpen)} aria-label='Abrir menú'>
+          ☰
+        </button>
+
+        {/* Fondo oscuro */}
+        <div 
           className={`overlay ${menuOpen ? "show" : ""}`} onClick={() => setMenuOpen(false)}>
-      </div>
+        </div>
 
-      {/* Menú móvil */}
-      <div className={`mobile-menu ${menuOpen ? "show" : ""}`}>
-          <span onClick={() => { handleNavigate("/"); setMenuOpen(false); }}>Inicio</span>
-          <span onClick={() => { handleNavigate("/Restaurantes"); setMenuOpen(false); }}>Restaurantes</span>
-          <span onClick={() => { handleNavigate("/Cultura"); setMenuOpen(false); }}>Cultura</span>
-          <span onClick={() => { handleNavigate("/Turismo"); setMenuOpen(false); }}>Turismo</span>
-          <span onClick={() => { handleNavigate("/Contáctanos"); setMenuOpen(false); }}>Contáctanos</span>
-          <span onClick={() => { handleNavigate("/Iniciar Sesión"); setMenuOpen(false); }}>Iniciar Sesión</span>
+        {/* Menú móvil */}
+
+        <div className={`mobile-menu ${menuOpen ? "show" : ""}`}>
+          {links.map((link) => (
+            <span className={location.pathname === link.path ? "active" : ""} key={link.path} onClick={() => handleNavigate(link.path)}>
+              {link.name}
+            </span>
+          ))}
+        </div>
 
       </div>
     </div>
-  )
+  );
 }
 
 export default Menu

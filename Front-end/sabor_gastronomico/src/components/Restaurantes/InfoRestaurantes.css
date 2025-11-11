@@ -1,0 +1,112 @@
+/* ====== CONTENEDOR PRINCIPAL ====== */
+.restaurante-page {
+  font-family: 'Georgia', serif;
+  background: linear-gradient(to bottom, #fafafa, #f3ece2);
+  min-height: 100vh;
+  color: #333;
+}
+
+/* ====== HEADER ====== */
+.header {
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1rem 0;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-logo {
+  width: 80px;
+  height: auto;
+}
+
+.header-title {
+  font-size: 1.8rem;
+  color: #333;
+}
+
+.header-title span {
+  color: orangered;
+}
+
+/* ====== INFORMACIÓN DEL RESTAURANTE ====== */
+.restaurante-info {
+  /* text-align: center; */
+  padding: 2rem;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.categorias-Res{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  max-width: 1000px;
+  padding: 50px ;
+}
+
+.restaurante-nombre {
+  font-size: 50px;
+  color: #006994;
+  margin-bottom: 0.5rem;
+}
+
+.restaurante-slogan {
+  font-style: italic;
+  color: #555;
+  margin-bottom: 1.5rem;
+  font-size: 25px;
+}
+.categoria{
+    font-size: 25px;
+}
+
+
+/* === CONTENEDOR DE LAS CAJAS === */
+.info-cajas {
+  display: flex;
+  align-items: stretch;
+  gap: 30px;
+  flex-wrap: nowrap; 
+  margin-top: 30px;
+}
+
+/* === ESTILO DE CADA CAJA === */
+.info-card {
+  background-color: #34495e;
+  border-radius: 15px;
+  padding: 20px;
+  flex: 1; /* Hace que todas tengan el mismo ancho */
+  max-width: 250px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+.info-card:hover {
+  background-color: #3d566e;
+  transform: translateY(-5px);
+}
+
+.info-card strong {
+  display: block;
+  color: #f1c40f;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+
+.info-card p {
+  color: #ecf0f1;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.text-menu{
+    text-align: center;
+    font-size: 25px;
+}
