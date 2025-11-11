@@ -266,11 +266,12 @@
 .destacado-card h3 {
   color: #333;
   margin-bottom: 0.3rem;
+  font-size: 25px;
 }
 
 .destacado-card p {
   color: #555;
-  font-size: 0.95rem;
+  font-size: 18px;
   line-height: 1.4;
 }
 
