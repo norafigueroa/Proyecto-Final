@@ -4,7 +4,12 @@ from django.contrib.auth.hashers import make_password
 from .models import *
 
 
-class UserSerializer(serializers.ModelSerializer):
+class PerfilUsuarioSerializer(serializers.ModelSerializer):
+    groups = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Group.objects.all()
+    )
+
     class Meta:
         model = PerfilUsuario
         fields = [
@@ -14,39 +19,35 @@ class UserSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'telefono',
-            'direccion',
+            'foto_perfil',
+            'groups',
             'password'
         ]
         extra_kwargs = {
-            'password': {'write_only': True}  # no se devuelve al listar usuarios
+            'password': {'write_only': True}
         }
 
     def create(self, validated_data):
-        # Encripta la contraseña antes de guardarla
-        if 'password' in validated_data:
-            validated_data['password'] = make_password(validated_data['password'])
-        return super().create(validated_data)
+        groups_data = validated_data.pop('groups', [])
+        validated_data['password'] = make_password(validated_data['password'])
+        user = PerfilUsuario.objects.create(**validated_data)
+        user.groups.set(groups_data)
+        return user
 
     def update(self, instance, validated_data):
-        # Si se actualiza la contraseña, también se encripta
+        groups_data = validated_data.pop('groups', None)
         password = validated_data.pop('password', None)
-        usuario = super().update(instance, validated_data)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
         if password:
-            usuario.password = make_password(password)
-            usuario.save()
-        return usuario
+            instance.password = make_password(password)
+        if groups_data is not None:
+            instance.groups.set(groups_data)
 
-    def validate_username(self, value):
-        value = value.strip()
-        if not value:
-            raise serializers.ValidationError("El nombre de usuario no puede estar vacío.")
-        return value
-
-    def validate_email(self, value):
-        if not value or '@' not in value:
-            raise serializers.ValidationError("Debe proporcionar un correo electrónico válido.")
-        return value
-
+        instance.save()
+        return instance
 
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
@@ -57,18 +58,6 @@ class GroupSerializer(serializers.ModelSerializer):
         if not value.strip():
             raise serializers.ValidationError("El nombre del grupo no puede estar vacío.")
         return value.title()
-
-
-class PerfilUsuarioSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PerfilUsuario
-        fields = '__all__'
-
-    def validate_telefono(self, value):
-        if value and not value.isdigit():
-            raise serializers.ValidationError("El teléfono solo debe contener números.")
-        return value
-
 
 
 class CategoriaSerializer(serializers.ModelSerializer):
@@ -288,3 +277,33 @@ class MensajesContactoSerializer(serializers.ModelSerializer):
         if len(value.strip()) < 10:
             raise serializers.ValidationError("El mensaje debe tener al menos 10 caracteres.")
         return value.strip()
+    
+class RedSocialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RedSocial
+        fields = '__all__'
+
+    def validate_nombre_red(self, value):
+        if not value.strip():
+            raise serializers.ValidationError("El nombre de la red social no puede estar vacío.")
+        return value
+
+    def validate_link(self, value):
+        if not value.startswith("http"):
+            raise serializers.ValidationError("Debe proporcionar un enlace válido (que comience con http o https).")
+        return value
+
+class RestauranteRedSocialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RestauranteRedSocial
+        fields = '__all__'
+
+    def validate(self, data):
+        restaurante = data.get('restaurante')
+        red_social = data.get('red_social')
+
+        # Evita duplicados manuales (además del unique_together)
+        if RestauranteRedSocial.objects.filter(restaurante=restaurante, red_social=red_social).exists():
+            raise serializers.ValidationError("Esta red social ya está asociada a este restaurante.")
+        return data
+
