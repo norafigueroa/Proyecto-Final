@@ -24,7 +24,9 @@ class PerfilUsuarioSerializer(serializers.ModelSerializer):
             'password'
         ]
         extra_kwargs = {
-            'password': {'write_only': True}
+            'password': {'write_only': True},
+            'email': {'required': True, 'allow_blank': False},
+            'username': {'required': True, 'allow_blank': False}
         }
 
     def create(self, validated_data):
@@ -91,22 +93,15 @@ class CategoriaRestauranteSerializer(serializers.ModelSerializer):
     class Meta:
         model = CategoriaRestaurante
         fields = '__all__'
-
-    def validate(self, data):
-        if data['categoria'] == data['restaurante']:
-            raise serializers.ValidationError("La categoría y el restaurante no pueden ser iguales.")
-        return data
-
+    
 
 class FotoRestauranteSerializer(serializers.ModelSerializer):
     class Meta:
         model = FotoRestaurante
         fields = '__all__'
-
-    def validate_url_foto(self, value):
-        if not value.startswith("http"):
-            raise serializers.ValidationError("Debe proporcionar una URL válida para la foto.")
-        return value
+    
+    # ✅ CloudinaryField maneja la validación automáticamente
+    # No necesita validación adicional de URL
 
 
 class CategoriaMenuSerializer(serializers.ModelSerializer):
@@ -163,16 +158,12 @@ class ResenaSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("La calificación debe estar entre 1 y 5.")
         return value
 
-
 class FotosResenaSerializer(serializers.ModelSerializer):
     class Meta:
         model = FotosResena
         fields = '__all__'
-
-    def validate_url_foto(self, value):
-        if not value.startswith("http"):
-            raise serializers.ValidationError("Debe ser una URL válida.")
-        return value
+    
+    # ✅ CloudinaryField maneja la validación automáticamente
 
 
 class CategoriaBlogSerializer(serializers.ModelSerializer):
@@ -256,11 +247,8 @@ class FotosLugaresSerializer(serializers.ModelSerializer):
     class Meta:
         model = FotosLugares
         fields = '__all__'
-
-    def validate_url_foto(self, value):
-        if not value.startswith("http"):
-            raise serializers.ValidationError("Debe ser una URL válida.")
-        return value
+    
+    # ✅ CloudinaryField maneja la validación automáticamente
 
 
 class MensajesContactoSerializer(serializers.ModelSerializer):
@@ -278,6 +266,7 @@ class MensajesContactoSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("El mensaje debe tener al menos 10 caracteres.")
         return value.strip()
     
+
 class RedSocialSerializer(serializers.ModelSerializer):
     class Meta:
         model = RedSocial
@@ -293,6 +282,7 @@ class RedSocialSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Debe proporcionar un enlace válido (que comience con http o https).")
         return value
 
+
 class RestauranteRedSocialSerializer(serializers.ModelSerializer):
     class Meta:
         model = RestauranteRedSocial
@@ -306,4 +296,3 @@ class RestauranteRedSocialSerializer(serializers.ModelSerializer):
         if RestauranteRedSocial.objects.filter(restaurante=restaurante, red_social=red_social).exists():
             raise serializers.ValidationError("Esta red social ya está asociada a este restaurante.")
         return data
-

@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings 
 from cloudinary.models import CloudinaryField
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 # USUARIOS
@@ -186,7 +187,7 @@ class DetallePedido(models.Model):
 class Resena(models.Model):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     restaurante = models.ForeignKey(Restaurante, on_delete=models.CASCADE)
-    calificacion = models.IntegerField()
+    calificacion = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     comentario = models.CharField(max_length=255, blank=True, null=True)
     fecha_resena = models.DateTimeField(auto_now_add=True)
 
@@ -290,7 +291,7 @@ class LugaresTuristicos(models.Model):
 
 class FotosLugares(models.Model):
     lugar = models.ForeignKey(LugaresTuristicos, on_delete=models.CASCADE)
-    url_foto = url_foto = CloudinaryField('foto_lugar')
+    url_foto = CloudinaryField('foto_lugar')
     descripcion = models.CharField(max_length=255, blank=True, null=True)
     fecha_subida = models.DateTimeField(auto_now_add=True)
 

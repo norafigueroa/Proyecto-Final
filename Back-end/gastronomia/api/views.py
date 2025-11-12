@@ -1,6 +1,8 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView, CreateAPIView, DestroyAPIView, UpdateAPIView, RetrieveAPIView
 from .models import *
 from .serializers import *
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
+
 
 # --- USUARIOS ---
 class PerfilUsuarioListCreateView(ListCreateAPIView):
@@ -33,10 +35,12 @@ class CategoriaDetailView(RetrieveUpdateDestroyAPIView):
 class RestauranteListCreateView(ListCreateAPIView):
     queryset = Restaurante.objects.all()
     serializer_class = RestauranteSerializer
+    # permission_classes = [IsAuthenticatedOrReadOnly]
 
 class RestauranteDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Restaurante.objects.all()
     serializer_class = RestauranteSerializer
+    # permission_classes = [IsAuthenticatedOrReadOnly]
 
 # --- CATEGORIA-RESTAURANTE ---
 class CategoriaRestauranteListCreateView(ListCreateAPIView):
@@ -78,10 +82,12 @@ class PlatilloDetailView(RetrieveUpdateDestroyAPIView):
 class PedidoListCreateView(ListCreateAPIView):
     queryset = Pedido.objects.all()
     serializer_class = PedidoSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class PedidoDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Pedido.objects.all()
     serializer_class = PedidoSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 # --- DETALLE PEDIDO ---
 class DetallePedidoListCreateView(ListCreateAPIView):
@@ -96,10 +102,12 @@ class DetallePedidoDetailView(RetrieveUpdateDestroyAPIView):
 class ResenaListCreateView(ListCreateAPIView):
     queryset = Resena.objects.all()
     serializer_class = ResenaSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class ResenaDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Resena.objects.all()
     serializer_class = ResenaSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 # --- FOTOS RESEÑA ---
 class FotosResenaListCreateView(ListCreateAPIView):
@@ -159,10 +167,12 @@ class GaleriaComunitariaDetailView(RetrieveUpdateDestroyAPIView):
 class ComentariosGaleriaListCreateView(ListCreateAPIView):
     queryset = ComentariosGaleria.objects.all()
     serializer_class = ComentariosGaleriaSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class ComentariosGaleriaDetailView(RetrieveUpdateDestroyAPIView):
     queryset = ComentariosGaleria.objects.all()
     serializer_class = ComentariosGaleriaSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 # --- LUGARES TURÍSTICOS ---
 class LugaresTuristicosListCreateView(ListCreateAPIView):
@@ -186,17 +196,18 @@ class FotosLugaresDetailView(RetrieveUpdateDestroyAPIView):
 class MensajesContactoListCreateView(ListCreateAPIView):
     queryset = MensajesContacto.objects.all()
     serializer_class = MensajesContactoSerializer
+    permission_classes = [AllowAny] 
 
 class MensajesContactoDetailView(RetrieveUpdateDestroyAPIView):
     queryset = MensajesContacto.objects.all()
     serializer_class = MensajesContactoSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly] 
 
 # --- REDES SOCIALES ---
 class RedSocialListCreateView(ListCreateAPIView):
     queryset = RedSocial.objects.all()
     serializer_class = RedSocialSerializer
-
-
+   
 class RedSocialDetailView(RetrieveUpdateDestroyAPIView):
     queryset = RedSocial.objects.all()
     serializer_class = RedSocialSerializer
@@ -205,7 +216,6 @@ class RedSocialDetailView(RetrieveUpdateDestroyAPIView):
 class RestauranteRedSocialListCreateView(ListCreateAPIView):
     queryset = RestauranteRedSocial.objects.all()
     serializer_class = RestauranteRedSocialSerializer
-
 
 class RestauranteRedSocialDetailView(RetrieveUpdateDestroyAPIView):
     queryset = RestauranteRedSocial.objects.all()
