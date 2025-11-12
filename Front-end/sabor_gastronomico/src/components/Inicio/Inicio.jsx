@@ -15,7 +15,7 @@ function Inicio() {
   const restaurantes = [
     { name: "Mariscos El Patio", categoria: "Mariscos", path: "/Restaurantes" },
     { name: "La Cevichería del Muelle", categoria: "Mariscos", path: "/Restaurantes" },
-    { name: "La Marisquería del puerto", categoria: "Mariscos", path: "/Restaurantes" },
+    { name: "Tiki Gastro Pub", categoria: "Mariscos", path: "/Restaurantes" },
     { name: "Restaurante Bahía Azul", categoria: "Mariscos", path: "/Restaurantes" },
     { name: "Restaurante El Ancla", categoria: "Comidas Típicas", path: "/Restaurantes" },
     { name: "La Cantina del Puerto", categoria: "Comidas Típicas", path: "/Restaurantes" },
@@ -121,8 +121,8 @@ return (
           <div className="destacados-grid">
             <div className="destacado-card">
               <img className="mariscos" src={mariscos} alt="mariscosImg"/>
-              <h3>La Marisquería del Puerto</h3>
-              <p>⭐ (4.8) • 127 reseñas</p>
+              <h3>Tiki Gastro Pub</h3>
+              <p>⭐ (4.2) • 46 reseñas</p>
               <p>
                 Especialidad en mariscos frescos del día. Ceviche de la casa, pescado entero frito y
                 camarones al ajillo son nuestros platillos estrella.

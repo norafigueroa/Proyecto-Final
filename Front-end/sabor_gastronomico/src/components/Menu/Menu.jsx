@@ -1,5 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import CartIcon from "../CartIcon/CartIcon";
+
+
 import "./Menu.css";
 
 function Menu() {
@@ -58,6 +61,10 @@ function Menu() {
             </span>
           ))}
         </nav>
+         {/* 🔹 Carrito */}
+          <div className="menu-cart">
+            <CartIcon />
+          </div>
 
         {/* Botón menú móvil */}
 

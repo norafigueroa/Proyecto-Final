@@ -1,0 +1,28 @@
+.cart-icon-container {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.cart-icon {
+  width: 32px;
+  height: 32px;
+  color: #fff;
+  transition: transform 0.2s ease;
+}
+
+.cart-icon:hover {
+  transform: scale(1.1);
+}
+
+.cart-count {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background-color: #ff4c4c;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 50%;
+}

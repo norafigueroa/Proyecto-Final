@@ -39,8 +39,6 @@
   padding: 2rem;
   margin: 2rem auto;
   background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 .categorias-Res{
   display: grid;
@@ -90,7 +88,7 @@
   border-radius: 15px;
   padding: 20px;
   flex: 1; /* Hace que todas tengan el mismo ancho */
-  max-width: 250px;
+  max-width: 300px;
   text-align: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
   transition: transform 0.2s ease, background-color 0.3s ease;
@@ -238,4 +236,53 @@
   }
 }
 
+/* ////////////////////////////////// MAPA ////////////////////////////////// */
 
+.map-container {
+  width: 100%;              /* ancho completo */
+  max-width: 1000px;        /* más grande en pantallas grandes */
+  margin: 2rem auto;        /* centrado y separación */
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.map-container:hover {
+  transform: scale(1.02);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.map-container iframe {
+  width: 100%;
+  height: 500px;            /* altura más grande */
+  border: 0;
+  display: block;
+}
+
+/* Para móviles: ajusta altura automáticamente */
+@media (max-width: 768px) {
+  .map-container iframe {
+    height: 400px;
+  }
+}
+
+
+.social-icons {
+  /* display: flex; */
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  gap: 2rem;
+}
+
+.social-icons img {
+  width: 50px;
+  cursor: pointer;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.social-icons img:hover {
+  transform: scale(1.1);
+  opacity: 0.8;
+}
