@@ -1,0 +1,119 @@
+.turismo-page {
+  font-family: 'Georgia', serif;
+  color: #333;
+  background: #fdf8f0;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.turismo-page h1 {
+  font-size: 3rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+.turismo-page span {
+  color: orangered;
+}
+
+.turismo-page p {
+  font-size: 1.5rem;
+  margin-bottom: 35px;
+}
+
+.carrusel-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-scroll {
+  background-color: #0077b6;
+  color: #fff;
+  border: none;
+  font-size: 2rem;
+  padding: 10px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-scroll:hover {
+  background-color: #023e8a;
+}
+
+.carrusel {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 20px;
+  padding: 10px 0;
+  width: 80%;
+  scrollbar-width: none;
+}
+
+.carrusel::-webkit-scrollbar {
+  display: none;
+}
+
+.lugar-card {
+  background: #fff;
+  border-radius: 15px;
+  width: 300px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: transform 0.3s;
+}
+
+.lugar-card:hover {
+  transform: scale(1.05);
+}
+
+.lugar-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 15px 15px 0 0;
+}
+
+.lugar-card h2 {
+  color: orangered;
+  margin: 15px 0 10px 0;
+}
+
+.lugar-card p {
+  padding: 0 15px 15px 15px;
+  font-size: 1rem;
+  color: #555;
+}
+
+/* 🔹 Responsive */
+@media (max-width: 768px) {
+  .turismo-page h1 {
+    font-size: 2rem;
+  }
+
+  .lugar-card {
+    width: 250px;
+  }
+
+  .btn-scroll {
+    font-size: 1.5rem;
+  }
+}
+
+.footer-turismo {
+  margin-top: 60px;
+  background-color: #243746;
+  color: white;
+  text-align: center;
+  padding: 15px 10px;
+  font-size: 1rem;
+  border-top: 3px solid #90e0ef;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.footer-turismo p {
+  margin: 0;
+  letter-spacing: 0.5px;
+}

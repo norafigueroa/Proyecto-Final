@@ -1,6 +1,9 @@
 import React from 'react'
 import { useNavigate } from "react-router-dom";
 
+import Instagram from "../../assets/Instagram.png"
+import Facebook from "../../assets/Facebook.png"
+
 import "./Footer.css";
 
 function Footer() {
@@ -28,7 +31,6 @@ function Footer() {
               <li onClick={() => navigate("/Cultura")}>Cultura</li>
               <li onClick={() => navigate("/Turismo")}>Turismo</li>
               <li onClick={() => navigate("/Contactanos")}>Contáctanos</li>
-              <li onClick={() => navigate("/Negocios")}>Para Negocios</li>
             </ul>
           </div>
 
@@ -36,11 +38,25 @@ function Footer() {
           <div className="footer-col">
             <h3 className="footer-title">Contacto</h3>
             <ul className="footer-contact">
-              <li>📧saborperladelpacifico@gmail.com</li>
+              <li>saborperladelpacifico@gmail.com</li>
               <li>🌐www.saborperla.cr</li>
               <li>📱+506 6095 4689</li>
               <li>📍Puntarenas, Costa Rica</li>
             </ul>
+          </div>
+
+            {/* Columna 4 */}
+          <div className="footer-col">
+            <h3 className="footer-title">Redes Sociales</h3>
+            <div className="social-icons">
+                 
+              <a href="https://www.instagram.com/elsabordelaperladelpacifico?igsh=c2hxd3Jkemd6Mnhl" target="_blank" rel="noopener noreferrer">
+                <img src= {Instagram} alt="Instagram" />
+              </a>
+              <a href="https://www.facebook.com/share/1Bn4qJV8JQ/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">
+                <img src= {Facebook} alt="Facebook" />
+              </a>
+            </div>
           </div>
 
         </div>

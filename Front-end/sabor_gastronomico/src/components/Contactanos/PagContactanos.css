@@ -1,0 +1,155 @@
+.contacto-page {
+  font-family: "Georgia", serif;
+  background: linear-gradient(to bottom, #f8f8f8, #e8e3dc);
+  color: #333;
+  padding: 40px 20px;
+}
+
+.contacto-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.contacto-header h1 {
+  font-size: 2.5rem;
+  color: #2b2b2b;
+}
+
+.contacto-header p {
+  padding: 0 15px 15px 15px;
+  font-size: 1rem;
+  color: #555;
+}
+
+.contacto-info {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  background: #fff;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.contacto-info ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 25px;
+}
+
+.contacto-info li {
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+}
+
+.redes-sociales img {
+  width: 40px;
+  margin: 10px;
+  transition: transform 0.2s;
+}
+
+.redes-sociales img:hover {
+  transform: scale(1.1);
+}
+
+.btn-abrir-modal {
+  background-color: #0077b6;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s;
+}
+
+.btn-abrir-modal:hover {
+  background-color: #005f8a;
+}
+
+/* ====== MODAL ====== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+  position: relative;
+  animation: aparecer 0.3s ease;
+}
+
+.modal-cerrar {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Formulario dentro del modal */
+.contacto-form label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.contacto-form input,
+.contacto-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+}
+
+.btn-enviar {
+  margin-top: 15px;
+  background-color: #0077b6;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.btn-enviar:hover {
+  background-color: #005f8a;
+}
+
+/* ====== MAPA ====== */
+.mapa-container {
+  margin: 40px auto;
+  max-width: 900px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+}
+
+
