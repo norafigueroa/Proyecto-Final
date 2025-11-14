@@ -1,10 +1,10 @@
 import React from 'react'
-import Registrarse from '../components/Register/Registrarse'
+import FormularioUsuario from '../components/FormularioUsuario/FormularioUsuario'
 
 function RegisterUsuario() {
   return (
     <div>
-      <Registrarse/>
+      <FormularioUsuario/>
     </div>
   )
 }

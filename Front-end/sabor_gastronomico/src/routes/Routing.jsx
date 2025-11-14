@@ -5,7 +5,7 @@ import Restaurantes from '../pages/Restaurantes';
 import Cultura from '../pages/Cultura';
 import Turismo from '../pages/Turismo';
 import Contactanos from '../pages/Contactanos';
-import Register from '../pages/RegisterUsuario';
+import RegisterUsuario from '../pages/RegisterUsuario';
 import Beneficios from '../pages/Beneficios';
 import Login from '../pages/Login';
 import RestauranteRegister from '../pages/RestauranteRegister';
@@ -21,7 +21,7 @@ function Routing() {
           <Route path="/Cultura" element={<Cultura/>}/>
           <Route path="/Turismo" element={<Turismo/>}/>
           <Route path="/Contactanos" element={<Contactanos/>}/>
-          <Route path="/Register" element={<Register/>}/>
+          <Route path="/RegisterUsuario" element={<RegisterUsuario/>}/>
           <Route path="/Beneficios" element={<Beneficios/>}/>
           <Route path="/Login" element={<Login/>}/>
           <Route path="/RestauranteRegister" element={<RestauranteRegister/>} />
