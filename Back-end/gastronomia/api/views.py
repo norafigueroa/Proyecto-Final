@@ -1,7 +1,7 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView, CreateAPIView, DestroyAPIView, UpdateAPIView, RetrieveAPIView
 from .models import *
 from .serializers import *
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated
 
 
 # --- USUARIOS ---
@@ -35,12 +35,12 @@ class CategoriaDetailView(RetrieveUpdateDestroyAPIView):
 class RestauranteListCreateView(ListCreateAPIView):
     queryset = Restaurante.objects.all()
     serializer_class = RestauranteSerializer
-    # permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
 class RestauranteDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Restaurante.objects.all()
     serializer_class = RestauranteSerializer
-    # permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
 # --- CATEGORIA-RESTAURANTE ---
 class CategoriaRestauranteListCreateView(ListCreateAPIView):

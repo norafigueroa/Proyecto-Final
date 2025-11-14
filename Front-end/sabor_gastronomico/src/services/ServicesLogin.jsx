@@ -1,32 +1,55 @@
-const API_URL_LOGIN = 'http://127.0.0.1:8000/api/token/';
+const API_URL_LOGIN = 'http://127.0.0.1:8000/api/login/';
 
-async function postLogin(credentials) {
+async function postLogin(credenciales) {
     try {
-        const response = await fetch(API_URL_LOGIN, {
+        const respuesta = await fetch(API_URL_LOGIN, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(credentials)
+            credentials: 'include',  // ← CLAVE: Permite enviar/recibir cookies
+            body: JSON.stringify(credenciales)
         });
 
-        if (!response.ok) {
-            let errorDetail = 'Error desconocido al iniciar sesión.';
+        if (!respuesta.ok) {
+            let detalleError = 'Error desconocido al iniciar sesión.';
             try {
-                const errorData = await response.json();
-                errorDetail = JSON.stringify(errorData);
+                const datosError = await respuesta.json();
+                detalleError = datosError.error || JSON.stringify(datosError);
             } catch (e) {
-                errorDetail = await response.text();
+                detalleError = await respuesta.text();
             }
-            throw new Error(`Respuesta del servidor (${response.status}): ${errorDetail}`);
+            throw new Error(`Error del servidor (${respuesta.status}): ${detalleError}`);
         }
 
-        return await response.json(); // Devuelve los tokens JWT
+        return await respuesta.json(); // Devuelve { message, user }
 
     } catch (error) {
-        console.error("Existe un error al iniciar sesión:", error);
+        console.error("Error al iniciar sesión:", error);
         throw error;
     }
 }
 
-export { postLogin };
+async function postLogout() {
+    try {
+        const respuesta = await fetch('http://127.0.0.1:8000/api/logout/', {
+            method: 'POST',
+            credentials: 'include',  // ← Envía las cookies para eliminarlas
+        });
+
+        if (!respuesta.ok) {
+            throw new Error('Error al cerrar sesión');
+        }
+
+        // Limpiar localStorage
+        localStorage.removeItem('usuario');
+
+        return await respuesta.json();
+
+    } catch (error) {
+        console.error("Error al cerrar sesión:", error);
+        throw error;
+    }
+}
+
+export { postLogin, postLogout };

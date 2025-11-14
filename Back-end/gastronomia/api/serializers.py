@@ -2,6 +2,8 @@ from rest_framework import serializers
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.hashers import make_password
 from .models import *
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 
 
 class PerfilUsuarioSerializer(serializers.ModelSerializer):
@@ -292,7 +294,20 @@ class RestauranteRedSocialSerializer(serializers.ModelSerializer):
         restaurante = data.get('restaurante')
         red_social = data.get('red_social')
 
-        # Evita duplicados manuales (además del unique_together)
         if RestauranteRedSocial.objects.filter(restaurante=restaurante, red_social=red_social).exists():
             raise serializers.ValidationError("Esta red social ya está asociada a este restaurante.")
+        return data
+    
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        # Obtener el grupo del usuario (rol)
+        groups = self.user.groups.values_list('name', flat=True)
+
+        # Agregar información extra
+        data['role'] = groups[0] if groups else None
+        data['id'] = self.user.id
+        data['username'] = self.user.username
+        data['email'] = self.user.email
         return data
