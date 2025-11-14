@@ -1,7 +1,7 @@
 import React from 'react'
 import Registrarse from '../components/Register/Registrarse'
 
-function Register() {
+function RegisterUsuario() {
   return (
     <div>
       <Registrarse/>
@@ -9,4 +9,4 @@ function Register() {
   )
 }
 
-export default Register
+export default RegisterUsuario

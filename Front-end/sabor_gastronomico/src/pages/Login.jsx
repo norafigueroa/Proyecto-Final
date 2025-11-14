@@ -1,10 +1,10 @@
 import React from 'react'
-import IniciarSesion from '../components/Login/IniciarSesion'
+import InicioSesion from '../components/InicioSesion/InicioSesion'
 
 function Login() {
   return (
     <div>
-      <IniciarSesion/>
+      <InicioSesion/>
     </div>
   )
 }
