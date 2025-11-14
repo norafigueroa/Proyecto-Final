@@ -126,10 +126,10 @@ function Inicio() {
                 path: "/Turismo",
               },
               {
-                icono: "👩‍🍳",
-                titulo: "Recetario Comunitario",
-                desc: "Recetas tradicionales transmitidas de generación en generación por familias",
-                path: "/Recetas",
+                icono: "🖼️​",
+                titulo: "Galería Comunitaria",
+                desc: "Descubre Puntarenas a través de los ojos de su gente.",
+                path: "/Galeria",
               },
             ].map((item, index) => (
               <div key={index} className="categoria-card" onClick={() => navigate(item.path)}>

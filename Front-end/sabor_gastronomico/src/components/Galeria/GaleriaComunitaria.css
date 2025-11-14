@@ -1,0 +1,156 @@
+.galeria-container {
+    font-family: 'Georgia', serif;
+    color: #333;
+    background: linear-gradient(to bottom, #f8f8f8, #e8e3dc);
+    padding: 40px 0 0 0;
+}
+
+.galeria-title {
+    font-size: 3rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.galeria-title span {
+    color: orangered;
+}
+
+.galeria-description {
+    font-size: 20px;
+    margin-bottom: 35px;
+}
+
+.galeria-btn {
+    padding: 15px 20px;
+    border: none;
+    background: #0077b6;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 110px auto 20px auto;
+    transition: 0.3s;
+    display: block;
+    font-size: 20px;
+}
+
+.galeria-btn:hover {
+    background: #005f8a;
+}
+
+/* GRID */
+.galeria-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.galeria-grid img {
+    width: 100%;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+/* ========== FONDO DEL MODAL ========== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* ========== CONTENEDOR DEL MODAL ========== */
+.modal-content {
+  background: #ffffff;
+  padding: 20px 25px;
+  width: 420px;
+  border-radius: 12px;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* ========== TITULO DEL MODAL ========== */
+.modal-content h2 {
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+/* ========== FORMULARIO ========== */
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Inputs y textarea */
+.modal-form input,
+.modal-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  outline: none;
+  transition: 0.2s ease-in-out;
+}
+
+.modal-form input:focus,
+.modal-form textarea:focus {
+  border-color: #007bff;
+}
+
+/* ========== BOTONES ========== */
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 18px;
+}
+
+.modal-buttons button {
+  width: 48%;
+  padding: 10px 0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: 0.2s ease;
+}
+
+/* Botón Guardar */
+.btn-save {
+  background: #28a745;
+  color: white;
+}
+
+.btn-save:hover {
+  background: #218838;
+}
+
+/* Botón Cancelar */
+.btn-cancel {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-cancel:hover {
+  background: #b52b37;
+}
+
+/* Animación */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

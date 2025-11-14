@@ -18,7 +18,7 @@ function Menu() {
       { name: "Cultura", path: "/Cultura" },
       { name: "Turismo", path: "/Turismo" },
       { name: "Contáctanos", path: "/Contactanos" },
-      { name: "Iniciar Sesión", path: "/Register" },
+      { name: "Iniciar Sesión", path: "/Login" },
     ];
 
     // Cierra el menú al hacer clic fuera
