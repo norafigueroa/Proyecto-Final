@@ -72,8 +72,8 @@ function GaleriaComunitaria() {
                     </form>
 
                     <div className="modal-buttons">
-                        <button className="btn-save">Guardar</button>
-                        <button className="btn-cancel">Cancelar</button>
+                        <button className="btn-save" onClick={guardarFoto}>Guardar</button>
+                        <button className="btn-cancel" onClick={closeModal}>Cancelar</button>
                     </div>
                 </div>
             </div>
