@@ -167,7 +167,7 @@ function Inicio() {
             </p>
             <div className="botones-footer">
               <button className="btn-registrar" onClick={() => navigate("/Register")}> Registrar mi negocio </button>
-              <button className="btn-beneficios" onClick={() => navigate("/Informacion")}> Conocer beneficios </button>
+              <button className="btn-beneficios" onClick={() => navigate("/Beneficios")}> Conocer beneficios </button>
             </div>
           </div>
         </section>

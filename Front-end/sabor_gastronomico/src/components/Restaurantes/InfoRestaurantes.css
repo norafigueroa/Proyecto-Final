@@ -1,7 +1,7 @@
 /* ====== CONTENEDOR PRINCIPAL ====== */
 .restaurante-page {
   font-family: 'Georgia', serif;
-  background: linear-gradient(to bottom, #fafafa, #f3ece2);
+  background: linear-gradient(to bottom, #f8f8f8, #e8e3dc);
   min-height: 100vh;
   color: #333;
 }
@@ -9,7 +9,6 @@
 /* ====== HEADER ====== */
 .header {
   background-color: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 1rem 0;
 }
 

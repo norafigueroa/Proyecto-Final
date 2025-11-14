@@ -64,7 +64,7 @@ function Footer() {
           <hr className="footer-divider" />
 
           <div className="footer-bottom">
-            © 2025 El Sabor de la Perla del Pacífico. Todos los derechos reservados.
+            © 2025 El Sabor de la Perla del Pacífico | Todos los derechos reservados.
           </div>
       </footer>
     </div>

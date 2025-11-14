@@ -89,7 +89,7 @@ function PagTurismo() {
             </div>
                 {/* ====== FOOTER TURISMO ====== */}
                 <footer className="footer-turismo">
-                    <p>© {new Date().getFullYear()} Turismo Puntarenas | La Perla del Pacífico 🌅</p>
+                    <p>© 2025 Turismo Puntarenas | La Perla del Pacífico 🌅</p>
                 </footer>
         </div>
     </div>

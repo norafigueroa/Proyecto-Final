@@ -1,4 +1,4 @@
-// src/services/platillosService.js
+/* // src/services/platillosService.js
 async function getPlatillos() {
   try {
     const response = await fetch("http://localhost:8000/api/platillos/", {
@@ -15,4 +15,4 @@ async function getPlatillos() {
   }
 }
 
-export default { getPlatillos };
+export default { getPlatillos }; */

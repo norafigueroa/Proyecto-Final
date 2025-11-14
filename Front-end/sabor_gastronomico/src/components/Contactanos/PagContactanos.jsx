@@ -101,7 +101,7 @@ function PagContactanos() {
 
         {/* ====== FOOTER TURISMO ====== */}
         <footer className="footer-turismo">
-            <p>© {new Date().getFullYear()} El Sabor de la Perla del Pacífico | Todos los derechos reservados </p>
+            <p>© 2025 El Sabor de la Perla del Pacífico | Todos los derechos reservados</p>
         </footer>
     </div>
   );

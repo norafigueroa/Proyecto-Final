@@ -4,7 +4,7 @@
   background: linear-gradient(to bottom, #f8f8f8, #e8e3dc);
   color: #333;
   line-height: 1.8;
-  padding: 40px 20px;
+  padding: 40px 0 0 0;
 }
 
 /* ======== HEADER ======== */
@@ -79,7 +79,7 @@
   color: white;
   text-align: center;
   padding: 18px 10px;
-  font-size: 1rem;
+  
   border-top: 3px solid #90e0ef;
   box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
   border-radius: 8px 8px 0 0;
@@ -89,6 +89,7 @@
   margin: 0;
   letter-spacing: 0.5px;
   font-weight: 500;
+  font-size: 20px;
 }
 
 /* ======== RESPONSIVE ======== */
