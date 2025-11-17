@@ -10,18 +10,17 @@ function InicioSesion() {
     e.preventDefault();
     setMensaje('');
 
-    const credenciales = {
-      username: username,
-      password: password
-    };
+    const credenciales = { username, password };
 
     try {
       const respuesta = await postLogin(credenciales);
       console.log('Respuesta del servidor:', respuesta);
 
-      // Guardar el token en localStorage para futuras peticiones
-      localStorage.setItem('access_token', respuesta.access);
-      localStorage.setItem('refresh_token', respuesta.refresh);
+      // ✅ Guardar solo la info del usuario para mostrar en UI (opcional)
+      // Los tokens están en cookies, no en localStorage
+      if (respuesta.user) {
+        localStorage.setItem('usuario', JSON.stringify(respuesta.user));
+      }
 
       setMensaje('✅ Inicio de sesión exitoso');
       setUsername('');
@@ -35,7 +34,11 @@ function InicioSesion() {
   return (
     <div className="container">
       <h2>Inicio de Sesión</h2>
-      {mensaje && <p style={{ color: mensaje.startsWith('❌') ? 'red' : 'green' }}>{mensaje}</p>}
+      {mensaje && (
+        <p style={{ color: mensaje.startsWith('❌') ? 'red' : 'green' }}>
+          {mensaje}
+        </p>
+      )}
 
       <form onSubmit={handleLogin}>
         <div>

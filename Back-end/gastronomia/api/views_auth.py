@@ -3,8 +3,9 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import Group
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import CustomTokenObtainPairSerializer
+from .serializers import CustomTokenObtainPairSerializer, PerfilUsuarioSerializer
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -12,56 +13,56 @@ def login_view(request):
     """
     Vista de login que:
     1. Verifica credenciales
-    2. Devuelve id, username, email, role
+    2. Devuelve id, username, email, rol
     3. Guarda tokens en cookies HttpOnly
     """
-    username = request.data.get('username')
-    password = request.data.get('password')
+    nombre_usuario = request.data.get('username')
+    contrasena = request.data.get('password')
     
     # Autenticar usuario
-    user = authenticate(username=username, password=password)
+    usuario = authenticate(username=nombre_usuario, password=contrasena)
     
-    if user is not None:
+    if usuario is not None:
         # Usar el serializer personalizado
-        serializer = CustomTokenObtainPairSerializer()
-        refresh = RefreshToken.for_user(user)
+        serializador = CustomTokenObtainPairSerializer()
+        actualizador = RefreshToken.for_user(usuario)
         
-        # Obtener grupos del usuario
-        groups = user.groups.values_list('name', flat=True)
+        # Obtener grupos del usuario (rol)
+        grupos = usuario.groups.values_list('name', flat=True)
         
         # Crear respuesta con la información del usuario
-        response = Response({
-            'message': 'Login exitoso',
+        respuesta = Response({
+            'mensaje': 'Login exitoso',
             'user': {
-                'id': user.id,
-                'username': user.username,
-                'email': user.email,
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'role': groups[0] if groups else None,
+                'id': usuario.id,
+                'username': usuario.username,
+                'email': usuario.email,
+                'first_name': usuario.first_name,
+                'last_name': usuario.last_name,
+                'role': grupos[0] if grupos else None,
             }
         }, status=status.HTTP_200_OK)
         
         # Guardar tokens en cookies HttpOnly
-        response.set_cookie(
+        respuesta.set_cookie(
             key='access_token',
-            value=str(refresh.access_token),
+            value=str(actualizador.access_token),
             httponly=True,
             secure=False,  # True en producción
             samesite='Lax',
             max_age=1800,  # 30 minutos
         )
         
-        response.set_cookie(
+        respuesta.set_cookie(
             key='refresh_token',
-            value=str(refresh),
+            value=str(actualizador),
             httponly=True,
             secure=False,
             samesite='Lax',
             max_age=86400,  # 1 día
         )
         
-        return response
+        return respuesta
     else:
         return Response(
             {'error': 'Credenciales inválidas'},
@@ -72,7 +73,55 @@ def login_view(request):
 @api_view(['POST'])
 def logout_view(request):
     """Vista de logout que elimina las cookies"""
-    response = Response({'message': 'Logout exitoso'})
-    response.delete_cookie('access_token')
-    response.delete_cookie('refresh_token')
-    return response
+    respuesta = Response({'mensaje': 'Logout exitoso'})
+    respuesta.delete_cookie('access_token')
+    respuesta.delete_cookie('refresh_token')
+    return respuesta
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def register_cliente(request):
+    """
+    Registro de cliente
+    Asigna automáticamente el grupo 'Cliente'
+    """
+    try:
+        # Obtener grupo Cliente
+        grupo_cliente = Group.objects.get(name='Cliente')
+        
+        # Agregar el grupo a los datos
+        request.data._mutable = True
+        request.data['groups'] = [grupo_cliente.id]
+        request.data._mutable = False
+        
+        # Serializar y validar datos
+        serializador = PerfilUsuarioSerializer(data=request.data)
+        
+        if serializador.is_valid():
+            usuario = serializador.save()
+            
+            return Response({
+                'mensaje': 'Cliente registrado exitosamente',
+                'user': {
+                    'id': usuario.id,
+                    'username': usuario.username,
+                    'email': usuario.email,
+                }
+            }, status=status.HTTP_201_CREATED)
+        else:
+            return Response(
+                {'errores': serializador.errors},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+    except Group.DoesNotExist:
+        return Response(
+            {'error': 'Grupo Cliente no existe'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+    except Exception as excepcion:
+        return Response(
+            {'error': str(excepcion)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

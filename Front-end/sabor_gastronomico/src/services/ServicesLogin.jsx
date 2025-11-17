@@ -1,55 +1,45 @@
-const API_URL_LOGIN = 'http://127.0.0.1:8000/api/login/';
+import axiosInstance from './AxiosConfig';
 
+const AUTH_BASE = '/'; // ya apunta a http://127.0.0.1:8000/api/
+
+// ==================== LOGIN ====================
 async function postLogin(credenciales) {
-    try {
-        const respuesta = await fetch(API_URL_LOGIN, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',  // ← CLAVE: Permite enviar/recibir cookies
-            body: JSON.stringify(credenciales)
-        });
+  try {
+    const response = await axiosInstance.post(`${AUTH_BASE}login/`, credenciales);
+    
+    // Guardamos SOLO la info del usuario (tokens están en cookies HttpOnly)
+    localStorage.setItem('usuario', JSON.stringify(response.data.user));
 
-        if (!respuesta.ok) {
-            let detalleError = 'Error desconocido al iniciar sesión.';
-            try {
-                const datosError = await respuesta.json();
-                detalleError = datosError.error || JSON.stringify(datosError);
-            } catch (e) {
-                detalleError = await respuesta.text();
-            }
-            throw new Error(`Error del servidor (${respuesta.status}): ${detalleError}`);
-        }
-
-        return await respuesta.json(); // Devuelve { message, user }
-
-    } catch (error) {
-        console.error("Error al iniciar sesión:", error);
-        throw error;
-    }
+    return response.data;
+  } catch (error) {
+    console.error('❌ Error en login:', error.response?.data || error.message);
+    throw error;
+  }
 }
 
+// ==================== LOGOUT ====================
 async function postLogout() {
-    try {
-        const respuesta = await fetch('http://127.0.0.1:8000/api/logout/', {
-            method: 'POST',
-            credentials: 'include',  // ← Envía las cookies para eliminarlas
-        });
-
-        if (!respuesta.ok) {
-            throw new Error('Error al cerrar sesión');
-        }
-
-        // Limpiar localStorage
-        localStorage.removeItem('usuario');
-
-        return await respuesta.json();
-
-    } catch (error) {
-        console.error("Error al cerrar sesión:", error);
-        throw error;
-    }
+  try {
+    await axiosInstance.post(`${AUTH_BASE}logout/`);
+    localStorage.removeItem('usuario');
+    return { message: "Logout exitoso" };
+  } catch (error) {
+    console.error('❌ Error en logout:', error.response?.data || error.message);
+    throw error;
+  }
 }
 
-export { postLogin, postLogout };
+// ==================== REGISTRO CLIENTE ====================
+async function postRegistroCliente(datosCliente) {
+  try {
+    const respuesta = await axiosInstance.post(`${AUTH_BASE}register-cliente/`, datosCliente);
+    
+    console.log('✅ Cliente registrado:', respuesta.data);
+    return respuesta.data;
+  } catch (error) {
+    console.error('❌ Error en registro:', error.response?.data || error.message);
+    throw error;
+  }
+}
+
+export { postLogin, postLogout, postRegistroCliente  };
