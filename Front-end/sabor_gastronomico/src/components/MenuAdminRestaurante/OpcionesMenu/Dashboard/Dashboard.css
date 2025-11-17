@@ -1,0 +1,80 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* ================================
+   CONTENEDOR GENERAL
+=================================*/
+.dashboard-container {
+  padding: 30px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+/* ================================
+   LOGO
+=================================*/
+.dashboard-logo-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.dashboard-logo {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #ddd;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* ================================
+   TITULOS Y FECHA
+=================================*/
+.dashboard-titulo {
+  font-size: 32px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.dashboard-fecha {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 25px;
+}
+
+/* ================================
+   TARJETA DE RESUMEN
+=================================*/
+.dashboard-resumen {
+  background: #fff;
+  width: 350px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.dashboard-resumen h3 {
+  margin-bottom: 15px;
+  font-size: 25px;
+}
+
+/* ================================
+   LISTA DE HORARIOS
+=================================*/
+.dashboard-horario-list {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 10px;
+}
+
+.dashboard-horario-list li {
+  margin-bottom: 6px;
+  font-size: 20px;
+  color: #333;
+}
+

@@ -10,6 +10,8 @@ import RegisterUsuario from '../pages/RegisterUsuario';
 import Beneficios from '../pages/Beneficios';
 import Login from '../pages/Login';
 import RestauranteRegister from '../pages/RestauranteRegister';
+
+import AdminRestaurante from '../pages/AdminRestaurante';
  
 
 function Routing() {
@@ -26,7 +28,11 @@ function Routing() {
           <Route path="/RegisterUsuario" element={<RegisterUsuario/>}/>
           <Route path="/Beneficios" element={<Beneficios/>}/>
           <Route path="/Login" element={<Login/>}/>
-          <Route path="/RestauranteRegister" element={<RestauranteRegister/>} />
+          <Route path="/RestauranteRegister" element={<RestauranteRegister/>}/>
+
+          {/* Rutas para la Pagina Admin de los restaurantes */}
+          <Route path="/AdminRestaurante" element={<AdminRestaurante/>}/>
+    
         </Routes>
       </Router>      
     </div>
