@@ -74,6 +74,8 @@ urlpatterns = [
     path('restaurantes-redes', RestauranteRedSocialListCreateView.as_view(), name="crear y listar asociaciones restaurante-red"),
     path('restaurantes-redes/<int:pk>', RestauranteRedSocialDetailView.as_view(), name="actualizar y eliminar asociación restaurante-red"),
 
+    # Nuevo Endpoint de Registro Combinado
+    path('restaurantes/register', RestauranteRegistrationView.as_view(), name="registro_restaurante_propietario"),
 ]
 
   

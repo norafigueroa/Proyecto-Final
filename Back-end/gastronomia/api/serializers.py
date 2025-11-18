@@ -311,3 +311,81 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['username'] = self.user.username
         data['email'] = self.user.email
         return data
+    
+# Serializer Específico para el Registro de Dueños de Restaurante
+class RestauranteRegistrationSerializer(serializers.Serializer):
+    """
+    Serializador combinado que maneja la creación de un PerfilUsuario
+    (con rol 'Admin Restaurante') y la creación de la entidad Restaurante,
+    todo en una sola transacción.
+    """
+
+    # CAMPOS DEL USUARIO (PerfilUsuario)
+
+    username = serializers.CharField(max_length=150)
+    email = serializers.EmailField(required=True)
+    password = serializers.CharField(write_only=True, min_length=8)
+    first_name = serializers.CharField(max_length=30)
+    last_name = serializers.CharField(max_length=150)
+    telefono = serializers.CharField(max_length=20, allow_blank=True, required=False)
+    
+    # CAMPOS DEL RESTAURANTE (Restaurante)
+    # Nota: Los IDs de las FK se recibirán como ID, si aplica
+    categoria = serializers.PrimaryKeyRelatedField(
+        queryset=Categoria.objects.all(),
+        required=False, 
+        allow_null=True
+    )
+    nombre_restaurante = serializers.CharField(max_length=255)
+    direccion = serializers.CharField(max_length=255)
+    telefono_restaurante = serializers.CharField(max_length=20, allow_blank=True, required=False) # Nombre diferente para evitar colisión
+    email_restaurante = serializers.EmailField(required=False, allow_blank=True) # Nombre diferente para evitar colisión
+    longitud = serializers.DecimalField(max_digits=10, decimal_places=8, required=False, allow_null=True)
+    latitud = serializers.DecimalField(max_digits=10, decimal_places=8, required=False, allow_null=True)
+    
+    # Validaciones personalizadas
+    def validate(self, data):
+        #Validación de usuario único
+        if PerfilUsuario.objects.filter(username=data['username']).exists():
+            raise serializers.ValidationError({"username": "Este nombre de usuario ya está registrado."})
+        if PerfilUsuario.objects.filter(email=data['email']).exists():
+            raise serializers.ValidationError({"email": "Este email ya está registrado."})
+        return data
+
+    def create(self, validated_data):
+        #Sacar datos del usuario
+        user_data = {
+            'username': validated_data.pop('username'),
+            'email': validated_data.pop('email'),
+            'password': validated_data.pop('password'),
+            'first_name': validated_data.pop('first_name'),
+            'last_name': validated_data.pop('last_name'),
+            'telefono': validated_data.pop('telefono'),
+        }
+        
+        #Crear PerfilUsuario (dueño del restaurante)
+        user = PerfilUsuario.objects.create_user(
+            **user_data
+        )
+        
+        #Asignar el rol 'Admin Restaurante'
+        try:
+            grupo_restaurante = Group.objects.get(name='Admin Restaurante')
+            user.groups.add(grupo_restaurante)
+        except Group.DoesNotExist:
+            raise serializers.ValidationError({"error": "El grupo 'Admin Restaurante' no existe. Pídele al administrador general que lo cree."})
+            
+        #Crear la entidad Restaurante
+        restaurante = Restaurante.objects.create(
+            usuario_propietario=user, # 👈 Asigna la FK al usuario recién creado
+            categoria=validated_data.get('categoria'),
+            nombre_restaurante=validated_data.get('nombre_restaurante'),
+            direccion=validated_data.get('direccion'),
+            telefono=validated_data.get('telefono_restaurante'), # Usar el campo de restaurante
+            email=validated_data.get('email_restaurante'),     # Usar el campo de restaurante
+            longitud=validated_data.get('longitud'),
+            latitud=validated_data.get('latitud'),
+        )
+        
+        #Devolver la instancia del Restaurante y el Usuario asociado
+        return {'user': user, 'restaurante': restaurante}

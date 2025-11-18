@@ -220,3 +220,38 @@ class RestauranteRedSocialListCreateView(ListCreateAPIView):
 class RestauranteRedSocialDetailView(RetrieveUpdateDestroyAPIView):
     queryset = RestauranteRedSocial.objects.all()
     serializer_class = RestauranteRedSocialSerializer
+
+# --- REGISTRO COMBINADO RESTAURANTE ---
+class RestauranteRegistrationView(CreateAPIView):
+    """
+    Vista para el registro combinado de un PerfilUsuario (Admin Restaurante) 
+    y su Restaurante asociado.
+    """
+    serializer_class = RestauranteRegistrationSerializer
+    permission_classes = [AllowAny] 
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        # La función create del serializer devuelve un diccionario con 'user' y 'restaurante'
+        data = serializer.save()
+        user = data['user']
+        restaurante = data['restaurante']
+        
+        # Preparamos una respuesta informativa para el frontend
+        respuesta = {
+            'mensaje': 'Registro de restaurante y propietario exitoso.',
+            'restaurante': {
+                'id': restaurante.id,
+                'nombre': restaurante.nombre_restaurante,
+                'direccion': restaurante.direccion,
+            },
+            'propietario': {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'role': 'Admin Restaurante'
+            }
+        }
+        return Response(respuesta, status=status.HTTP_201_CREATED)
