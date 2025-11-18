@@ -1,0 +1,129 @@
+/* ===== Reset ===== */
+body, html {
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== Contenedor General ===== */
+.gestion-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ===== Título ===== */
+.gestion-title {
+  margin: 0;
+  text-align: center;
+  font-size: 2rem;
+  color: #222;
+  padding-top: 20px;
+}
+
+/* ===== Botón principal ===== */
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: 0.3s;
+}
+
+.btn-primario { background: #007bff; color: #fff; }
+.btn-primario:hover { background: #005ec4; }
+
+.btn-secundario { background: #e4e4e4; color: #333; }
+.btn-secundario:hover { background: #cacaca; }
+
+.btn-peligro { background: #ff4a4a; color: white; }
+.btn-peligro:hover { background: #cc0000; }
+
+/* ===== Lista de Platos ===== */
+.lista-platos {
+  margin-top: 25px;
+}
+
+/* ===== Tarjeta de Plato ===== */
+.plato-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0px 3px 10px rgba(0,0,0,0.08);
+}
+
+.plato-card h3 {
+  margin: 0 0 5px;
+}
+
+.precio {
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 10px;
+}
+
+.plato-img {
+  width: 100%;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+/* ===== Modal ===== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(3px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.modal-content {
+  background: white;
+  padding: 25px;
+  width: 400px;
+  max-width: 90%;
+  border-radius: 12px;
+  box-shadow: 0px 4px 15px rgba(0,0,0,0.2);
+  animation: fadeIn 0.3s ease;
+}
+
+/* Animación modal */
+@keyframes fadeIn {
+  from { transform: translateY(-10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* ===== Formulario ===== */
+.formulario label {
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+.formulario input, 
+.formulario textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+}
+
+.preview-img {
+  width: 100%;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+/* Botones formulario */
+.btn-group {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+}

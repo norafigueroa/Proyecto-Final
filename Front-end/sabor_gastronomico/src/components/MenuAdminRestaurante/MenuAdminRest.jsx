@@ -1,8 +1,9 @@
 import React, { useState } from "react";
+import LogoTiki from "../../assets/LogoTiki.jpg"
 import "./MenuAdminRest.css"; 
 
 // 🔹 Importa los componentes del contenido
-import Dashboard from "./OpcionesMenu/Dashboard/Dashboard";
+import Inicio from "./OpcionesMenu/Inicio/Inicio";
 import GestionMenu from "./OpcionesMenu/GestionMenu/GestionMenu";
 import GaleriaAdmin from "./OpcionesMenu/GaleriaAdmin/GaleriaAdmin";
 import Perfil from "./OpcionesMenu/Perfil/Perfil";
@@ -13,18 +14,18 @@ import Stats from "./OpcionesMenu/Stats/Stats";
 import Config from "./OpcionesMenu/ConfigPag/Config";
 
 function MenuAdminRest() {
-    const [selected, setSelected] = useState("dashboard");
+    const [selected, setSelected] = useState("Inicio");
 
     // Render dinámico del contenido
     const renderContent = () => {
         switch (selected) {
-            case "dashboard": return <Dashboard/>;
+            case "Inicio": return <Inicio/>;
             case "menu": return <GestionMenu/>;
             case "galeria": return <GaleriaAdmin/>;
             case "perfil": return <Perfil/>;
             case "promos": return <Promos/>;
             case "pedidos": return <Pedidos/>;
-            case "Resenas": return <Resenas/>;
+            case "resenas": return <Resenas/>;
             case "stats": return <Stats/>;
             case "config": return <Config/>;
             default: return <Dashboard/>;
@@ -39,13 +40,16 @@ function MenuAdminRest() {
         {/* ---------- SIDEBAR ---------- */}
         <aside className="menu-admin-sidebar">
             <div className="sidebar-header">
+                <div className='Menu-logo-wrapper'>
+                    <img src= {LogoTiki} alt="Logo del Restaurante" className='Menu-logo'/>
+                </div>
                 <div>
                     <h2>Tiki Gastro Pub</h2>
                     <p>PANEL ADMINISTRATIVO</p>
                 </div>  
             </div>
             <ul className="sidebar-menu">
-                <li className={selected === "dashboard" ? "active" : ""} onClick={() => setSelected("dashboard")}>Dashboard</li>
+                <li className={selected === "Inicio" ? "active" : ""} onClick={() => setSelected("Inicio")}>Inicio</li>
 
                 <li className={selected === "menu" ? "active" : ""} onClick={() => setSelected("menu")}>Gestionar Menú</li>
 

@@ -1,8 +1,8 @@
 import React from 'react'
 import LogoTiki from "../../../../assets/LogoTiki.jpg";
-import "./Dashboard.css";
+import "./Inicio.css";
 
-function Dashboard() {
+function Inicio() {
   const fechaHora = new Date().toLocaleString("es-CR", {
     dateStyle: "full",
     timeStyle: "short",
@@ -39,15 +39,15 @@ function Dashboard() {
 
   return (
     <div>
-      <div className='dashboard-container'>
-        <div className='dashboard-logo-wrapper'>
-          <img src= {LogoTiki} alt="Logo del Restaurante" className='dashboard-logo'/>
+      <div className='Inicio-container'>
+        <div className='Inicio-logo-wrapper'>
+          <img src= {LogoTiki} alt="Logo del Restaurante" className='Inicio-logo'/>
         </div>
 
-        <h2 className='dashboard-titulo'>Bienvenido, Administrador</h2>
-        <p className='dashboard-fecha'> {fechaHora} </p>
+        <h2 className='Inicio-titulo'>Bienvenido, Administrador</h2>
+        <p className='Inicio-fecha'> {fechaHora} </p>
 
-        <div className='dashboard-resumen'>
+        <div className='Inicio-resumen'>
           <h3>Resumen del Restaurante</h3>
 
           <p> 
@@ -57,7 +57,7 @@ function Dashboard() {
 
           <p> <strong> Horario de hoy: </strong></p>
 
-          <ul className="dashboard-horario-list">
+          <ul className="Inicio-horario-list">
             <li>Lun - Jue: 11:00 AM – 11:00 PM</li>
             <li>Viernes: 11:00 AM – 12:00 AM</li>
             <li>Sábado: 9:30 AM – 12:00 AM</li>
@@ -70,4 +70,4 @@ function Dashboard() {
   )
 }
 
-export default Dashboard
+export default Inicio

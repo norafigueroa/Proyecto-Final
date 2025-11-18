@@ -36,25 +36,18 @@ function PagContactanos() {
         {/* Redes sociales */}
         <div className="redes-sociales">
           <a
-            href="https://www.instagram.com/tikigastropub?utm_source=ig_web_button_share_sheet&igsh=cjVyanE0eWZsbGl6"
+            href="https://www.instagram.com/elsabordelaperladelpacifico?igsh=c2hxd3Jkemd6Mnhl"
             target="_blank"
             rel="noopener noreferrer"
           >
             <img src={Instagram} alt="Instagram" />
           </a>
           <a
-            href="https://www.facebook.com/share/1BjMcpx2Kz/?mibextid=wwXIfr"
+            href="https://www.facebook.com/share/1Bn4qJV8JQ/?mibextid=wwXIfr"
             target="_blank"
             rel="noopener noreferrer"
           >
             <img src={Facebook} alt="Facebook" />
-          </a>
-          <a
-            href="https://www.tiktok.com"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img src={Tiktok} alt="TikTok" />
           </a>
         </div>
 

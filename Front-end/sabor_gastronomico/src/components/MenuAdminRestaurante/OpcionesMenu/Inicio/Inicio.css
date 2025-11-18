@@ -1,12 +1,8 @@
-body {
-  margin: 0;
-  padding: 0;
-}
 
 /* ================================
    CONTENEDOR GENERAL
 =================================*/
-.dashboard-container {
+.Inicio-container {
   padding: 30px;
   text-align: center;
   font-family: Arial, sans-serif;
@@ -15,13 +11,13 @@ body {
 /* ================================
    LOGO
 =================================*/
-.dashboard-logo-wrapper {
+.Inicio-logo-wrapper {
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
 }
 
-.dashboard-logo {
+.Inicio-logo {
   width: 220px;
   height: 220px;
   border-radius: 50%;
@@ -33,13 +29,13 @@ body {
 /* ================================
    TITULOS Y FECHA
 =================================*/
-.dashboard-titulo {
+.Inicio-titulo {
   font-size: 32px;
   font-weight: bold;
   margin-top: 10px;
 }
 
-.dashboard-fecha {
+.Inicio-fecha {
   font-size: 18px;
   color: #666;
   margin-bottom: 25px;
@@ -48,7 +44,7 @@ body {
 /* ================================
    TARJETA DE RESUMEN
 =================================*/
-.dashboard-resumen {
+.Inicio-resumen {
   background: #fff;
   width: 350px;
   margin: 0 auto;
@@ -58,7 +54,7 @@ body {
   text-align: center;
 }
 
-.dashboard-resumen h3 {
+.Inicio-resumen h3 {
   margin-bottom: 15px;
   font-size: 25px;
 }
@@ -66,13 +62,13 @@ body {
 /* ================================
    LISTA DE HORARIOS
 =================================*/
-.dashboard-horario-list {
+.Inicio-horario-list {
   list-style: none;
   padding-left: 0;
   margin-top: 10px;
 }
 
-.dashboard-horario-list li {
+.Inicio-horario-list li {
   margin-bottom: 6px;
   font-size: 20px;
   color: #333;
