@@ -1,12 +1,15 @@
 import { AuthProvider } from './context/AuthContext';
+import { CategoriasProvider } from './context/CategoriasContext';
 import Routing from './routes/Routing';
 
 function App() {
   return (
     <AuthProvider>
-      <div>
-        <Routing/>
-      </div>
+      <CategoriasProvider>
+        <div>
+          <Routing/>
+        </div>
+      </CategoriasProvider>
     </AuthProvider>
   )
 }

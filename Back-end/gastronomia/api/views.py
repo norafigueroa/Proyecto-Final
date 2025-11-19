@@ -2,7 +2,8 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from .models import *
 from .serializers import *
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated
-
+from rest_framework.response import Response
+from rest_framework import status
 
 # --- USUARIOS ---
 class PerfilUsuarioListCreateView(ListCreateAPIView):

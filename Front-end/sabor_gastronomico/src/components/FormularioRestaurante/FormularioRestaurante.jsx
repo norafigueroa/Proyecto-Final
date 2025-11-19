@@ -1,157 +1,278 @@
 import React, { useState } from 'react';
-import { postRestaurante } from "../../services/ServicesRestaurantes";
+import { registerRestaurante } from '../../services/ServicesRegistro';
+import { useCategorias } from '../../context/CategoriasContext';
 
 function FormularioRestaurante() {
-  // Hooks para manejar el estado de los inputs
-  const [nombre, setNombre] = useState('');
-  const [propietarioId, setPropietarioId] = useState(''); 
-  const [categoriaId, setCategoriaId] = useState(''); 
-  const [direccion, setDireccion] = useState('');
-  const [telefono, setTelefono] = useState('');
-  const [email, setEmail] = useState('');
-  const [longitud, setLongitud] = useState('');
-  const [latitud, setLatitud] = useState('');
+  const { categorias, cargando: categsCargando } = useCategorias();
+  const [cargando, setCargando] = useState(false);
   const [mensaje, setMensaje] = useState('');
 
-  // Función para manejar el envío del formulario
-  const handleGuardarRestaurante = async (e) => {
-    e.preventDefault(); 
+  const [datos, setDatos] = useState({
+    // Datos del Admin
+    first_name: '',
+    last_name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    telefono: '',
+    
+    // Datos del Restaurante
+    nombre_restaurante: '',
+    direccion: '',
+    telefono_restaurante: '',
+    email_restaurante: '',
+    categoria: '',
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setDatos({ ...datos, [name]: value });
+  };
+
+  const validar = () => {
+    // Validar datos del admin
+    if (!datos.first_name || !datos.last_name || !datos.email || !datos.password) {
+      setMensaje('❌ Campos del propietario incompletos');
+      return false;
+    }
+    
+    if (datos.password.length < 8) {
+      setMensaje('❌ La contraseña debe tener mínimo 8 caracteres');
+      return false;
+    }
+    
+    if (datos.password !== datos.confirmPassword) {
+      setMensaje('❌ Las contraseñas no coinciden');
+      return false;
+    }
+
+    if (!datos.email.includes('@')) {
+      setMensaje('❌ Email del propietario inválido');
+      return false;
+    }
+
+    // Validar datos del restaurante
+    if (!datos.nombre_restaurante || !datos.direccion || !datos.telefono_restaurante || !datos.email_restaurante) {
+      setMensaje('❌ Campos del restaurante incompletos');
+      return false;
+    }
+
+    if (!datos.email_restaurante.includes('@')) {
+      setMensaje('❌ Email del restaurante inválido');
+      return false;
+    }
+
+    if (!datos.categoria) {
+      setMensaje('❌ Debes seleccionar una categoría');
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setMensaje('');
 
-    // 1. Construir el objeto de datos
-    const objRestaurante = {
-      // Campos obligatorios y relaciones:
-      usuario_propietario: parseInt(propietarioId), 
-      categoria: categoriaId ? parseInt(categoriaId) : null, 
-      nombre_restaurante: nombre,
-      direccion: direccion,
-      
-      // Campos opcionales:
-      telefono: telefono,
-      email: email,
-      longitud: longitud ? parseFloat(longitud) : null, 
-      latitud: latitud ? parseFloat(latitud) : null,   
-    };
+    if (!validar()) return;
 
-    console.log('Objeto a enviar:', objRestaurante);
+    setCargando(true);
 
     try {
-      // 2. Llamar al servicio
-      const respuestaServidor = await postRestaurante(objRestaurante);
+      const { confirmPassword, ...datosEnvio } = datos;
+  datosEnvio.username = datos.first_name.toLowerCase().replace(' ', '_');
+  
+  const respuesta = await registerRestaurante(datosEnvio);
+
+      setMensaje('✅ Restaurante registrado exitosamente (pendiente de verificación)');
       
-      console.log('Respuesta del Servidor:', respuestaServidor);
-      setMensaje(`✅ Restaurante '${respuestaServidor.nombre_restaurante}' registrado con éxito! ID: ${respuestaServidor.id}`);
-      
-      // Limpiar el formulario
-      setNombre(''); setPropietarioId(''); setCategoriaId('');
-      setDireccion(''); setTelefono(''); setEmail('');
-      setLongitud(''); setLatitud('');
+      // Limpiar formulario
+      setDatos({
+        first_name: '',
+        last_name: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        telefono: '',
+        nombre_restaurante: '',
+        direccion: '',
+        telefono_restaurante: '',
+        email_restaurante: '',
+        categoria: '',
+      });
+
+      // Redirigir después de 2 segundos
+      setTimeout(() => {
+        window.location.href = '/Login';
+      }, 2000);
 
     } catch (error) {
-      // Capturar y mostrar errores de conexión o del backend
-      console.error('Error al guardar el restaurante:', error);
-      setMensaje(`❌ Error al registrar: ${error.message || 'Error de conexión'}. Revisa la consola.`);
+      const errorMsg = error.response?.data?.errores || error.message;
+      setMensaje(`❌ Error: ${JSON.stringify(errorMsg)}`);
+    } finally {
+      setCargando(false);
     }
   };
 
   return (
     <div className="container">
-      <h2>Registro de Nuevo Restaurante</h2>
-      {mensaje && <p style={{ color: mensaje.startsWith('❌') ? 'red' : 'green' }}>{mensaje}</p>}
+      <h2>Registro de Restaurante</h2>
+      <p>Completa los datos para registrar tu restaurante</p>
 
-      <form onSubmit={handleGuardarRestaurante}>
-        {/* Propietario ID (FK) - OBLIGATORIO */}
-        <div>
-          <label htmlFor="propietarioId">ID del Propietario (Usuario):</label>
-          <input 
-            type="number" 
-            id="propietarioId"
-            value={propietarioId}
-            onChange={(e) => setPropietarioId(e.target.value)}
-            required
-          />
-        </div>
+      {mensaje && (
+        <p style={{ color: mensaje.startsWith('❌') ? 'red' : 'green' }}>
+          {mensaje}
+        </p>
+      )}
 
-        {/* Categoría ID (FK) - OPCIONAL */}
-        <div>
-          <label htmlFor="categoriaId">ID de Categoría (Opcional):</label>
-          <input 
-            type="number" 
-            id="categoriaId"
-            value={categoriaId}
-            onChange={(e) => setCategoriaId(e.target.value)}
-          />
-        </div>
+      <form onSubmit={handleSubmit}>
+        <h3>Datos del Propietario</h3>
 
-        {/* Nombre - OBLIGATORIO */}
         <div>
-          <label htmlFor="nombre">Nombre del Restaurante:</label>
-          <input 
+          <label>Nombre: *</label>
+          <input
             type="text"
-            id="nombre"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
+            name="first_name"
+            value={datos.first_name}
+            onChange={handleChange}
+            disabled={cargando}
             required
           />
         </div>
 
-        {/* Dirección - OBLIGATORIO */}
         <div>
-          <label htmlFor="direccion">Dirección:</label>
-          <input 
-            type="text" 
-            id="direccion"
-            value={direccion}
-            onChange={(e) => setDireccion(e.target.value)}
-            required
-          />
-        </div>
-        
-        {/* Teléfono - OPCIONAL */}
-        <div>
-          <label htmlFor="telefono">Teléfono:</label>
-          <input 
-            type="tel" 
-            id="telefono"
-            value={telefono}
-            onChange={(e) => setTelefono(e.target.value)}
-          />
-        </div>
-
-        {/* Email - OPCIONAL */}
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input 
-            type="email" 
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        
-        {/* Longitud y Latitud - OPCIONAL */}
-        <div>
-          <label htmlFor="longitud">Longitud (Decimal):</label>
-          <input 
+          <label>Apellido: *</label>
+          <input
             type="text"
-            id="longitud"
-            value={longitud}
-            onChange={(e) => setLongitud(e.target.value)}
+            name="last_name"
+            value={datos.last_name}
+            onChange={handleChange}
+            disabled={cargando}
+            required
           />
         </div>
+
         <div>
-          <label htmlFor="latitud">Latitud (Decimal):</label>
-          <input 
-            type="text" 
-            id="latitud"
-            value={latitud}
-            onChange={(e) => setLatitud(e.target.value)}
+          <label>Email: *</label>
+          <input
+            type="email"
+            name="email"
+            value={datos.email}
+            onChange={handleChange}
+            disabled={cargando}
+            required
           />
         </div>
+
+        <div>
+          <label>Contraseña: *</label>
+          <input
+            type="password"
+            name="password"
+            value={datos.password}
+            onChange={handleChange}
+            disabled={cargando}
+            required
+          />
+        </div>
+
+        <div>
+          <label>Confirmar Contraseña: *</label>
+          <input
+            type="password"
+            name="confirmPassword"
+            value={datos.confirmPassword}
+            onChange={handleChange}
+            disabled={cargando}
+            required
+          />
+        </div>
+
+        <div>
+          <label>Teléfono:</label>
+          <input
+            type="tel"
+            name="telefono"
+            value={datos.telefono}
+            onChange={handleChange}
+            disabled={cargando}
+          />
+        </div>
+
+        <hr />
+        <h3>Datos del Restaurante</h3>
+
+        <div>
+          <label>Nombre del Restaurante: *</label>
+          <input
+            type="text"
+            name="nombre_restaurante"
+            value={datos.nombre_restaurante}
+            onChange={handleChange}
+            disabled={cargando}
+            required
+          />
+        </div>
+
+        <div>
+          <label>Dirección: *</label>
+          <input
+            type="text"
+            name="direccion"
+            value={datos.direccion}
+            onChange={handleChange}
+            disabled={cargando}
+            required
+          />
+        </div>
+
+        <div>
+          <label>Teléfono del Restaurante: *</label>
+          <input
+            type="tel"
+            name="telefono_restaurante"
+            value={datos.telefono_restaurante}
+            onChange={handleChange}
+            disabled={cargando}
+            required
+          />
+        </div>
+
+        <div>
+          <label>Email del Restaurante: *</label>
+          <input
+            type="email"
+            name="email_restaurante"
+            value={datos.email_restaurante}
+            onChange={handleChange}
+            disabled={cargando}
+            required
+          />
+        </div>
+
+        <div>
+          <label>Categoría: *</label>
+          <select
+            name="categoria"
+            value={datos.categoria}
+            onChange={handleChange}
+            disabled={cargando || categsCargando}
+            required
+          >
+            <option value="">
+              {categsCargando ? 'Cargando categorías...' : 'Selecciona una categoría'}
+            </option>
+            {categorias.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.nombre_categoria}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <br />
-        
-        <button type="submit">
-          Registrar Restaurante
+        <button type="submit" disabled={cargando}>
+          {cargando ? 'Registrando...' : 'Registrar Restaurante'}
         </button>
       </form>
     </div>
