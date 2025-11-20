@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import *
-from .views_auth import login_view, logout_view, register_cliente
+from .views_auth import login_view, logout_view, register_cliente, token_refresh_view
 
 
 urlpatterns = [
@@ -82,6 +82,7 @@ urlpatterns = [
     # Autenticación
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
+    path('token/refresh/', token_refresh_view, name='token_refresh'),
     path('register-cliente/', register_cliente, name='register_cliente'),
 ]
 

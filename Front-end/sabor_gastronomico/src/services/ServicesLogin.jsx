@@ -4,17 +4,13 @@ const AUTH_BASE = '/'; // ya apunta a http://127.0.0.1:8000/api/
 
 // ==================== LOGIN ====================
 async function postLogin(credenciales) {
-  try {
-    const response = await axiosInstance.post(`${AUTH_BASE}login/`, credenciales);
-    
-    // 🛑 ELIMINADO: Ya no guardamos en localStorage aquí. El AuthContext lo hace.
-    // localStorage.setItem('usuario', JSON.stringify(response.data.user)); 
-
-    return response.data;
-  } catch (error) {
-    console.error('❌ Error en login:', error.response?.data || error.message);
-    throw error;
-  }
+  try {
+    const response = await axiosInstance.post(`${AUTH_BASE}login/`, credenciales);
+    return response.data;  // ✅ Retorna solo los datos
+  } catch (error) {
+    console.error('❌ Error en login:', error.response?.data || error.message);
+    throw error;
+  }
 }
 
 // ==================== LOGOUT ====================

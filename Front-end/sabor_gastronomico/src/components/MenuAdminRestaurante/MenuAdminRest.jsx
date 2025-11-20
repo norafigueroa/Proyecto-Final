@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import LogoTiki from "../../assets/LogoTiki.jpg"
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import "./MenuAdminRest.css"; 
 
 // 🔹 Importa los componentes del contenido
@@ -15,6 +17,24 @@ import Config from "./OpcionesMenu/ConfigPag/Config";
 
 function MenuAdminRest() {
     const [selected, setSelected] = useState("Inicio");
+    const [cargandoLogout, setCargandoLogout] = useState(false);
+    
+    const { logout } = useAuth();
+    const navegar = useNavigate();
+
+    // Función para cerrar sesión
+    const handleLogout = async () => {
+      setCargandoLogout(true);
+      try {
+        await logout();
+        console.log('✅ Sesión cerrada');
+        navegar('/Login');
+      } catch (error) {
+        console.error('❌ Error al cerrar sesión:', error);
+      } finally {
+        setCargandoLogout(false);
+      }
+    };
 
     // Render dinámico del contenido
     const renderContent = () => {
@@ -28,7 +48,7 @@ function MenuAdminRest() {
             case "resenas": return <Resenas/>;
             case "stats": return <Stats/>;
             case "config": return <Config/>;
-            default: return <Dashboard/>;
+            default: return <Inicio/>;
         }
     }
 
@@ -36,12 +56,11 @@ function MenuAdminRest() {
     <div>
       <div className="menu-admin-container">
 
-
         {/* ---------- SIDEBAR ---------- */}
         <aside className="menu-admin-sidebar">
             <div className="sidebar-header">
                 <div className='Menu-logo-wrapper'>
-                    <img src= {LogoTiki} alt="Logo del Restaurante" className='Menu-logo'/>
+                    <img src={LogoTiki} alt="Logo del Restaurante" className='Menu-logo'/>
                 </div>
                 <div>
                     <h2>Tiki Gastro Pub</h2>
@@ -67,12 +86,20 @@ function MenuAdminRest() {
 
                 <li className={selected === "config" ? "active" : ""} onClick={() => setSelected("config")}>Configuración</li>
 
-                <button className="logout-btn">Cerrar Sesión</button>
+                <button 
+                  className="logout-btn"
+                  onClick={handleLogout}
+                  disabled={cargandoLogout}
+                >
+                  {cargandoLogout ? 'Cerrando...' : 'Cerrar Sesión'}
+                </button>
             </ul>
         </aside>
 
         {/* ---------- CONTENIDO PRINCIPAL ---------- */}
-        <main className="menu-admin-main"> {renderContent()} </main>
+        <main className="menu-admin-main"> 
+          {renderContent()} 
+        </main>
       </div>
     </div>
   )

@@ -1,91 +1,127 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { postLogin } from '../../services/ServicesLogin';
-
-// 🚨 IMPORTACIÓN CORREGIDA 🚨
-import { useAuth } from '../../context/AuthContext'; 
+import { useAuth } from '../../context/AuthContext';
 
 function InicioSesion() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [mensaje, setMensaje] = useState('');
+  const [nombreUsuario, setNombreUsuario] = useState('');
+  const [contrasena, setContrasena] = useState('');
+  const [mensaje, setMensaje] = useState('');
+  const [cargando, setCargando] = useState(false);
 
-  const { login } = useAuth(); // Usar el hook de contexto para obtener la función login
-  const navigate = useNavigate(); // Hook para la navegación
+  const { login, autenticado } = useAuth();
+  const navegar = useNavigate();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setMensaje('');
+  // Bloquear flecha atrás del navegador cuando estés logueado
+  useEffect(() => {
+    if (autenticado) {
+      window.history.replaceState(null, null, window.location.href);
+      window.onpopstate = () => {
+        window.history.pushState(null, null, window.location.href);
+      };
+    }
+  }, [autenticado]);
 
-    const credenciales = { username, password };
+  const manejarLogin = async (e) => {
+    e.preventDefault();
+    setMensaje('');
+    setCargando(true);
 
-    try {
-      const respuesta = await postLogin(credenciales);
+    // Validar campos
+    if (!nombreUsuario || !contrasena) {
+      setMensaje('❌ Usuario y contraseña son requeridos');
+      setCargando(false);
+      return;
+    }
 
-      if (respuesta.user) {
-        // 1. ACTUALIZA ESTADO GLOBAL y guarda en localStorage (tarea de AuthContext)
-        login(respuesta.user); 
-        
-        setMensaje('✅ Inicio de sesión exitoso. Redirigiendo...');
+    const credenciales = { username: nombreUsuario, password: contrasena };
 
-        // 2. REDIRECCIÓN CONDICIONAL BASADA EN EL ROL
-        switch (respuesta.user.role) {
-          case 'Admin General':
-            navigate('/AdminGeneral');
-            break;
-          case 'Admin Restaurante':
-            navigate('/AdminRestaurante');
-            break;
-          case 'Cliente':
-          default: 
-            navigate('/'); 
-            break;
-        }
-      }
+    try {
+      console.log('🔐 Iniciando sesión...');
+      
+      const respuesta = await postLogin(credenciales);
 
-    } catch (error) {
-      console.error('Error al iniciar sesión:', error);
-      setMensaje('❌ Credenciales inválidas o error en el servidor');
-    }
-  };
+      if (respuesta && respuesta.user) {
+        // Guardar usuario en el contexto (también en localStorage)
+        login(respuesta.user);
+        
+        setMensaje('✅ Inicio de sesión exitoso. Redirigiendo...');
+        
+        // Limpiar campos
+        setNombreUsuario('');
+        setContrasena('');
 
-  return (
-    <div className="container">
-      <h2>Inicio de Sesión</h2>
-      {mensaje && (
-        <p style={{ color: mensaje.startsWith('❌') ? 'red' : 'green' }}>
-          {mensaje}
-        </p>
-      )}
+        // Redirigir según el rol después de 1 segundo
+        setTimeout(() => {
+          switch (respuesta.user.role) {
+            case 'Admin General':
+              console.log('📍 Redirigiendo a Admin General');
+              navegar('/AdminGeneral');
+              break;
+            case 'Admin Restaurante':
+              console.log('📍 Redirigiendo a Admin Restaurante');
+              navegar('/AdminRestaurante');
+              break;
+            case 'Cliente':
+            default:
+              console.log('📍 Redirigiendo a Home');
+              navegar('/');
+              break;
+          }
+        }, 1000);
+      }
 
-      <form onSubmit={handleLogin}>
-        <div>
-          <label htmlFor="username">Usuario:</label>
-          <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
+    } catch (error) {
+      console.error('❌ Error al iniciar sesión:', error);
+      
+      // Mostrar mensaje de error más específico
+      if (error.response?.status === 401) {
+        setMensaje('❌ Usuario o contraseña incorrectos');
+      } else if (error.response?.data?.error) {
+        setMensaje(`❌ ${error.response.data.error}`);
+      } else {
+        setMensaje('❌ Error en el servidor. Intenta más tarde');
+      }
+    } finally {
+      setCargando(false);
+    }
+  };
 
-        <div>
-          <label htmlFor="password">Contraseña:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
+  return (
+    <div>
+      <h2>Inicio de Sesión</h2>
+      
+      {mensaje && <p>{mensaje}</p>}
 
-        <br />
-        <button type="submit">Iniciar Sesión</button>
-      </form>
-    </div>
-  );
+      <div>
+        <div>
+          <label htmlFor="nombreUsuario">Usuario:</label>
+          <input
+            type="text"
+            id="nombreUsuario"
+            value={nombreUsuario}
+            onChange={(e) => setNombreUsuario(e.target.value)}
+            disabled={cargando}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="contrasena">Contraseña:</label>
+          <input
+            type="password"
+            id="contrasena"
+            value={contrasena}
+            onChange={(e) => setContrasena(e.target.value)}
+            disabled={cargando}
+          />
+        </div>
+
+        <button onClick={manejarLogin} disabled={cargando}>
+          {cargando ? 'Cargando...' : 'Iniciar Sesión'}
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export default InicioSesion;
