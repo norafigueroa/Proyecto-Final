@@ -102,3 +102,22 @@
     justify-content: center;
   }
 }
+
+.redes-icons {
+  /* display: flex; */
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  gap: 2rem;
+}
+
+.redes-icons img {
+  width: 50px;
+  cursor: pointer;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.redes-icons img:hover {
+  transform: scale(1.1);
+  opacity: 0.8;
+}

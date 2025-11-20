@@ -1,0 +1,52 @@
+.resena-contenedor {
+  max-width: 700px;
+  margin: auto;
+  padding: 20px;
+}
+
+.titulo {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.datos-grid {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.btn {
+  width: 100%;
+  padding: 12px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #43a047;
+}
+
+.subtitulo {
+  margin-top: 25px;
+  font-weight: bold;
+}
+
+.lista-resenas {
+  margin-top: 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.item-resena {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}

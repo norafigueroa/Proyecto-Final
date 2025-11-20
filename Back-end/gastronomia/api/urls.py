@@ -1,5 +1,7 @@
 from django.urls import path
 from .views import *
+from .views_auth import login_view, logout_view, register_cliente
+
 
 urlpatterns = [
     # Usuarios y perfiles
@@ -11,7 +13,7 @@ urlpatterns = [
     path('grupos/<int:pk>', GroupDetailView.as_view(), name="actualizar y eliminar grupo"),
 
     # Categorías
-    path('categorias', CategoriaListCreateView.as_view(), name="crear y listar categorias"),
+    path('categorias/', CategoriaListCreateView.as_view(), name="crear y listar categorias"),
     path('categorias/<int:pk>', CategoriaDetailView.as_view(), name="actualizar y eliminar categoria"),
 
     # Restaurantes
@@ -75,7 +77,12 @@ urlpatterns = [
     path('restaurantes-redes/<int:pk>', RestauranteRedSocialDetailView.as_view(), name="actualizar y eliminar asociación restaurante-red"),
 
     # Nuevo Endpoint de Registro Combinado
-    path('restaurantes/register', RestauranteRegistrationView.as_view(), name="registro_restaurante_propietario"),
+    path('register-restaurante', RestauranteRegistrationView.as_view(), name="registro_restaurante_propietario"),
+
+    # Autenticación
+    path('login/', login_view, name='login'),
+    path('logout/', logout_view, name='logout'),
+    path('register-cliente/', register_cliente, name='register_cliente'),
 ]
 
   

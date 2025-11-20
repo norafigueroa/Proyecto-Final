@@ -1,17 +1,52 @@
 import React from 'react';
-import "./InicioAdminGeneral.css";
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext'; 
 
 function InicioAdminGeneral() {
+  const { usuario, logout  } = useAuth(); 
+  const navegar = useNavigate();
+
+  const manejarCerrarSesion = () => {
+    logout (); 
+    navegar('/Login');
+  };
+
+  if (!usuario) {
+    return <div>Acceso no autorizado. Redirigiendo...</div>;
+  }
+
   return (
-    <div style={{ padding: '30px', backgroundColor: '#f9f9f9', minHeight: '100vh', borderLeft: '5px solid #007bff' }}>
-      <h1>👑 Dashboard: Administración General</h1>
-      <p>Bienvenido, **Admin General**. Este es tu centro de control para toda la plataforma. Tus responsabilidades incluyen:</p>
-      <ul>
-        <li>Aprobación y gestión de **Restaurantes**.</li>
-        <li>Gestión de **Usuarios** (Clientes, Admins de Restaurante).</li>
-        <li>Administración de **Contenido** (Categorías, Cultura, Turismo).</li>
-      </ul>
-      {/* Aquí irán los componentes reales de gestión */}
+    <div>
+      <header>
+          <h1>Panel Administrativo General</h1>
+          
+          <button onClick={manejarCerrarSesion}>
+              Cerrar Sesión
+          </button>
+      </header>
+
+      <div>
+          <h2>Bienvenido, {usuario.first_name || usuario.username}</h2>
+          <p>
+              Tu nivel de acceso es: <span>{usuario.role}</span>
+          </p>
+
+          <section>
+              <div>
+                  <h3>Gestión de Restaurantes</h3>
+                  <p>Aprobar y asignar administradores.</p>
+              </div>
+              <div>
+                  <h3>Control de Usuarios</h3>
+                  <p>Revisión y mantenimiento de las cuentas.</p>
+              </div>
+              <div>
+                  <h3>Configuración General</h3>
+                  <p>Ajustes globales de la plataforma.</p>
+              </div>
+          </section>
+
+      </div>
     </div>
   );
 }

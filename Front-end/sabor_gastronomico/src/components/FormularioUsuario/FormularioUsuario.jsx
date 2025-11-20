@@ -65,7 +65,7 @@ function FormularioUsuario() {
       
       // Aquí redirige a login después de 2 segundos
       setTimeout(() => {
-        window.location.href = '/login';
+        window.location.href = '/Login';
       }, 2000);
       
     } catch (error) {
