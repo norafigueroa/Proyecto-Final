@@ -1,0 +1,84 @@
+.pedidos-section {
+  padding: 25px;
+  background: #f7f8fa;
+  border-radius: 12px;
+}
+
+.pedidos-section h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* ------------ Tabla ------------ */
+
+.tabla-pedidos {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+.tabla-pedidos thead {
+  background: #2c7be5;
+  color: #fff;
+}
+
+.tabla-pedidos thead th {
+  padding: 14px;
+  font-weight: 600;
+  text-align: left;
+  font-size: 14px;
+}
+
+.tabla-pedidos tbody tr {
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.tabla-pedidos tbody tr:hover {
+  background: #f1f5ff;
+}
+
+.tabla-pedidos td {
+  padding: 14px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* ------------ Botón de acciones ------------ */
+
+button {
+  background: #28c76f;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #20b565;
+}
+
+/* ✔ símbolo en pedidos entregados */
+td span {
+  font-size: 22px;
+  color: #28c76f;
+  font-weight: bold;
+}
+
+/* ------------ Select de estado ------------ */
+
+select {
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  cursor: pointer;
+  outline: none;
+}

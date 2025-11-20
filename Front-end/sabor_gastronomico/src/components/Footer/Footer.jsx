@@ -48,7 +48,7 @@ function Footer() {
             {/* Columna 4 */}
           <div className="footer-col">
             <h3 className="footer-title">Redes Sociales</h3>
-            <div className="social-icons">
+            <div className="redes-icons">
                  
               <a href="https://www.instagram.com/elsabordelaperladelpacifico?igsh=c2hxd3Jkemd6Mnhl" target="_blank" rel="noopener noreferrer">
                 <img src= {Instagram} alt="Instagram" />
