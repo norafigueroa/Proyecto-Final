@@ -17,7 +17,7 @@ urlpatterns = [
     path('categorias/<int:pk>', CategoriaDetailView.as_view(), name="actualizar y eliminar categoria"),
 
     # Restaurantes
-    path('restaurantes', RestauranteListCreateView.as_view(), name="crear y listar restaurantes"),
+    path('restaurantes/', RestauranteListCreateView.as_view(), name="crear y listar restaurantes"),
     path('restaurantes/<int:pk>', RestauranteDetailView.as_view(), name="actualizar y eliminar restaurante"),
     path('categorias-restaurante', CategoriaRestauranteListCreateView.as_view(), name="crear y listar categorias de restaurante"),
     path('categorias-restaurante/<int:pk>', CategoriaRestauranteDetailView.as_view(), name="actualizar y eliminar categoria de restaurante"),
