@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const axiosInstance = axios.create({
   baseURL: 'http://127.0.0.1:8000/api/',
-  withCredentials: true, // ✅ Envía y recibe cookies automáticamente
+  withCredentials: true, // ✔ Necesario para cookies HttpOnly
   headers: {
     'Content-Type': 'application/json',
   },
@@ -11,45 +11,47 @@ const axiosInstance = axios.create({
 // ==================== INTERCEPTOR DE RESPUESTA ====================
 axiosInstance.interceptors.response.use(
   (respuesta) => {
-    // Respuesta exitosa, retornar normalmente
     console.log('✅ Respuesta exitosa:', respuesta.status);
     return respuesta;
   },
+
   async (error) => {
     const solicitudOriginal = error.config;
 
-    // Si es error 401 (token expirado) y NO hemos intentado renovar aún
+    // ==================== CASO: ERROR 401 ====================
     if (error.response?.status === 401 && !solicitudOriginal._reintento) {
-  solicitudOriginal._reintento = true;
+      solicitudOriginal._reintento = true;
 
-    try {
-      console.log('🔄 Token expirado, intentando renovar...');
-      
-      // NO intentar renovar si ya es una solicitud de refresh
-      if (solicitudOriginal.url === 'token/refresh/') {
-        throw new Error('No se puede renovar token');
-    }
-    
-    await axiosInstance.post('token/refresh/');
-        
-        console.log('✅ Token renovado exitosamente');
-        
-        // Reintentar la solicitud original con el nuevo token
+      try {
+        console.log('🔄 Intentando renovar el token...');
+
+        // Evitar loops: si ya estamos en /token/refresh/ → no renovar
+        if (solicitudOriginal.url.includes("token/refresh")) {
+          throw new Error("No se puede renovar desde refresh");
+        }
+
+        // 🔄 Solicitud para refrescar token (cookie HttpOnly se envía sola)
+        await axiosInstance.post('token/refresh/');
+
+        console.log('✅ Token renovado exitosamente, repitiendo solicitud...');
+
+        // Reintentar la solicitud original
         return axiosInstance(solicitudOriginal);
+
       } catch (errorRefresh) {
-        console.error('❌ No se pudo renovar el token');
-        
-        // Limpiar localStorage
-        localStorage.removeItem('usuario');
-        
-        // Redirigir a login
+        console.error('❌ No se pudo renovar el token, cerrando sesión');
+
+        // Borrar datos locales del usuario (si guardaste algo)
+        localStorage.removeItem("usuario");
+
+        // Redirigir al login
         window.location.href = '/Login';
-        
+
         return Promise.reject(errorRefresh);
       }
     }
 
-    // Para otros errores, rechazar normalmente
+    // ==================== OTROS ERRORES ====================
     console.error('❌ Error en respuesta:', error.response?.status);
     return Promise.reject(error);
   }

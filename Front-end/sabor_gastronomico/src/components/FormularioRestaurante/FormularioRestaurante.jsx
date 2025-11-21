@@ -1,11 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { registerRestaurante } from '../../services/ServicesRegistro';
-import { useCategorias } from '../../context/CategoriasContext';
+import { getCategorias } from '../../services/ServicesCategorias';
 
 function FormularioRestaurante() {
-  const { categorias, cargando: categsCargando } = useCategorias();
+  
+  const [cate, setCate] = useState([])
   const [cargando, setCargando] = useState(false);
+  const [cargacate, setCargaCate,] = useState(false);
   const [mensaje, setMensaje] = useState('');
+
+    useEffect(() => {
+    async function obtener() {
+      const respuesta = await getCategorias();
+      console.log("🔥 Categorías recibidos:", respuesta);
+      setCate(respuesta)
+    }
+    obtener()
+    setCargaCate(true)
+    
+  }, []);
 
   const [datos, setDatos] = useState({
     // Datos del Admin
@@ -256,13 +269,13 @@ function FormularioRestaurante() {
             name="categoria"
             value={datos.categoria}
             onChange={handleChange}
-            disabled={cargando || categsCargando}
+            disabled={cargando}
             required
           >
             <option value="">
-              {categsCargando ? 'Cargando categorías...' : 'Selecciona una categoría'}
+              {cargacate === false ? 'Cargando categorías...' : 'Selecciona una categoría'}
             </option>
-            {categorias.map((cat) => (
+            {cate.map((cat) => (
               <option key={cat.id} value={cat.id}>
                 {cat.nombre_categoria}
               </option>

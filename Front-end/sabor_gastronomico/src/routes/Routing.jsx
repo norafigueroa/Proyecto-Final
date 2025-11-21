@@ -13,6 +13,8 @@ import RestauranteRegister from '../pages/RestauranteRegister';
 import AdminRestaurante from '../pages/AdminRestaurante';
 import AdminGeneral from '../pages/AdminGeneral'; 
 import ProtectedRoute from './ProtectedRoute'; 
+import InfoRestaurantes from '../components/Restaurantes/InfoRestaurantes';
+
  
 function Routing() {
   return (
@@ -23,6 +25,7 @@ function Routing() {
         <Route path="/" element={<Home/>}/>
         <Route path="/Galeria" element={<Galeria/>}/>
         <Route path="/Restaurantes" element={<Restaurantes/>}/>
+        <Route path="/Restaurante/:id" element={<InfoRestaurantes />} />
         <Route path="/Cultura" element={<Cultura/>}/>
         <Route path="/Turismo" element={<Turismo/>}/>
         <Route path="/Contactanos" element={<Contactanos/>}/>

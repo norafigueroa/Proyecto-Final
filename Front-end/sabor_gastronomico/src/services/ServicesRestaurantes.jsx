@@ -1,4 +1,4 @@
-const API_URL = 'http://127.0.0.1:8000/api/restaurantes/';
+const API_URL = "http://127.0.0.1:8000/api/restaurantes/";
 
 async function postRestaurante(restauranteData) {
     try {
@@ -30,30 +30,21 @@ async function postRestaurante(restauranteData) {
 }
 
 async function getRestaurantes() {
-    try {
-        const response = await fetch(API_URL);
-        if (!response.ok) {
-            throw new Error(`Error al obtener los restaurantes: ${response.status}`);
-        }
-        return await response.json();
-    } catch (error) {
-        console.error("Error al obtener los restaurantes:", error);
-        throw error;
-    }
+  const response = await fetch(API_URL); 
+  if (!response.ok) {
+    throw new Error(`Error al obtener los restaurantes: ${response.status}`);
+  }
+  return await response.json();
 }
 
 async function getRestauranteById(id) {
-    try {
-        const response = await fetch(`${API_URL}${id}/`);
-        if (!response.ok) {
-            throw new Error(`Error al obtener el restaurante con ID ${id}: ${response.status}`);
-        }
-        return await response.json();
-    } catch (error) {
-        console.error("Error al obtener el restaurante por ID:", error);
-        throw error;
-    }
+  const response = await fetch(`${API_URL}${id}`); 
+  if (!response.ok) {
+    throw new Error(`Error al obtener el restaurante con ID ${id}: ${response.status}`);
+  }
+  return await response.json();
 }
+
 
 async function updateRestaurante(id, restauranteData) {
     try {

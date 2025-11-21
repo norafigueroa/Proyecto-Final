@@ -22,15 +22,22 @@ function Config() {
   const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState(false);
 
-  // Cargar datos
+  // Cargar datos SIN then()
   useEffect(() => {
-    ConfigService.obtenerConfig()
-      .then((res) => {
+    const cargarConfig = async () => {
+      try {
+        const res = await ConfigService.obtenerConfig();
         setRestaurante(res.data);
+
         if (res.data.logo) setPreviewLogo(res.data.logo);
-      })
-      .catch((err) => console.error("❌ Error cargando config:", err))
-      .finally(() => setCargando(false));
+      } catch (err) {
+        console.error("❌ Error cargando config:", err);
+      } finally {
+        setCargando(false);
+      }
+    };
+
+    cargarConfig();
   }, []);
 
   // Cambios de input
@@ -45,22 +52,23 @@ function Config() {
     setPreviewLogo(URL.createObjectURL(file));
   };
 
-  // GUARDAR SIN FORMULARIO
-  const guardarCambios = () => {
+  const guardarCambios = async () => {
     setGuardando(true);
 
-    const formData = new FormData();
-    Object.entries(restaurante).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
+    try {
+      const formData = new FormData();
+      for (const [key, value] of Object.entries(restaurante)) {
+        formData.append(key, value);
+      }
 
-    ConfigService.actualizarConfig(formData)
-      .then(() => alert("Configuración actualizada correctamente"))
-      .catch((err) => {
-        console.error("❌ Error guardando:", err);
-        alert("Error al guardar");
-      })
-      .finally(() => setGuardando(false));
+      await ConfigService.actualizarConfig(formData);
+      alert("Configuración actualizada correctamente");
+    } catch (err) {
+      console.error("❌ Error guardando:", err);
+      alert("Error al guardar");
+    } finally {
+      setGuardando(false);
+    }
   };
 
   if (cargando) return <p>Cargando configuración...</p>;

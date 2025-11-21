@@ -1,29 +1,56 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getRestaurantes } from "../../services/ServicesRestaurantes";
+
 import mariscos from "../../assets/mariscos.webp";
 import soda from "../../assets/soda.webp";
 import tipica from "../../assets/gallopinto.jpg";
 import "./Inicio.css";
 
 function Inicio() {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("Todos");
-  const navigate = useNavigate();
+  const [restaurantes, setRestaurantes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // 🔹 Lista de restaurantes de Puntarenas
-  const restaurantes = [
-    { name: "El Jorón", categoria: "Mariscos", path: "/Restaurantes" },
-    { name: "Tiki Gastro Pub", categoria: "Mariscos", path: "/Restaurantes" },
-    { name: "Casa Almendro", categoria: "Mariscos", path: "/Restaurantes" },
-    { name: "Restaurante El Ancla", categoria: "Comidas Típicas", path: "/Restaurantes" },
-    { name: "La Cantina del Puerto", categoria: "Comidas Típicas", path: "/Restaurantes" },
-    { name: "Soda La Esquina 2", categoria: "Sodas Tradicionales", path: "/Restaurantes" },
-    { name: "Soda La Favorita", categoria: "Sodas Tradicionales", path: "/Restaurantes" },
-    { name: "Rancho Marino", categoria: "Comidas Típicas", path: "/Restaurantes" },
-    { name: "Soda Martinez", categoria: "Sodas Tradicionales", path: "/Restaurantes" },
-  ];
+  // Traer restaurantes desde la API
+  useEffect(() => {
+    async function obtener() {
+      const data = await getRestaurantes()
+      console.log("🔥 Restaurantes recibidos:", data.results);
+      setRestaurantes(data.results);
+    }
 
-  // 🔹 Restaurantes destacados (sección inferior)
+    obtener()
+    setLoading(false)
+    
+  }, []);
+
+  console.log(restaurantes);
+  
+  // Filtrar por búsqueda y categoría
+  const filteredData = restaurantes.filter((item) => {
+    const matchesSearch = item.nombre_restaurante
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+    const matchesCategory = categoriaSeleccionada === "Todos" || item.categoria?.nombre_categoria === categoriaSeleccionada;
+    return matchesSearch && matchesCategory;
+  });
+
+  const handleSelect = (id) => {
+    console.log(id);
+    navigate(`/Restaurante/${id}`);
+  };
+
+
+    
+  if (loading) return <p>Cargando restaurantes...</p>;
+  if (error) return <p>{error}</p>;
+
+    // Restaurantes destacados (puedes dejarlos fijos o seleccionarlos desde la API)
   const destacados = [
     {
       nombre: "Tiki Gastro Pub",
@@ -31,14 +58,12 @@ function Inicio() {
       rating: "⭐ (4.2) • 46 reseñas",
       descripcion:
         "Restaurante tipo Gastro Pub & Bar frente al mar, con ambiente al aire libre, atardeceres únicos y atención familiar. Ofrece mariscos frescos, cortes especiales, hamburguesas artesanales, nachos, cócteles y cerveza draft.",
-      path: "/restaurantes",
     },
     {
       nombre: "Soda La Esquina 2",
       img: soda,
       rating: "⭐ (4.5) • 87 reseñas",
       descripcion: "Casados tradicionales, gallo pinto legendario y el mejor café de la zona.",
-      path: "/restaurantes",
     },
     {
       nombre: "Restaurante El Ancla",
@@ -46,22 +71,10 @@ function Inicio() {
       rating: "⭐ (4.7) • 89 reseñas",
       descripcion:
         "Fusión de sabores del Pacífico con técnicas contemporáneas. Experiencia culinaria única con vista panorámica al atardecer.",
-      path: "/restaurantes",
     },
   ];
 
-  // 🔍 Filtro de búsqueda
-  const filteredData = restaurantes.filter((item) => {
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory =
-      categoriaSeleccionada === "Todos" || item.categoria === categoriaSeleccionada;
-    return matchesSearch && matchesCategory;
-  });
-
-  const handleSelect = (path) => {
-    navigate(path);
-  };
-
+  console.log("🔥 RESTAURANTES CARGADOS:", restaurantes);
   return (
     <div>
       <div className="search-page">
@@ -86,18 +99,22 @@ function Inicio() {
           <span className="busqueda-icono">🔍</span>
         </div>
 
-        {/* Resultados */}
-        <ul className="busqueda-lista">
-          {searchTerm === "" && categoriaSeleccionada === "Todos" ? (
-            <li className="busqueda-msg">Resultados</li>
-          ) : filteredData.length > 0 ? (
-            filteredData.map((item, index) => (
-              <li key={index} className="busqueda-item" onClick={() => handleSelect(item.path)}>{item.name}</li>
-            ))
-          ) : (
-            <li className="busqueda-msg">No se encontraron restaurantes</li>
-          )}
-        </ul>
+      {/* Lista de resultados */}
+      <ul className="busqueda-lista">
+        {filteredData.length > 0 ? (
+          filteredData.map((item) => (
+            <li
+              key={item.id}
+              className="busqueda-item"
+              onClick={() => handleSelect(item.id)}
+            >
+              {item.nombre_restaurante}
+            </li>
+          ))
+        ) : (
+          <li className="busqueda-msg">No se encontraron restaurantes</li>
+        )}
+      </ul>
 
         {/* ====== SECCIÓN DE EXPLORAR ====== */}
         <section className="categorias-section">
@@ -149,7 +166,7 @@ function Inicio() {
 
           <div className="destacados-grid">
             {destacados.map((rest, index) => (
-              <div key={index} className="destacado-card" onClick={() => navigate(rest.path)}>
+              <div key={index} className="destacado-card" onClick={() => navigate(`/Restaurante/1`)}>
                 <img src={rest.img} alt={rest.nombre} />
                 <h3>{rest.nombre}</h3>
                 <p>{rest.rating}</p>

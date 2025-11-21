@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+/* import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getCategorias } from '../services/ServicesCategorias';
 
 const CategoriasContext = createContext();
@@ -45,4 +45,4 @@ export const useCategorias = () => {
     throw new Error('useCategorias debe ser usado dentro de CategoriasProvider');
   }
   return contexto;
-};
+}; */

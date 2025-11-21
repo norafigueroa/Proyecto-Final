@@ -16,27 +16,26 @@ function Perfil() {
   const [esEditando, setEsEditando] = useState(false);
   const [datosOriginales, setDatosOriginales] = useState({});
 
-  // ------------------------------------------------------------------
-  // Cargar datos desde la API
-  // ------------------------------------------------------------------
-  function cargarPerfil() {
-    PerfilService.obtenerPerfil()
-      .then((res) => {
-        setPerfil(res.data);
-        setDatosOriginales(res.data);
-      })
-      .catch((err) => {
-        console.error("Error al cargar perfil:", err);
-      });
+
+  // Cargar datos desde la API SIN .then()
+
+  async function cargarPerfil() {
+    try {
+      const res = await PerfilService.obtenerPerfil();
+      setPerfil(res.data);
+      setDatosOriginales(res.data);
+    } catch (err) {
+      console.error("Error al cargar perfil:", err);
+    }
   }
 
   useEffect(() => {
     cargarPerfil();
   }, []);
 
-  // ------------------------------------------------------------------
+
   // Manejar cambios del formulario
-  // ------------------------------------------------------------------
+
   function handleCambio(e) {
     const { name, value, files, type } = e.target;
 
@@ -54,27 +53,25 @@ function Perfil() {
     }));
   }
 
-  // ------------------------------------------------------------------
-  // Guardar edición
-  // ------------------------------------------------------------------
-  function handleGuardar() {
-    const formData = new FormData();
+  async function handleGuardar() {
+    try {
+      const formData = new FormData();
 
-    Object.entries(perfil).forEach(([key, value]) => {
-      if (value !== null && value !== undefined) {
-        formData.append(key, value);
-      }
-    });
-
-    PerfilService.actualizarPerfil(formData)
-      .then((res) => {
-        setEsEditando(false);
-        setPerfil(res.data);
-        setDatosOriginales(res.data);
-      })
-      .catch((err) => {
-        console.error("Error al actualizar perfil:", err);
+      Object.entries(perfil).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          formData.append(key, value);
+        }
       });
+
+      const res = await PerfilService.actualizarPerfil(formData);
+
+      setEsEditando(false);
+      setPerfil(res.data);
+      setDatosOriginales(res.data);
+
+    } catch (err) {
+      console.error("Error al actualizar perfil:", err);
+    }
   }
 
   // ------------------------------------------------------------------
@@ -86,16 +83,18 @@ function Perfil() {
   }
 
   // ------------------------------------------------------------------
-  // Cambiar contraseña
+  // Cambiar contraseña SIN .then()
   // ------------------------------------------------------------------
-  function handleCambiarPassword() {
+  async function handleCambiarPassword() {
     const nueva = prompt("Ingrese la nueva contraseña:");
-
     if (!nueva) return;
 
-    PerfilService.cambiarPassword({ password: nueva })
-      .then(() => alert("Contraseña cambiada con éxito"))
-      .catch(() => alert("Error al cambiar contraseña"));
+    try {
+      await PerfilService.cambiarPassword({ password: nueva });
+      alert("Contraseña cambiada con éxito");
+    } catch (err) {
+      alert("Error al cambiar contraseña");
+    }
   }
 
   return (
