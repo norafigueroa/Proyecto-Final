@@ -1,5 +1,21 @@
+/* ======== CONTENEDOR GENERAL ======== */
+.admin-container {
+  width: 100%;
+  min-height: 100vh;
+  background: #f4f5f9;
+  font-family: Arial, sans-serif;
+}
+
+/* ======== ACCESO DENEGADO ======== */
+.no-acceso {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+  color: #b22234;
+}
+
 /* ======== HEADER ======== */
-header {
+.admin-header {
   background: #1e1e2f;
   color: #fff;
   padding: 20px;
@@ -8,12 +24,13 @@ header {
   align-items: center;
 }
 
-header h1 {
+.admin-title {
   margin: 0;
   font-size: 24px;
 }
 
-header button {
+/* ======== BOTÓN CERRAR SESIÓN ======== */
+.btn-cerrarPag {
   background: #e63946;
   color: white;
   border: none;
@@ -24,34 +41,44 @@ header button {
   transition: 0.3s;
 }
 
-header button:hover {
+.btn-cerrarPag:hover {
   background: #b22234;
 }
 
 /* ======== CONTENIDO PRINCIPAL ======== */
-div {
+.admin-contenido {
   padding: 20px;
 }
 
-h2 {
+.admin-bienvenida {
   font-size: 22px;
   color: #222;
 }
 
-p span {
+.admin-bienvenida span {
+  color: #0077b6;
+  font-weight: bold;
+}
+
+.admin-rol {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.admin-rol span {
   font-weight: bold;
   color: #0077b6;
 }
 
 /* ======== TARJETAS DE SECCIONES ======== */
-section {
+.admin-secciones {
   margin-top: 25px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
 }
 
-section div {
+.card-admin {
   background: white;
   padding: 20px;
   border-radius: 10px;
@@ -59,15 +86,28 @@ section div {
   transition: transform 0.2s ease;
 }
 
-section div:hover {
+.card-admin:hover {
   transform: translateY(-5px);
 }
 
-section h3 {
+.card-admin h3 {
   margin-top: 0;
   color: #1d3557;
 }
 
-section p {
+.card-admin p {
   color: #333;
+}
+
+/* ======== RESPONSIVE ======== */
+@media (max-width: 600px) {
+  .admin-header {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .btn-cerrarPag {
+    width: 100%;
+  }
 }
