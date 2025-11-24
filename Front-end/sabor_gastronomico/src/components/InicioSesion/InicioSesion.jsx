@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { postLogin } from '../../services/ServicesLogin';
 import { useAuth } from '../../context/AuthContext';
 
+import "./InicioSesion.css";
+
 function InicioSesion() {
   const [nombreUsuario, setNombreUsuario] = useState('');
   const [contrasena, setContrasena] = useState('');
@@ -88,39 +90,31 @@ function InicioSesion() {
   };
 
   return (
-    <div>
-      <h2>Inicio de Sesión</h2>
-      
-      {mensaje && <p>{mensaje}</p>}
+    <div className="login-container">
+    <h2>Inicio de Sesión</h2>
+
+    {mensaje && (
+      <p className={`login-message ${mensaje.startsWith("❌") ? "error" : "success"}`}>
+        {mensaje}
+      </p>
+    )}
+
+    <div className="login-form">
+      <div>
+        <label htmlFor="nombreUsuario">Usuario:</label>
+        <input type="text" id="nombreUsuario" value={nombreUsuario} onChange={(e) => setNombreUsuario(e.target.value)} disabled={cargando}/>
+      </div>
 
       <div>
-        <div>
-          <label htmlFor="nombreUsuario">Usuario:</label>
-          <input
-            type="text"
-            id="nombreUsuario"
-            value={nombreUsuario}
-            onChange={(e) => setNombreUsuario(e.target.value)}
-            disabled={cargando}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="contrasena">Contraseña:</label>
-          <input
-            type="password"
-            id="contrasena"
-            value={contrasena}
-            onChange={(e) => setContrasena(e.target.value)}
-            disabled={cargando}
-          />
-        </div>
-
-        <button onClick={manejarLogin} disabled={cargando}>
-          {cargando ? 'Cargando...' : 'Iniciar Sesión'}
-        </button>
+        <label htmlFor="contrasena">Contraseña:</label>
+        <input type="password" id="contrasena" value={contrasena} onChange={(e) => setContrasena(e.target.value)} disabled={cargando}/>
       </div>
+
+      <button className="login-button" onClick={manejarLogin} disabled={cargando}>
+        {cargando ? 'Cargando...' : 'Iniciar Sesión'}
+      </button>
     </div>
+  </div>
   );
 }
 
