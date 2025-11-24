@@ -77,105 +77,55 @@ function FormularioUsuario() {
   };
 
   return (
-    <div className="container">
-      <h2>Registro de Cliente</h2>
-      
-      {mensaje && (
-        <p style={{ color: mensaje.startsWith('❌') ? 'red' : 'green' }}>
-          {mensaje}
-        </p>
-      )}
+  <div className="container">
+  <h2>Registro de Cliente</h2>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Nombre: *</label>
-          <input
-            type="text"
-            name="first_name"
-            value={datos.first_name}
-            onChange={handleChange}
-            disabled={cargando}
-            required
-          />
-        </div>
+  {mensaje && (<p style={{ color: mensaje.startsWith('❌') ? 'red' : 'green' }}> {mensaje}</p>
+  )}
 
-        <div>
-          <label>Apellido: *</label>
-          <input
-            type="text"
-            name="last_name"
-            value={datos.last_name}
-            onChange={handleChange}
-            disabled={cargando}
-            required
-          />
-        </div>
-
-        <div>
-          <label>Usuario: *</label>
-          <input
-            type="text"
-            name="username"
-            value={datos.username}
-            onChange={handleChange}
-            disabled={cargando}
-            required
-          />
-        </div>
-
-        <div>
-          <label>Email: *</label>
-          <input
-            type="email"
-            name="email"
-            value={datos.email}
-            onChange={handleChange}
-            disabled={cargando}
-            required
-          />
-        </div>
-
-        <div>
-          <label>Teléfono:</label>
-          <input
-            type="tel"
-            name="telefono"
-            value={datos.telefono}
-            onChange={handleChange}
-            disabled={cargando}
-          />
-        </div>
-
-        <div>
-          <label>Contraseña: *</label>
-          <input
-            type="password"
-            name="password"
-            value={datos.password}
-            onChange={handleChange}
-            disabled={cargando}
-            required
-          />
-        </div>
-
-        <div>
-          <label>Confirmar Contraseña: *</label>
-          <input
-            type="password"
-            name="confirmPassword"
-            value={datos.confirmPassword}
-            onChange={handleChange}
-            disabled={cargando}
-            required
-          />
-        </div>
-
-        <br />
-        <button type="submit" disabled={cargando}>
-          {cargando ? 'Registrando...' : 'Registrarse'}
-        </button>
-      </form>
+  <div className="form-container">
+    <div>
+      <label>Nombre: *</label>
+      <input type="text" name="first_name" value={datos.first_name} onChange={handleChange} disabled={cargando} required/>
     </div>
+
+    <div>
+      <label>Apellido: *</label>
+      <input type="text" name="last_name" value={datos.last_name} onChange={handleChange} disabled={cargando} required/>
+    </div>
+
+    <div>
+      <label>Usuario: *</label>
+      <input type="text" name="username" value={datos.username} onChange={handleChange} disabled={cargando} required/>
+    </div>
+
+    <div>
+      <label>Email: *</label>
+      <input type="email" name="email" value={datos.email} onChange={handleChange} disabled={cargando} required/>
+    </div>
+
+    <div>
+      <label>Teléfono:</label>
+      <input type="tel" name="telefono" value={datos.telefono} onChange={handleChange} disabled={cargando}/>
+    </div>
+
+    <div>
+      <label>Contraseña: *</label>
+      <input type="password" name="password" value={datos.password} onChange={handleChange} disabled={cargando} required/>
+    </div>
+
+    <div>
+      <label>Confirmar Contraseña: *</label>
+      <input type="password" name="confirmPassword" value={datos.confirmPassword} onChange={handleChange} disabled={cargando} required/>
+    </div>
+
+    <br />
+    <button disabled={cargando}onClick={handleSubmit}>
+    {cargando ? 'Registrando...' : 'Registrarse'}
+    </button>
+  </div>
+</div>
+
   );
 }
 
