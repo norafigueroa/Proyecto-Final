@@ -69,7 +69,7 @@ function Pedidos() {
                 <td>
                   {pedido.detalles?.map((item) => (
                     <div key={item.id}>
-                      {item.cantidad}x {item.platillo} – ₡{item.subtotal}
+                      {item.cantidad}x {item.platillo} ₡{item.subtotal}
                     </div>
                   ))}
                 </td>

@@ -58,10 +58,10 @@ function Inicio() {
           <p> <strong> Horario de hoy: </strong></p>
 
           <ul className="Inicio-horario-list">
-            <li>Lun - Jue: 11:00 AM – 11:00 PM</li>
-            <li>Viernes: 11:00 AM – 12:00 AM</li>
-            <li>Sábado: 9:30 AM – 12:00 AM</li>
-            <li>Domingo: 9:30 AM – 11:00 PM</li>
+            <li>Lun - Jue: 11:00 AM - 11:00 PM</li>
+            <li>Viernes: 11:00 AM - 12:00 AM</li>
+            <li>Sábado: 9:30 AM - 12:00 AM</li>
+            <li>Domingo: 9:30 AM - 11:00 PM</li>
           </ul>
         </div>
         

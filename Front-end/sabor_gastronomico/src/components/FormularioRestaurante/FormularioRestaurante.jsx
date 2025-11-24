@@ -93,7 +93,7 @@ function FormularioRestaurante() {
 
     try {
       const { confirmPassword, ...datosEnvio } = datos;
-      datosEnvio.username = datos.first_name.toLowerCase().replace(' ', '_');
+  datosEnvio.username = datos.first_name.toLowerCase().replace(' ', '_');
   
   const respuesta = await registerRestaurante(datosEnvio);
 
@@ -138,37 +138,78 @@ function FormularioRestaurante() {
         </p>
       )}
 
-      <div>
+      <form onSubmit={handleSubmit}>
         <h3>Datos del Propietario</h3>
 
         <div>
           <label>Nombre: *</label>
-          <input type="text" name="first_name" value={datos.first_name} onChange={handleChange} disabled={cargando} required/>
+          <input
+            type="text"
+            name="first_name"
+            value={datos.first_name}
+            onChange={handleChange}
+            disabled={cargando}
+            required
+          />
         </div>
 
         <div>
           <label>Apellido: *</label>
-          <input type="text" name="last_name" value={datos.last_name} onChange={handleChange} disabled={cargando} required/>
+          <input
+            type="text"
+            name="last_name"
+            value={datos.last_name}
+            onChange={handleChange}
+            disabled={cargando}
+            required
+          />
         </div>
 
         <div>
           <label>Email: *</label>
-          <input type="email" name="email" value={datos.email} onChange={handleChange} disabled={cargando} required/>
+          <input
+            type="email"
+            name="email"
+            value={datos.email}
+            onChange={handleChange}
+            disabled={cargando}
+            required
+          />
         </div>
 
         <div>
           <label>Contraseña: *</label>
-          <input type="password" name="password" value={datos.password} onChange={handleChange} disabled={cargando} required/>
+          <input
+            type="password"
+            name="password"
+            value={datos.password}
+            onChange={handleChange}
+            disabled={cargando}
+            required
+          />
         </div>
 
         <div>
           <label>Confirmar Contraseña: *</label>
-          <input type="password" name="confirmPassword" value={datos.confirmPassword} onChange={handleChange} disabled={cargando} required/>
+          <input
+            type="password"
+            name="confirmPassword"
+            value={datos.confirmPassword}
+            onChange={handleChange}
+            disabled={cargando}
+            required
+          />
         </div>
 
         <div>
           <label>Teléfono:</label>
-          <input type="tel" name="telefono" value={datos.telefono} onChange={handleChange} disabled={cargando}/>
+          <input
+            type="tel"
+            name="telefono"
+            value={datos.telefono}
+            onChange={handleChange}
+            disabled={cargando}
+          />
         </div>
 
         <hr />
@@ -176,28 +217,64 @@ function FormularioRestaurante() {
 
         <div>
           <label>Nombre del Restaurante: *</label>
-          <input type="text" name="nombre_restaurante" value={datos.nombre_restaurante} onChange={handleChange} disabled={cargando} required />
+          <input
+            type="text"
+            name="nombre_restaurante"
+            value={datos.nombre_restaurante}
+            onChange={handleChange}
+            disabled={cargando}
+            required
+          />
         </div>
 
         <div>
           <label>Dirección: *</label>
-          <input type="text" name="direccion" value={datos.direccion} onChange={handleChange} disabled={cargando} required/>
+          <input
+            type="text"
+            name="direccion"
+            value={datos.direccion}
+            onChange={handleChange}
+            disabled={cargando}
+            required
+          />
         </div>
 
         <div>
           <label>Teléfono del Restaurante: *</label>
-          <input type="tel" name="telefono_restaurante" value={datos.telefono_restaurante} onChange={handleChange} disabled={cargando} required/>
+          <input
+            type="tel"
+            name="telefono_restaurante"
+            value={datos.telefono_restaurante}
+            onChange={handleChange}
+            disabled={cargando}
+            required
+          />
         </div>
 
         <div>
           <label>Email del Restaurante: *</label>
-          <input type="email" name="email_restaurante" value={datos.email_restaurante} onChange={handleChange} disabled={cargando} required/>
+          <input
+            type="email"
+            name="email_restaurante"
+            value={datos.email_restaurante}
+            onChange={handleChange}
+            disabled={cargando}
+            required
+          />
         </div>
 
         <div>
           <label>Categoría: *</label>
-          <select name="categoria" value={datos.categoria} onChange={handleChange} disabled={cargando} required>
-            <option value=""> {cargacate === false ? 'Cargando categorías...' : 'Selecciona una categoría'} </option>
+          <select
+            name="categoria"
+            value={datos.categoria}
+            onChange={handleChange}
+            disabled={cargando}
+            required
+          >
+            <option value="">
+              {cargacate === false ? 'Cargando categorías...' : 'Selecciona una categoría'}
+            </option>
             {cate.map((cat) => (
               <option key={cat.id} value={cat.id}>
                 {cat.nombre_categoria}
@@ -207,8 +284,10 @@ function FormularioRestaurante() {
         </div>
 
         <br />
-        <button type="button" onClick={handleSubmit} disabled={cargando}> {cargando ? 'Registrando...' : 'Registrar Restaurante'}</button>
-      </div>
+        <button type="submit" disabled={cargando}>
+          {cargando ? 'Registrando...' : 'Registrar Restaurante'}
+        </button>
+      </form>
     </div>
   );
 }

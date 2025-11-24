@@ -72,7 +72,7 @@
 }
 
 .beneficios-btn {
-  background-color: #0077b6;     /* azul turismo */
+  background-color: #0077b6;     
   color: #fff;
   border: none;
   padding: 14px 28px;
@@ -84,7 +84,7 @@
 }
 
 .beneficios-btn:hover {
-  background-color: #023e8a;     /* azul más oscuro */
+  background-color: #023e8a;    
   transform: scale(1.05);
 }
 
