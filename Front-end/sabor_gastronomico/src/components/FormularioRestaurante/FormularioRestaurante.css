@@ -1,0 +1,112 @@
+/* ====== CONTENEDOR PRINCIPAL ====== */
+.form-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 25px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  font-family: Arial, sans-serif;
+}
+
+.form-title {
+  text-align: center;
+  color: #1d3557;
+  margin-bottom: 10px;
+}
+
+.form-subtitle {
+  text-align: center;
+  color: #333;
+}
+
+/* ====== MENSAJES ====== */
+.form-mensaje {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.form-mensaje.error {
+  color: red;
+}
+
+.form-mensaje.exito {
+  color: green;
+}
+
+/* ====== FORMULARIO ====== */
+.form-box {
+  margin-top: 20px;
+}
+
+.form-section-title {
+  color: #1d3557;
+  border-left: 4px solid #457b9d;
+  padding-left: 8px;
+  margin-top: 25px;
+}
+
+/* ====== CAMPOS ====== */
+.form-field {
+  margin-bottom: 15px;
+}
+
+.form-field label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #1d3557;
+}
+
+.form-field input,
+.form-field select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #bfc8d6;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+  border-color: #457b9d;
+}
+
+/* ====== BOTÓN ====== */
+.form-button {
+  width: 100%;
+  padding: 12px;
+  background: #1d3557;
+  color: #fff;
+  border: none;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.form-button:hover {
+  background: #457b9d;
+}
+
+.form-button:disabled {
+  background: #9aa1af;
+  cursor: not-allowed;
+}
+
+/* ====== SEPARADOR ====== */
+.form-divider {
+  margin: 25px 0;
+  border: none;
+  border-bottom: 1px solid #cdd2dc;
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 600px) {
+  .form-container {
+    padding: 20px;
+  }
+}

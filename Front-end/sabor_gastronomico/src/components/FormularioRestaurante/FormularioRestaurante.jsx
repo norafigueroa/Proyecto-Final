@@ -1,35 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { registerRestaurante } from '../../services/ServicesRegistro';
 import { getCategorias } from '../../services/ServicesCategorias';
+import "./FormularioRestaurante.css";
 
 function FormularioRestaurante() {
   
-  const [cate, setCate] = useState([])
+  const [cate, setCate] = useState([]);
   const [cargando, setCargando] = useState(false);
-  const [cargacate, setCargaCate,] = useState(false);
+  const [cargacate, setCargaCate] = useState(false);
   const [mensaje, setMensaje] = useState('');
 
-    useEffect(() => {
+  useEffect(() => {
     async function obtener() {
       const respuesta = await getCategorias();
-      console.log("🔥 Categorías recibidos:", respuesta);
-      setCate(respuesta)
+      setCate(respuesta);
     }
-    obtener()
-    setCargaCate(true)
-    
+    obtener();
+    setCargaCate(true);
   }, []);
 
   const [datos, setDatos] = useState({
-    // Datos del Admin
     first_name: '',
     last_name: '',
     email: '',
     password: '',
     confirmPassword: '',
     telefono: '',
-    
-    // Datos del Restaurante
     nombre_restaurante: '',
     direccion: '',
     telefono_restaurante: '',
@@ -43,43 +39,34 @@ function FormularioRestaurante() {
   };
 
   const validar = () => {
-    // Validar datos del admin
     if (!datos.first_name || !datos.last_name || !datos.email || !datos.password) {
       setMensaje('❌ Campos del propietario incompletos');
       return false;
     }
-    
     if (datos.password.length < 8) {
       setMensaje('❌ La contraseña debe tener mínimo 8 caracteres');
       return false;
     }
-    
     if (datos.password !== datos.confirmPassword) {
       setMensaje('❌ Las contraseñas no coinciden');
       return false;
     }
-
     if (!datos.email.includes('@')) {
       setMensaje('❌ Email del propietario inválido');
       return false;
     }
-
-    // Validar datos del restaurante
     if (!datos.nombre_restaurante || !datos.direccion || !datos.telefono_restaurante || !datos.email_restaurante) {
       setMensaje('❌ Campos del restaurante incompletos');
       return false;
     }
-
     if (!datos.email_restaurante.includes('@')) {
       setMensaje('❌ Email del restaurante inválido');
       return false;
     }
-
     if (!datos.categoria) {
       setMensaje('❌ Debes seleccionar una categoría');
       return false;
     }
-
     return true;
   };
 
@@ -88,18 +75,16 @@ function FormularioRestaurante() {
     setMensaje('');
 
     if (!validar()) return;
-
     setCargando(true);
 
     try {
       const { confirmPassword, ...datosEnvio } = datos;
-  datosEnvio.username = datos.first_name.toLowerCase().replace(' ', '_');
-  
-  const respuesta = await registerRestaurante(datosEnvio);
+      datosEnvio.username = datos.first_name.toLowerCase().replace(' ', '_');
+
+      await registerRestaurante(datosEnvio);
 
       setMensaje('✅ Restaurante registrado exitosamente (pendiente de verificación)');
       
-      // Limpiar formulario
       setDatos({
         first_name: '',
         last_name: '',
@@ -114,7 +99,6 @@ function FormularioRestaurante() {
         categoria: '',
       });
 
-      // Redirigir después de 2 segundos
       setTimeout(() => {
         window.location.href = '/Login';
       }, 2000);
@@ -128,163 +112,87 @@ function FormularioRestaurante() {
   };
 
   return (
-    <div className="container">
-      <h2>Registro de Restaurante</h2>
-      <p>Completa los datos para registrar tu restaurante</p>
+    <div className="form-container">
+      <h2 className="form-title">Registro de Restaurante</h2>
+      <p className="form-subtitle">Completa los datos para registrar tu restaurante</p>
 
       {mensaje && (
-        <p style={{ color: mensaje.startsWith('❌') ? 'red' : 'green' }}>
+        <p className={`form-mensaje ${mensaje.startsWith('❌') ? 'error' : 'exito'}`}>
           {mensaje}
         </p>
       )}
 
-      <form onSubmit={handleSubmit}>
-        <h3>Datos del Propietario</h3>
+      <form className="form-box" onSubmit={handleSubmit}>
+        
+        <h3 className="form-section-title">Datos del Propietario</h3>
 
-        <div>
+        <div className="form-field">
           <label>Nombre: *</label>
-          <input
-            type="text"
-            name="first_name"
-            value={datos.first_name}
-            onChange={handleChange}
-            disabled={cargando}
-            required
-          />
+          <input type="text" name="first_name" value={datos.first_name} onChange={handleChange} disabled={cargando} required />
         </div>
 
-        <div>
+        <div className="form-field">
           <label>Apellido: *</label>
-          <input
-            type="text"
-            name="last_name"
-            value={datos.last_name}
-            onChange={handleChange}
-            disabled={cargando}
-            required
-          />
+          <input type="text" name="last_name" value={datos.last_name} onChange={handleChange} disabled={cargando} required />
         </div>
 
-        <div>
+        <div className="form-field">
           <label>Email: *</label>
-          <input
-            type="email"
-            name="email"
-            value={datos.email}
-            onChange={handleChange}
-            disabled={cargando}
-            required
-          />
+          <input type="email" name="email" value={datos.email} onChange={handleChange} disabled={cargando} required />
         </div>
 
-        <div>
+        <div className="form-field">
           <label>Contraseña: *</label>
-          <input
-            type="password"
-            name="password"
-            value={datos.password}
-            onChange={handleChange}
-            disabled={cargando}
-            required
-          />
+          <input type="password" name="password" value={datos.password} onChange={handleChange} disabled={cargando} required />
         </div>
 
-        <div>
+        <div className="form-field">
           <label>Confirmar Contraseña: *</label>
-          <input
-            type="password"
-            name="confirmPassword"
-            value={datos.confirmPassword}
-            onChange={handleChange}
-            disabled={cargando}
-            required
-          />
+          <input type="password" name="confirmPassword" value={datos.confirmPassword} onChange={handleChange} disabled={cargando} required />
         </div>
 
-        <div>
+        <div className="form-field">
           <label>Teléfono:</label>
-          <input
-            type="tel"
-            name="telefono"
-            value={datos.telefono}
-            onChange={handleChange}
-            disabled={cargando}
-          />
+          <input type="tel" name="telefono" value={datos.telefono} onChange={handleChange} disabled={cargando} />
         </div>
 
-        <hr />
-        <h3>Datos del Restaurante</h3>
+        <hr className="form-divider" />
 
-        <div>
+        <h3 className="form-section-title">Datos del Restaurante</h3>
+
+        <div className="form-field">
           <label>Nombre del Restaurante: *</label>
-          <input
-            type="text"
-            name="nombre_restaurante"
-            value={datos.nombre_restaurante}
-            onChange={handleChange}
-            disabled={cargando}
-            required
-          />
+          <input type="text" name="nombre_restaurante" value={datos.nombre_restaurante} onChange={handleChange} disabled={cargando} required />
         </div>
 
-        <div>
+        <div className="form-field">
           <label>Dirección: *</label>
-          <input
-            type="text"
-            name="direccion"
-            value={datos.direccion}
-            onChange={handleChange}
-            disabled={cargando}
-            required
-          />
+          <input type="text" name="direccion" value={datos.direccion} onChange={handleChange} disabled={cargando} required />
         </div>
 
-        <div>
+        <div className="form-field">
           <label>Teléfono del Restaurante: *</label>
-          <input
-            type="tel"
-            name="telefono_restaurante"
-            value={datos.telefono_restaurante}
-            onChange={handleChange}
-            disabled={cargando}
-            required
-          />
+          <input type="tel" name="telefono_restaurante" value={datos.telefono_restaurante} onChange={handleChange} disabled={cargando} required />
         </div>
 
-        <div>
+        <div className="form-field">
           <label>Email del Restaurante: *</label>
-          <input
-            type="email"
-            name="email_restaurante"
-            value={datos.email_restaurante}
-            onChange={handleChange}
-            disabled={cargando}
-            required
-          />
+          <input type="email" name="email_restaurante" value={datos.email_restaurante} onChange={handleChange} disabled={cargando} required />
         </div>
 
-        <div>
+        <div className="form-field">
           <label>Categoría: *</label>
-          <select
-            name="categoria"
-            value={datos.categoria}
-            onChange={handleChange}
-            disabled={cargando}
-            required
-          >
+          <select name="categoria" value={datos.categoria} onChange={handleChange} disabled={cargando} required>
             <option value="">
-              {cargacate === false ? 'Cargando categorías...' : 'Selecciona una categoría'}
+              {!cargacate ? 'Cargando categorías...' : 'Selecciona una categoría'}
             </option>
             {cate.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.nombre_categoria}
-              </option>
+              <option key={cat.id} value={cat.id}>{cat.nombre_categoria}</option>
             ))}
           </select>
         </div>
 
-        <br />
-        <button type="submit" disabled={cargando}>
+        <button className="form-button" type="submit" disabled={cargando}>
           {cargando ? 'Registrando...' : 'Registrar Restaurante'}
         </button>
       </form>
