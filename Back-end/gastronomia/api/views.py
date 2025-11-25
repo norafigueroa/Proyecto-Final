@@ -36,12 +36,12 @@ class CategoriaDetailView(RetrieveUpdateDestroyAPIView):
 class RestauranteListCreateView(ListCreateAPIView):
     queryset = Restaurante.objects.all()
     serializer_class = RestauranteSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    #permission_classes = [IsAuthenticatedOrReadOnly]
 
 class RestauranteDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Restaurante.objects.all()
     serializer_class = RestauranteSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    #permission_classes = [IsAuthenticatedOrReadOnly]
 
 # --- CATEGORIA-RESTAURANTE ---
 class CategoriaRestauranteListCreateView(ListCreateAPIView):

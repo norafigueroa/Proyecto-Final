@@ -207,13 +207,11 @@ def register_cliente(request):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        # Hacer mutable los datos
-        request.data._mutable = True
-        request.data['groups'] = [grupo_cliente.id]
-        request.data._mutable = False
+        data = request.data.copy()   # Aquí sí es mutable
+        data['groups'] = [grupo_cliente.id]
         
         # Serializar y validar datos
-        serializador = PerfilUsuarioSerializer(data=request.data)
+        serializador = PerfilUsuarioSerializer(data=data)
         
         if serializador.is_valid():
             usuario = serializador.save()
