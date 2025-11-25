@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import LogoTiki from "../../assets/LogoTiki.jpg"
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import "./MenuAdminRest.css"; 
 
 // 🔹 Importa los componentes del contenido
@@ -18,6 +19,7 @@ import Config from "./OpcionesMenu/ConfigPag/Config";
 function MenuAdminRest() {
     const [selected, setSelected] = useState("Inicio");
     const [cargandoLogout, setCargandoLogout] = useState(false);
+    const { idRestaurante } = useParams();
     
     const { logout } = useAuth();
     const navegar = useNavigate();
@@ -39,16 +41,16 @@ function MenuAdminRest() {
     // Render dinámico del contenido
     const renderContent = () => {
         switch (selected) {
-            case "Inicio": return <Inicio/>;
-            case "menu": return <GestionMenu/>;
-            case "galeria": return <GaleriaAdmin/>;
-            case "perfil": return <Perfil/>;
-            case "promos": return <Promos/>;
-            case "pedidos": return <Pedidos/>;
-            case "resenas": return <Resenas/>;
-            case "stats": return <Stats/>;
-            case "config": return <Config/>;
-            default: return <Inicio/>;
+            case "Inicio": return <Inicio idRestaurante={idRestaurante}/>;
+            case "menu": return <GestionMenu idRestaurante={idRestaurante}/>;
+            case "galeria": return <GaleriaAdmin idRestaurante={idRestaurante}/>;
+            case "perfil": return <Perfil idRestaurante={idRestaurante}/>;
+            case "promos": return <Promos idRestaurante={idRestaurante}/>;
+            case "pedidos": return <Pedidos idRestaurante={idRestaurante}/>;
+            case "resenas": return <Resenas idRestaurante={idRestaurante}/>;
+            case "stats": return <Stats idRestaurante={idRestaurante}/>;
+            case "config": return <Config idRestaurante={idRestaurante}/>;
+            default: return <Inicio idRestaurante={idRestaurante}/>;
         }
     }
 

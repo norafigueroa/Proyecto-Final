@@ -23,7 +23,7 @@ function Perfil() {
   // Cargar datos desde la API 
   async function cargarPerfil() {
     try {
-      const res = await PerfilService.obtenerPerfil();
+      const res = await PerfilService.obtenerPerfil(idRestaurante);
       setPerfil(res.data);
       setDatosOriginales(res.data);
     } catch (err) {

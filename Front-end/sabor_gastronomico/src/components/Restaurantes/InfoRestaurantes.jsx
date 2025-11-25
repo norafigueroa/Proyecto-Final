@@ -52,13 +52,22 @@ function InfoRestaurantes() {
   // Testimonios
   const testimonios = restaurante.resenas || []; // Suponiendo que tu API devuelve "resenas"
 
+  const iconosRedes = {
+    facebook: Facebook,
+    instagram: Instagram,
+    tiktok: TikTok,
+    whatsapp: Whatsapp,
+    twitter: null,
+    youtube: null,
+    otra: null,
+  };
+
   // Redes sociales (ejemplo estático)
-  const redes = [
-    { nombre: "Whatsapp", icono: Whatsapp, link: restaurante.whatsapp || "https://wa.me/50685155757" },
-    { nombre: "Instagram", icono: Instagram, link: restaurante.instagram || "#" },
-    { nombre: "Facebook", icono: Facebook, link: restaurante.facebook || "#" },
-    { nombre: "TikTok", icono: TikTok, link: restaurante.tiktok || "#" },
-  ];
+  const redes = (restaurante.redes || []).map((red) => ({
+    nombre: red.nombre_red,
+    icono: iconosRedes[red.nombre_red],
+    link: red.link,
+  }));
 
   return (
     <div>

@@ -62,7 +62,7 @@ function InicioSesion() {
               break;
             case 'Admin Restaurante':
               console.log('📍 Redirigiendo a Admin Restaurante');
-              navegar('/AdminRestaurante');
+              navegar(`/AdminRestaurante/${respuesta.user.restaurante_id}`);
               break;
             case 'Cliente':
             default:

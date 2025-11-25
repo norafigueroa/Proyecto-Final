@@ -9,7 +9,7 @@ function Pedidos() {
   useEffect(() => {
     const cargarPedidos = async () => {
       try {
-        const data = await obtenerPedidos();
+        const data = await obtenerPedidos(idRestaurante);
         setPedidos(data);
       } catch (error) {
         setError("Error al cargar los pedidos");

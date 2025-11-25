@@ -1,0 +1,70 @@
+/* ======= CONTENEDOR GENERAL ======= */
+.restaurantes-contenedor {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 22px;
+  padding: 25px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ======= TARJETA ======= */
+.restaurante-card {
+  background: #ffffff;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-align: center;
+  padding-bottom: 15px;
+  cursor: pointer;
+}
+
+.restaurante-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+}
+
+/* ======= IMAGEN DEL RESTAURANTE ======= */
+.restaurante-card img {
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  background-color: #eaeaea;
+}
+
+/* ======= NOMBRE DEL RESTAURANTE ======= */
+.restaurante-card h3 {
+  margin: 12px 0 4px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* ======= TEXTO DE DETALLES ======= */
+.restaurante-card p {
+  margin: 4px 0;
+  font-size: 15px;
+  color: #555;
+}
+
+/* ======= TEXTO DE CARGA ======= */
+.cargando {
+  width: 100%;
+  text-align: center;
+  margin-top: 40px;
+  font-size: 20px;
+  color: #444;
+}
+
+/* ======= RESPONSIVE ======= */
+@media (max-width: 480px) {
+  .restaurantes-contenedor {
+    grid-template-columns: 1fr;
+    padding: 15px;
+  }
+
+  .restaurante-card img {
+    height: 150px;
+  }
+}

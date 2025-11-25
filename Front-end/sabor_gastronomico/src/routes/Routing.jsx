@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from '../pages/Home';
 import Galeria from '../pages/Galeria';
 import Restaurantes from '../pages/Restaurantes';
+import GeneralRestaurantes from '../components/Restaurantes/GeneralRestaurantes';
 import Cultura from '../pages/Cultura';
 import Turismo from '../pages/Turismo';
 import Contactanos from '../pages/Contactanos';
@@ -25,6 +26,7 @@ function Routing() {
             <Route path="/Galeria" element={<Galeria/>}/>
             <Route path="/Restaurantes" element={<Restaurantes/>}/>
             <Route path="/Restaurante/:id" element={<InfoRestaurantes />} />
+            <Route path="/GeneralRestaurantes/" element={<GeneralRestaurantes />} />
             <Route path="/Cultura" element={<Cultura/>}/>
             <Route path="/Turismo" element={<Turismo/>}/>
             <Route path="/Contactanos" element={<Contactanos/>}/>

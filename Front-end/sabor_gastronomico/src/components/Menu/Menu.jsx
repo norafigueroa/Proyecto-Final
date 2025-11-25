@@ -14,7 +14,7 @@ function Menu() {
 
     const links = [
       { name: "Inicio", path: "/" },
-      { name: "Restaurantes", path: "/Restaurantes" },
+      { name: "Restaurantes", path: "/GeneralRestaurantes" },
       { name: "Cultura", path: "/Cultura" },
       { name: "Turismo", path: "/Turismo" },
       { name: "Contáctanos", path: "/Contactanos" },

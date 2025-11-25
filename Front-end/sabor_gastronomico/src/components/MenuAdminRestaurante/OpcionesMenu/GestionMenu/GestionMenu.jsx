@@ -25,7 +25,7 @@ function GestionMenu() {
 
   const cargarCategorias = async () => {
     try {
-      const res = await MenuService.obtenerCategorias();
+      const res = await MenuService.obtenerCategorias(idRestaurante);
       setCategorias(res.data);
     } catch (err) {
       console.error("Error cargando categorías:", err);

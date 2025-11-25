@@ -26,7 +26,7 @@ function Config() {
   useEffect(() => {
     const cargarConfig = async () => {
       try {
-        const res = await ConfigService.obtenerConfig();
+        const res = await ConfigService.obtenerConfig(idRestaurante);
         setRestaurante(res.data);
 
         if (res.data.logo) setPreviewLogo(res.data.logo);
