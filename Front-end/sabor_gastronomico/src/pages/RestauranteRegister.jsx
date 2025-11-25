@@ -1,9 +1,14 @@
 import React from 'react'
 import FormularioRestaurante from '../components/FormularioRestaurante/FormularioRestaurante'
+import Menu from '../components/Menu/Menu'
+
 
 function RestauranteRegister() {
   return (
-    <FormularioRestaurante/>
+    <div>
+      <Menu/>
+      <FormularioRestaurante/>
+    </div>
   )
 }
 

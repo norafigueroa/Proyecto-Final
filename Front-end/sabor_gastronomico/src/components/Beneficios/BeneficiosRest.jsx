@@ -59,7 +59,7 @@ function BeneficiosRest() {
         <div className="beneficios-cta">
           <p>¿Listo para digitalizar tu restaurante?</p>
           <button
-            className="beneficios-btn" onClick={() => (window.location.href = "/registrarse")}>¡Únete ahora!</button>
+            className="beneficios-btn" onClick={() => (window.location.href = "/RestauranteRegister")}>¡Únete ahora!</button>
         </div>
       </div>
     </section>
