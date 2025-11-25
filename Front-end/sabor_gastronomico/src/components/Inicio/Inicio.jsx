@@ -86,7 +86,7 @@ function Inicio() {
 
         {/* Botones de categorías */}
         <div className="categoria-botones">
-          {["Todos", "Mariscos", "Comidas Típicas", "Sodas Tradicionales"].map((cat) => (
+          {["Todos", "Mariscos", "Comida China", "Sodas", "Comida Rápidas"].map((cat) => (
             <button key={cat} className={`categoria-btn ${categoriaSeleccionada === cat ? "activo" : ""}`} onClick={() => setCategoriaSeleccionada(cat)}> {cat}</button>
           ))}
         </div>

@@ -16,9 +16,11 @@ function Perfil() {
   const [esEditando, setEsEditando] = useState(false);
   const [datosOriginales, setDatosOriginales] = useState({});
 
+  // Modal cambiar contraseña
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [nuevaPassword, setNuevaPassword] = useState("");
 
-  // Cargar datos desde la API SIN .then()
-
+  // Cargar datos desde la API 
   async function cargarPerfil() {
     try {
       const res = await PerfilService.obtenerPerfil();
@@ -33,9 +35,7 @@ function Perfil() {
     cargarPerfil();
   }, []);
 
-
   // Manejar cambios del formulario
-
   function handleCambio(e) {
     const { name, value, files, type } = e.target;
 
@@ -74,24 +74,24 @@ function Perfil() {
     }
   }
 
-  // ------------------------------------------------------------------
   // Cancelar edición
-  // ------------------------------------------------------------------
   function handleCancelar() {
     setPerfil(datosOriginales);
     setEsEditando(false);
   }
 
-  // ------------------------------------------------------------------
-  // Cambiar contraseña SIN .then()
-  // ------------------------------------------------------------------
+  // Guardar nueva contraseña
   async function handleCambiarPassword() {
-    const nueva = prompt("Ingrese la nueva contraseña:");
-    if (!nueva) return;
+    if (!nuevaPassword) {
+      alert("Debe ingresar una contraseña.");
+      return;
+    }
 
     try {
-      await PerfilService.cambiarPassword({ password: nueva });
+      await PerfilService.cambiarPassword({ password: nuevaPassword });
       alert("Contraseña cambiada con éxito");
+      setMostrarModal(false);
+      setNuevaPassword("");
     } catch (err) {
       alert("Error al cambiar contraseña");
     }
@@ -99,6 +99,32 @@ function Perfil() {
 
   return (
     <div className='perfil-container'>
+      
+      {/* Modal de cambiar contraseña */}
+      {mostrarModal && (
+        <div className="modal-fondo">
+          <div className="modal-contenido">
+            <h2>Cambiar Contraseña</h2>
+
+            <input
+              type="password"
+              placeholder="Nueva contraseña"
+              value={nuevaPassword}
+              onChange={(e) => setNuevaPassword(e.target.value)}
+            />
+
+            <div className="modal-acciones">
+              <button className="guardar" onClick={handleCambiarPassword}>
+                Guardar
+              </button>
+              <button className="cancelar" onClick={() => setMostrarModal(false)}>
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <header>
         <h1>Mi Perfil</h1>
       </header>
@@ -150,9 +176,9 @@ function Perfil() {
                 />
               </label>
 
-              <div className="acciones">
+              <div className="accionesPerfil">
                 <button onClick={handleGuardar}>Guardar</button>
-                <button onClick={handleCancelar} className='secundario'>Cancelar</button>
+                <button onClick={handleCancelar}>Cancelar</button>
               </div>
             </div>
           ) : (
@@ -177,7 +203,7 @@ function Perfil() {
 
         <section className="configuracion-seguridad card">
           <h3>Seguridad</h3>
-          <button onClick={handleCambiarPassword}>Cambiar Contraseña</button>
+          <button onClick={() => setMostrarModal(true)}>Cambiar Contraseña</button>
         </section>
 
       </main>

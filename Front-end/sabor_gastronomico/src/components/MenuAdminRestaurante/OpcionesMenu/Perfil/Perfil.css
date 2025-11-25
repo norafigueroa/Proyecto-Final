@@ -1,37 +1,213 @@
-/* -----------------------------
-   CONTENEDOR GENERAL
------------------------------ */
+/* === CONTENEDOR GENERAL === */
 .perfil-container {
-  max-width: 950px;
-  margin: 0 auto;
+  width: 100%;
+  min-height: 100vh;
+  background: #f5f6fa;
+  padding-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- HEADER --- */
+.perfil-container header {
+  background: #1e1e2f;
+  color: #fff;
   padding: 20px;
-  animation: fadeIn 0.4s ease-in-out;
+  text-align: center;
 }
 
 .perfil-container header h1 {
-  text-align: center;
-  font-size: 2rem;
-  margin-bottom: 1.2rem;
-  color: #333;
+  margin: 0;
+  font-size: 26px;
+  letter-spacing: 1px;
 }
 
-/* -----------------------------
-   SECCIONES  
------------------------------ */
+/* --- CONTENIDO PRINCIPAL --- */
 .perfil-content {
+  width: 90%;
+  max-width: 900px;
+  margin: 30px auto;
   display: flex;
   flex-direction: column;
   gap: 25px;
 }
 
+/* --- CARDS GENERALES --- */
 .card {
   background: #ffffff;
+  border-radius: 12px;
   padding: 25px;
-  border-radius: 16px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-  transition: 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.card:hover {
-  box-shadow: 0 6px 20px
+/* =========================
+   SECCIÓN DATOS PERSONALES
+=========================== */
+.datos-personales h3,
+.configuracion-seguridad h3 {
+  font-size: 22px;
+  margin-bottom: 15px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Vista de visualización */
+.info-visualizacion p {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.info-visualizacion strong {
+  color: #1e1e2f;
+}
+
+/* Imagen del perfil */
+.img-perfil {
+  margin-top: 15px;
+  width: 130px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #1e1e2f33;
+}
+
+/* Botón Editar */
+.info-visualizacion button {
+  margin-top: 20px;
+  padding: 12px 20px;
+  border: none;
+  background: #1e1e2f;
+  color: white;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: 0.2s;
+}
+
+.info-visualizacion button:hover {
+  background: #34344a;
+}
+
+/* =========================
+     FORMULARIO DE EDICIÓN
+=========================== */
+.formulario-edicion label {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.formulario-edicion input[type="text"],
+.formulario-edicion input[type="file"] {
+  margin-top: 6px;
+  padding: 10px;
+  border: 1px solid #d0d0d0;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.accionesPerfil {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.accionesPerfil button {
+  padding: 12px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.accionesPerfil button:first-child {
+  background: #2a9d8f;
+  color: #fff;
+}
+
+.accionesPerfil button:first-child:hover {
+  background: #21867a;
+}
+
+.accionesPerfil .secundario {
+  background: #e63946;
+  color: #fff;
+}
+
+.accionesPerfil .secundario:hover {
+  background: #c72f3b;
+}
+
+
+.configuracion-seguridad button {
+  padding: 12px 18px;
+  background: #1e1e2f;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.configuracion-seguridad button:hover {
+  background: #32324a;
+}
+
+.modal-fondo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-contenido {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  animation: aparecer 0.2s ease-in-out;
+}
+
+@keyframes aparecer {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal-acciones {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* =========================
+        RESPONSIVO
+=========================== */
+@media (max-width: 600px) {
+  .perfil-content {
+    padding: 10px;
+  }
+
+  .acciones {
+    flex-direction: column;
+  }
+
+  .acciones button {
+    width: 100%;
+  }
+
+  .img-perfil {
+    width: 110px;
+    height: 110px;
+  }
 }
