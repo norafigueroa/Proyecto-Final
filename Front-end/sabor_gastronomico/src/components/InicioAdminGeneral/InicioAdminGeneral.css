@@ -1,3 +1,4 @@
+
 /* ======== CONTENEDOR GENERAL ======== */
 .admin-container {
   width: 100%;
@@ -23,6 +24,7 @@
   justify-content: space-between;
   align-items: center;
 }
+
 
 .admin-title {
   margin: 0;
