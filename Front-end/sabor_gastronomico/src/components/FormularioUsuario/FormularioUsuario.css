@@ -1,0 +1,84 @@
+/* ====== CONTENEDOR GENERAL ====== */
+.container {
+  max-width: 700px;
+  margin: 40px auto;
+  font-family: Arial, sans-serif;
+}
+
+/* ====== TÍTULO ====== */
+.container h2 {
+  text-align: center;
+  color: #1d3557;
+  margin-bottom: 10px;
+}
+
+/* ====== FORMULARIO ====== */
+.form-container {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  margin-top: 20px;
+}
+
+/* ====== CAMPOS ====== */
+.form-container div {
+  margin-bottom: 15px;
+}
+
+.form-container label {
+  display: block;
+  font-weight: bold;
+  color: #1d3557;
+  margin-bottom: 5px;
+}
+
+.form-container input {
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+  border: 1px solid #bfc8d6;
+  border-radius: 8px;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+.form-container input:focus {
+  border-color: #457b9d;
+}
+
+/* ====== MENSAJE ====== */
+.container p {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+/* ====== BOTÓN ====== */
+.container button {
+  width: 100%;
+  padding: 12px;
+  background: #1d3557;
+  color: #fff;
+  border: none;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.container button:hover {
+  background: #457b9d;
+}
+
+.container button:disabled {
+  background: #9aa1af;
+  cursor: not-allowed;
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 600px) {
+  .form-container {
+    padding: 20px;
+  }
+}
