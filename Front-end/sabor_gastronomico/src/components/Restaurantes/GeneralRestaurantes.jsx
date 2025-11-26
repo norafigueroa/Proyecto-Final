@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 function GeneralRestaurantes() {
   const [restaurantes, setRestaurantes] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   // 🟢 Función para determinar si está abierto o cerrado
@@ -35,13 +36,21 @@ function GeneralRestaurantes() {
     return "Cerrado";
   };
 
+  
+
   useEffect(() => {
     const cargarRestaurantes = async () => {
       try {
         const response = await fetch("http://localhost:8000/api/restaurantes/");
         const data = await response.json();
+
+        console.log("API devuelve:", data.results);
+
+        // 🔥 Soporte para ambas respuestas (lista o paginada)
+        const lista = Array.isArray(data) ? data : data.results || [];
+
         setRestaurantes(data.results);
-        console.log("API devuelve:", data);
+
       } catch (error) {
         console.error("Error cargando restaurantes:", error);
       } finally {
@@ -51,6 +60,9 @@ function GeneralRestaurantes() {
 
     cargarRestaurantes();
   }, []);
+
+  console.log(restaurantes);
+  
 
 
   return (
@@ -76,14 +88,6 @@ function GeneralRestaurantes() {
 
               <p><strong>Categoría:</strong> {rest.categoria?.nombre_categoria || "Sin categoría"}</p>
 
-              <p><strong>Descripción:</strong> {rest.descripcion || "Sin descripción"}</p>
-
-              <p>
-                <strong>Estado:</strong>{" "}
-                <span className={estado === "Abierto" ? "estado-abierto" : "estado-cerrado"}>
-                  {estado}
-                </span>
-              </p>
             </div>
           );
         })

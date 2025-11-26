@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { postLogin } from '../../services/ServicesLogin';
 import { useAuth } from '../../context/AuthContext';
+import { getRestaurantes } from '../../services/ServicesRestaurantes';
 
 import "./InicioSesion.css";
 
@@ -10,6 +11,7 @@ function InicioSesion() {
   const [contrasena, setContrasena] = useState('');
   const [mensaje, setMensaje] = useState('');
   const [cargando, setCargando] = useState(false);
+  const [resta, setResta] = useState([])
 
   const { login, autenticado } = useAuth();
   const navegar = useNavigate();
@@ -24,6 +26,17 @@ function InicioSesion() {
     }
   }, [autenticado]);
 
+   useEffect(() => {
+     async function obtener() {
+       const data = await getRestaurantes()
+       console.log("🔥 Restaurantes recibidos:", data.results);
+       setResta(data.results);
+     }
+ 
+     obtener()
+     
+   }, []);
+
   const manejarLogin = async (e) => {
     e.preventDefault();
     setMensaje('');
@@ -31,7 +44,7 @@ function InicioSesion() {
 
     // Validar campos
     if (!nombreUsuario || !contrasena) {
-      setMensaje('❌ Usuario y contraseña son requeridos');
+      setMensaje('Usuario y contraseña son requeridos');
       setCargando(false);
       return;
     }
@@ -42,47 +55,70 @@ function InicioSesion() {
       console.log('🔐 Iniciando sesión...');
       
       const respuesta = await postLogin(credenciales);
+      console.log(respuesta);
+      
 
       if (respuesta && respuesta.user) {
-        // Guardar usuario en el contexto (también en localStorage)
-        login(respuesta.user);
-        
-        setMensaje('✅ Inicio de sesión exitoso. Redirigiendo...');
-        
-        // Limpiar campos
-        setNombreUsuario('');
-        setContrasena('');
+        const user = respuesta.user;
+        login(user);
 
-        // Redirigir según el rol después de 1 segundo
-        setTimeout(() => {
-          switch (respuesta.user.role) {
-            case 'Admin General':
-              console.log('📍 Redirigiendo a Admin General');
-              navegar('/AdminGeneral');
-              break;
-            case 'Admin Restaurante':
-              console.log('📍 Redirigiendo a Admin Restaurante');
-              navegar(`/AdminRestaurante/${respuesta.user.restaurante_id}`);
-              break;
-            case 'Cliente':
-            default:
-              console.log('📍 Redirigiendo a Home');
-              navegar('/');
-              break;
-          }
-        }, 1000);
+      console.log(resta);
+      
+
+      // Filtrar restaurante por el ID del usuario
+      const restauranteAsignado = resta.find(
+        (rest) => rest.usuario_propietario === user.id
+      );
+      //console.log(await getRestaurantes());
+
+      // Validar si el restaurante del backend coincide con el del usuario
+    const rol = (user.role || user.rol || user.tipo || "").toLowerCase();
+    console.log(rol);
+    
+
+    // Validar restaurante SOLO si el rol es admin restaurante
+    if (rol.includes("restaurante")) {
+
+      if (!restauranteAsignado) {
+        setMensaje("No tienes un restaurante asignado.");
+        return;
       }
 
+      if (restauranteAsignado.usuario_propietario !== user.id) {
+        setMensaje("El restaurante no coincide. Acceso denegado.");
+        return;
+      }
+    }
+
+        setMensaje('✅ Inicio de sesión exitoso. Redirigiendo...');
+
+        setTimeout(() => {
+
+          if (rol.includes("general")) {
+            navegar("/AdminGeneral");
+            return;
+          }
+
+          if (rol.includes("restaurante")) {
+            navegar(`/AdminRestaurante/${restauranteAsignado.id}`);
+            return;
+          }
+
+          navegar("/");
+        }, 1000);
+      }
     } catch (error) {
-      console.error('❌ Error al iniciar sesión:', error);
+      console.error('Error al iniciar sesión:', error);
       
       // Mostrar mensaje de error más específico
       if (error.response?.status === 401) {
-        setMensaje('❌ Usuario o contraseña incorrectos');
+        setMensaje('Usuario o contraseña incorrectos');
+
       } else if (error.response?.data?.error) {
-        setMensaje(`❌ ${error.response.data.error}`);
+        setMensaje(`${error.response.data.error}`);
+
       } else {
-        setMensaje('❌ Error en el servidor. Intenta más tarde');
+        setMensaje('Error en el servidor. Intenta más tarde');
       }
     } finally {
       setCargando(false);

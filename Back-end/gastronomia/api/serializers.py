@@ -76,6 +76,7 @@ class CategoriaSerializer(serializers.ModelSerializer):
 
 
 class RestauranteSerializer(serializers.ModelSerializer):
+    categoria = CategoriaSerializer(read_only=True)
     class Meta:
         model = Restaurante
         fields = '__all__'

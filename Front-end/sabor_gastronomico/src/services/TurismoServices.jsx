@@ -1,12 +1,15 @@
 import axios from "axios";
 
-const API_URL = "http://127.0.0.1:8000/lugares/";
-
-class TurismoServices {
-  obtenerLugares() {
-    return axios.get(API_URL);
+class LugaresServices {
+  static async obtenerLugares() {
+    try {
+      const response = await axios.get(`${API_URL}/lugares-turisticos`);
+      return response.data;
+    } catch (error) {
+      console.error("Error obteniendo lugares:", error);
+      throw error;
+    }
   }
 }
 
-export default new TurismoServices();
-
+export default LugaresServices;

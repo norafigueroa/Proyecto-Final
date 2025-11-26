@@ -1,19 +1,23 @@
 import React, { useRef, useEffect, useState } from "react";
 import "./PagTurismo.css";
-import LugaresServices from "../../services/TurismoServices"
+import LugaresServices from "../../services/TurismoServices";
 
 function PagTurismo() {
   const carruselRef = useRef(null);
   const [lugares, setLugares] = useState([]);
 
+  // 🔵 Cargar lugares usando async/await
   useEffect(() => {
-    LugaresServices.obtenerLugares()
-      .then((res) => {
-        setLugares(res.data);
-      })
-      .catch((error) => {
+    const cargarLugares = async () => {
+      try {
+        const data = await LugaresServices.obtenerLugares();
+        setLugares(data); // data ya ES la lista, no tiene data.data
+      } catch (error) {
         console.error("Error cargando lugares:", error);
-      });
+      }
+    };
+
+    cargarLugares();
   }, []);
 
   const scrollIzquierda = () => {
@@ -24,15 +28,15 @@ function PagTurismo() {
     carruselRef.current.scrollBy({ left: 300, behavior: "smooth" });
   };
 
-  // Carrusel auto
+  // Carrusel automático
   useEffect(() => {
     const intervalo = setInterval(() => {
       if (carruselRef.current) {
         carruselRef.current.scrollBy({ left: 300, behavior: "smooth" });
 
+        // Si llegó al final, vuelve al inicio
         if (
-          carruselRef.current.scrollLeft +
-            carruselRef.current.offsetWidth >=
+          carruselRef.current.scrollLeft + carruselRef.current.offsetWidth >=
           carruselRef.current.scrollWidth
         ) {
           carruselRef.current.scrollTo({ left: 0, behavior: "smooth" });
@@ -63,7 +67,6 @@ function PagTurismo() {
               <h2>{lugar.nombre_lugar}</h2>
               <p>{lugar.descripcion}</p>
 
-              {/* 🔵 UBICACIÓN DINÁMICA DESDE BACKEND */}
               {lugar.latitud && lugar.longitud && (
                 <a
                   href={`https://www.google.com/maps?q=${lugar.latitud},${lugar.longitud}`}

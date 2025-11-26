@@ -46,7 +46,7 @@ function Routing() {
 
             {/* 2. Dashboard Admin Restaurante (Rol: Admin Restaurante) */}
             <Route element={<ProtectedRoute rolesPermitidos={['Admin Restaurante']} />}>
-                <Route path="/AdminRestaurante" element={<AdminRestaurante/>}/>
+                <Route path="/AdminRestaurante/:id" element={<AdminRestaurante/>}/>
             </Route>
             
             {/* 3. Rutas para CUALQUIER USUARIO logueado (ej. Mi Perfil) */}

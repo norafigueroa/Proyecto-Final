@@ -32,6 +32,8 @@ function Inicio() {
   
   // Filtrar por búsqueda y categoría
   const filteredData = restaurantes.filter((item) => {
+    console.log(item.categoria?.nombre_categoria);
+    
     const matchesSearch = item.nombre_restaurante
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
@@ -128,7 +130,7 @@ function Inicio() {
                 icono: "🍽️",
                 titulo: "Restaurantes",
                 desc: "Descubre los mejores lugares para disfrutar la auténtica comida puntarenense",
-                path: "/Restaurantes",
+                path: "/GeneralRestaurantes",
               },
               {
                 icono: "📖",
