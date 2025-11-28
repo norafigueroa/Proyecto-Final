@@ -43,14 +43,14 @@ function InfoRestaurantes() {
   const categorias = ["General", "Entradas", "Platos Fuertes", "Bebidas", "Postres"];
 
   // Filtrado de platillos
-  const platillos = restaurante.platillos || []; // Suponiendo que tu API devuelve "platillos"
+  const platillos = restaurante.platillos || []; 
   const platillosFiltrados =
     categoriaSeleccionada === "General"
       ? platillos
       : platillos.filter((p) => p.categoria === categoriaSeleccionada);
 
   // Testimonios
-  const testimonios = restaurante.resenas || []; // Suponiendo que tu API devuelve "resenas"
+  const testimonios = restaurante.resenas || []; 
 
   const iconosRedes = {
     facebook: Facebook,

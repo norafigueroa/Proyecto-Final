@@ -11,9 +11,12 @@ function Perfil() {
     last_name: "",
     telefono: "",
     foto_perfil: null,
+    groups: []
   });
 
-  const id = localStorage.getItem("userId");
+  const info = JSON.parse(localStorage.getItem("usuario"));
+  console.log(info);
+  
 
   const [esEditando, setEsEditando] = useState(false);
   const [datosOriginales, setDatosOriginales] = useState({});
@@ -25,7 +28,7 @@ function Perfil() {
   // Cargar datos desde la API 
   async function cargarPerfil() {
     try {
-      const res = await PerfilService.obtenerPerfil(id);
+      const res = await PerfilService.obtenerPerfil(info.id);
       setPerfil(res.data);
       setDatosOriginales(res.data);
     } catch (err) {
@@ -57,15 +60,12 @@ function Perfil() {
 
   async function handleGuardar() {
     try {
-      const formData = new FormData();
+      
+      console.log(perfil);
 
-      Object.entries(perfil).forEach(([key, value]) => {
-        if (value !== null && value !== undefined) {
-          formData.append(key, value);
-        }
-      });
-
-      const res = await PerfilService.actualizarPerfil(id, formData);
+      const res = await PerfilService.actualizarPerfil(info.id, perfil);
+      console.log(res);
+      
 
       setEsEditando(false);
       setPerfil(res.data);

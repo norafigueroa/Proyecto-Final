@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "./GestionMenu.css";
+import { useParams } from "react-router-dom";
 import MenuService from "../../../../services/servicesAdminRest/ServicesMenu";
 
 function GestionMenu() {
+  const { idRestaurante } = useParams();
+
   const [platos, setPlatos] = useState([]);
   const [categorias, setCategorias] = useState([]);
 
@@ -15,7 +18,7 @@ function GestionMenu() {
     descripcion: "",
     precio: "",
     categoria_menu: "",
-    foto: "",
+    foto: null,
   });
 
   useEffect(() => {
@@ -25,8 +28,9 @@ function GestionMenu() {
 
   const cargarCategorias = async () => {
     try {
-      const res = await MenuService.obtenerCategorias(idRestaurante);
-      setCategorias(res.data);
+      const res = await MenuService.obtenerCategorias();
+      console.log("🔥 Categorías recibidas:", res.data.results);
+      setCategorias(res.data.results); 
     } catch (err) {
       console.error("Error cargando categorías:", err);
     }
@@ -35,7 +39,8 @@ function GestionMenu() {
   const cargarPlatos = async () => {
     try {
       const res = await MenuService.obtenerPlatillos();
-      setPlatos(res.data);
+      console.log("🔥 Platillos recibidos:", res.data.results);
+      setPlatos(res.data.results);   // ⬅️ Igual que Inicio.jsx
     } catch (err) {
       console.error("Error cargando platillos:", err);
     }
@@ -49,40 +54,44 @@ function GestionMenu() {
       descripcion: "",
       precio: "",
       categoria_menu: "",
-      foto: "",
+      foto: null,
     });
     setModalAbierto(true);
   };
 
   const abrirModalEditar = (plato) => {
     setModoEdicion(true);
-    setPlatoActual(plato);
+    setPlatoActual({
+      id: plato.id,
+      nombre_platillo: plato.nombre_platillo,
+      descripcion: plato.descripcion,
+      precio: plato.precio,
+      categoria_menu: plato.categoria_menu,
+      foto: null,
+    });
     setModalAbierto(true);
   };
 
   const manejarImagen = (e) => {
     const archivo = e.target.files[0];
-    if (!archivo) return;
-
-    const lector = new FileReader();
-    lector.onloadend = () => {
-      setPlatoActual({ ...platoActual, foto: lector.result });
-    };
-    lector.readAsDataURL(archivo);
+    if (archivo) {
+      setPlatoActual({ ...platoActual, foto: archivo });
+    }
   };
 
   const manejarSubmit = async (e) => {
     e.preventDefault();
 
-    if (!platoActual.nombre_platillo || !platoActual.descripcion || !platoActual.precio) {
-      alert("Completa todos los campos");
-      return;
-    }
-
     const formData = new FormData();
-    Object.entries(platoActual).forEach(([key, value]) => {
-      if (value !== null && value !== undefined) formData.append(key, value);
-    });
+    formData.append("restaurante", idRestaurante);
+    formData.append("categoria_menu", platoActual.categoria_menu);
+    formData.append("nombre_platillo", platoActual.nombre_platillo);
+    formData.append("descripcion", platoActual.descripcion);
+    formData.append("precio", platoActual.precio);
+
+    if (platoActual.foto) {
+      formData.append("foto", platoActual.foto);
+    }
 
     try {
       if (modoEdicion) {
@@ -91,11 +100,10 @@ function GestionMenu() {
         await MenuService.crearPlatillo(formData);
       }
 
-      await cargarPlatos();
+      cargarPlatos();
       setModalAbierto(false);
-
     } catch (err) {
-      console.error("Error guardando:", err);
+      console.error("Error guardando:", err.response?.data || err);
     }
   };
 
@@ -126,15 +134,21 @@ function GestionMenu() {
         ) : (
           platos.map((p) => (
             <div className="gm-card" key={p.id}>
-              {p.foto && <img src={p.foto} className="gm-card-img" alt="plato" />}
+              {p.foto && (
+                <img src={p.foto} className="gm-card-img" alt="imagen del plato" />
+              )}
 
               <h3 className="gm-card-title">{p.nombre_platillo}</h3>
               <p className="gm-card-desc">{p.descripcion}</p>
               <p className="gm-card-price">₡{p.precio}</p>
 
               <div className="gm-card-actions">
-                <button className="gm-btn-edit" onClick={() => abrirModalEditar(p)}>Editar</button>
-                <button className="gm-btn-delete" onClick={() => eliminarPlato(p.id)}>Eliminar</button>
+                <button className="gm-btn-edit" onClick={() => abrirModalEditar(p)}>
+                  Editar
+                </button>
+                <button className="gm-btn-delete" onClick={() => eliminarPlato(p.id)}>
+                  Eliminar
+                </button>
               </div>
             </div>
           ))
@@ -147,7 +161,7 @@ function GestionMenu() {
 
             <h3>{modoEdicion ? "Editar Platillo" : "Agregar Platillo"}</h3>
 
-            <div className="gm-form">
+            <form className="gm-form" onSubmit={manejarSubmit}>
 
               <div className="gm-form-group">
                 <label>Nombre:</label>
@@ -167,7 +181,7 @@ function GestionMenu() {
                   onChange={(e) =>
                     setPlatoActual({ ...platoActual, descripcion: e.target.value })
                   }
-                />
+                ></textarea>
               </div>
 
               <div className="gm-form-group">
@@ -182,25 +196,37 @@ function GestionMenu() {
               </div>
 
               <div className="gm-form-group">
+                <label>Categoría:</label>
+                <select
+                  value={platoActual.categoria_menu}
+                  onChange={(e) =>
+                    setPlatoActual({ ...platoActual, categoria_menu: e.target.value })
+                  }
+                >
+                  <option value="">Seleccione una categoría</option>
+                  {categorias.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.nombre_categoria}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="gm-form-group">
                 <label>Imagen:</label>
                 <input type="file" accept="image/*" onChange={manejarImagen} />
               </div>
 
-              {platoActual.foto && (
-                <img src={platoActual.foto} className="gm-preview" alt="preview" />
-              )}
-
               <div className="gm-modal-actions">
-                <button className="gm-btn-cancel" onClick={() => setModalAbierto(false)}>
+                <button type="button" className="gm-btn-cancel" onClick={() => setModalAbierto(false)}>
                   Cancelar
                 </button>
-
-                <button className="gm-btn-save" onClick={manejarSubmit}>
+                <button type="submit" className="gm-btn-save">
                   {modoEdicion ? "Guardar Cambios" : "Agregar"}
                 </button>
               </div>
 
-            </div>
+            </form>
 
           </div>
         </div>
