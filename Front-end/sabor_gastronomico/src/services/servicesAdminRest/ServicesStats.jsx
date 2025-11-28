@@ -5,3 +5,4 @@ const StatsService = {
 };
 
 export default StatsService;
+//Estadisticas
