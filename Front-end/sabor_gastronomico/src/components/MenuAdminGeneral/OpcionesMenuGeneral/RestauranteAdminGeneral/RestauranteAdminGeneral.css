@@ -1,0 +1,401 @@
+/* ==================== CONTENEDOR PRINCIPAL ==================== */
+.restaurantes-contenedor {
+  padding: 2rem;
+  background-color: #fafbfc;
+  min-height: 100%;
+}
+
+.restaurantes-cargando {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* ==================== ENCABEZADO ==================== */
+.restaurantes-encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.restaurantes-encabezado h2 {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.restaurantes-btn-crear {
+  background-color: #1a4d6d;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.restaurantes-btn-crear:hover {
+  background-color: #0d3a54;
+}
+
+/* ==================== FILTROS ==================== */
+.restaurantes-filtros {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.restaurantes-input-busqueda,
+.restaurantes-select-filtro {
+  padding: 0.75rem 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: border-color 0.3s ease;
+}
+
+.restaurantes-input-busqueda {
+  flex: 1;
+  min-width: 250px;
+}
+
+.restaurantes-input-busqueda:focus,
+.restaurantes-select-filtro:focus {
+  outline: none;
+  border-color: #1a4d6d;
+  box-shadow: 0 0 0 3px rgba(26, 77, 109, 0.1);
+}
+
+.restaurantes-select-filtro {
+  min-width: 200px;
+}
+
+/* ==================== TABLA ==================== */
+.restaurantes-tabla-contenedor {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  margin-bottom: 2rem;
+}
+
+.restaurantes-tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.restaurantes-tabla thead {
+  background-color: #f5f5f5;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.restaurantes-tabla th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.95rem;
+}
+
+.restaurantes-tabla td {
+  padding: 1rem;
+  border-bottom: 1px solid #e8eaed;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.restaurantes-tabla tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+.restaurantes-tabla tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.restaurantes-sin-datos {
+  text-align: center;
+  color: #999;
+  padding: 2rem 1rem !important;
+}
+
+/* ==================== BADGES ==================== */
+.restaurantes-badge {
+  display: inline-block;
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.restaurantes-badge.estado-pendiente {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.restaurantes-badge.estado-activo {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.restaurantes-badge.estado-inactivo {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* ==================== ACCIONES ==================== */
+.restaurantes-acciones {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.restaurantes-btn-accion {
+  background: none;
+  border: 1px solid #e0e0e0;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.restaurantes-btn-accion:hover {
+  transform: scale(1.1);
+  border-color: #1a4d6d;
+}
+
+.restaurantes-btn-accion.editar:hover {
+  background-color: #e3f2fd;
+}
+
+.restaurantes-btn-accion.aprobar:hover {
+  background-color: #d4edda;
+}
+
+.restaurantes-btn-accion.rechazar:hover {
+  background-color: #f8d7da;
+}
+
+.restaurantes-btn-accion.eliminar:hover {
+  background-color: #ffebee;
+}
+
+/* ==================== PAGINACIÓN ==================== */
+.restaurantes-paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.restaurantes-paginacion button {
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.restaurantes-paginacion button:hover:not(:disabled) {
+  background-color: #f5f5f5;
+  border-color: #1a4d6d;
+}
+
+.restaurantes-paginacion button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.restaurantes-paginacion span {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* ==================== MODAL ==================== */
+.restaurantes-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.restaurantes-modal {
+  background: white;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.restaurantes-modal-encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem;
+  border-bottom: 1px solid #e8eaed;
+  background-color: #f9f9f9;
+}
+
+.restaurantes-modal-encabezado h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #2c3e50;
+}
+
+.restaurantes-modal-cerrar {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.3s ease;
+}
+
+.restaurantes-modal-cerrar:hover {
+  color: #333;
+}
+
+.restaurantes-modal-contenido {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.restaurantes-form-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.restaurantes-form-grupo label {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.95rem;
+}
+
+.restaurantes-form-grupo input,
+.restaurantes-form-grupo textarea,
+.restaurantes-form-grupo select {
+  padding: 0.75rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
+}
+
+.restaurantes-form-grupo input:focus,
+.restaurantes-form-grupo textarea:focus,
+.restaurantes-form-grupo select:focus {
+  outline: none;
+  border-color: #1a4d6d;
+  box-shadow: 0 0 0 3px rgba(26, 77, 109, 0.1);
+}
+
+.restaurantes-form-fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.restaurantes-modal-footer {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding: 2rem;
+  border-top: 1px solid #e8eaed;
+  background-color: #f9f9f9;
+}
+
+.restaurantes-btn-cancelar,
+.restaurantes-btn-guardar {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.restaurantes-btn-cancelar {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.restaurantes-btn-cancelar:hover {
+  background-color: #e0e0e0;
+}
+
+.restaurantes-btn-guardar {
+  background-color: #1a4d6d;
+  color: white;
+}
+
+.restaurantes-btn-guardar:hover {
+  background-color: #0d3a54;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .restaurantes-contenedor {
+    padding: 1rem;
+  }
+
+  .restaurantes-encabezado {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .restaurantes-btn-crear {
+    width: 100%;
+  }
+
+  .restaurantes-filtros {
+    flex-direction: column;
+  }
+
+  .restaurantes-input-busqueda,
+  .restaurantes-select-filtro {
+    width: 100%;
+  }
+
+  .restaurantes-tabla th,
+  .restaurantes-tabla td {
+    padding: 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .restaurantes-form-fila {
+    grid-template-columns: 1fr;
+  }
+
+  .restaurantes-modal-footer {
+    flex-direction: column;
+  }
+
+  .restaurantes-btn-cancelar,
+  .restaurantes-btn-guardar {
+    width: 100%;
+  }
+}

@@ -1,9 +1,9 @@
 import React from 'react';
-import InicioAdminGeneral from '../components/InicioAdminGeneral/InicioAdminGeneral';
+import MenuAdminGeneral from '../components/MenuAdminGeneral/MenuAdminGeneral';
 
 function AdminGeneral() {
     return (
-        <InicioAdminGeneral /> 
+        <MenuAdminGeneral/> 
     );
 }
 

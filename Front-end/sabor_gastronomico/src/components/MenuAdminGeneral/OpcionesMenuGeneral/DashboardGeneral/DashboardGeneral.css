@@ -1,0 +1,203 @@
+/* ==================== CONTENEDOR PRINCIPAL ==================== */
+.dashboard-contenedor {
+  padding: 2rem;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.dashboard-encabezado {
+  margin-bottom: 2rem;
+}
+
+.dashboard-encabezado h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-encabezado p {
+  font-size: 1rem;
+  color: #666;
+}
+
+.dashboard-cargando {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  font-size: 1.1rem;
+  color: #666;
+}
+
+/* ==================== TARJETAS DE ESTADÍSTICAS ==================== */
+.dashboard-tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.tarjeta {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tarjeta:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tarjeta-icono {
+  font-size: 2.5rem;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.tarjeta-icono.restaurante {
+  background-color: #fff3cd;
+}
+
+.tarjeta-icono.usuario {
+  background-color: #d1ecf1;
+}
+
+.tarjeta-icono.articulo {
+  background-color: #d4edda;
+}
+
+.tarjeta-icono.turismo {
+  background-color: #f8d7da;
+}
+
+.tarjeta-contenido {
+  flex: 1;
+}
+
+.tarjeta-label {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0 0 0.5rem 0;
+  font-weight: 500;
+}
+
+.tarjeta-numero {
+  font-size: 2rem;
+  color: #333;
+  margin: 0.5rem 0;
+  font-weight: bold;
+}
+
+.tarjeta-subtitulo {
+  font-size: 0.85rem;
+  color: #999;
+  margin: 0;
+}
+
+/* ==================== SECCIÓN DE ACTIVIDAD ==================== */
+.dashboard-actividad {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-actividad h3 {
+  font-size: 1.3rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.actividad-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.actividad-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  border-left: 4px solid #d4af37;
+  background-color: #fafafa;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.actividad-item:hover {
+  background-color: #f0f0f0;
+}
+
+.actividad-icono {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.actividad-contenido {
+  flex: 1;
+}
+
+.actividad-evento {
+  margin: 0 0 0.25rem 0;
+  font-weight: 600;
+  color: #333;
+}
+
+.actividad-detalles {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.actividad-fecha {
+  font-size: 0.85rem;
+  color: #999;
+  white-space: nowrap;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .dashboard-contenedor {
+    padding: 1rem;
+  }
+
+  .dashboard-encabezado h2 {
+    font-size: 1.5rem;
+  }
+
+  .dashboard-tarjetas {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .tarjeta {
+    padding: 1rem;
+  }
+
+  .tarjeta-numero {
+    font-size: 1.5rem;
+  }
+
+  .dashboard-actividad {
+    padding: 1rem;
+  }
+
+  .actividad-item {
+    flex-direction: column;
+  }
+
+  .actividad-fecha {
+    white-space: normal;
+  }
+}

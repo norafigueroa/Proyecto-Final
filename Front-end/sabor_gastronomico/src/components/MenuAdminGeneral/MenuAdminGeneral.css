@@ -1,0 +1,447 @@
+/* ==================== RESET Y BASE ==================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+/* ==================== CONTENEDOR PRINCIPAL ==================== */
+.menu-admin-contenedor {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #fafbfc;
+  overflow: hidden;
+}
+
+.menu-no-acceso {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 1.1rem;
+  color: #d32f2f;
+  background-color: #fafbfc;
+}
+
+/* ==================== HEADER - COMPLETAMENTE FIJO ==================== */
+.menu-admin-header {
+  background-color: #ffffff;
+  color: #2c3e50;
+  padding: 1.25rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  border-bottom: 1px solid #e8eaed;
+  height: 70px;
+}
+
+.menu-toggle-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: #2c3e50;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin-right: 1rem;
+  transition: opacity 0.3s ease;
+}
+
+.menu-toggle-btn:hover {
+  opacity: 0.7;
+}
+
+.menu-admin-titulo {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1a3a3a;
+  letter-spacing: -0.5px;
+  flex: 1;
+}
+
+.menu-admin-usuario {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.menu-admin-usuario span {
+  font-weight: 500;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.menu-btn-logout {
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  color: #666;
+  border-radius: 6px;
+  width: 38px;
+  height: 38px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.menu-btn-logout:hover {
+  background: #efefef;
+  border-color: #d0d0d0;
+}
+
+/* ==================== WRAPPER ==================== */
+.menu-admin-wrapper {
+  display: flex;
+  flex: 1;
+  position: relative;
+  margin-top: 70px;
+  overflow: hidden;
+}
+
+/* ==================== SIDEBAR ==================== */
+.menu-admin-sidebar {
+  width: 280px;
+  background: #ffffff;
+  border-right: 1px solid #e8eaed;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  position: fixed;
+  left: 0;
+  top: 70px;
+  height: calc(100vh - 70px);
+  z-index: 50;
+}
+
+/* Scrollbar personalizada */
+.menu-admin-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.menu-admin-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.menu-admin-sidebar::-webkit-scrollbar-thumb {
+  background: #d0d0d0;
+  border-radius: 3px;
+}
+
+.menu-admin-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #b0b0b0;
+}
+
+/* Perfil en Sidebar */
+.menu-sidebar-perfil {
+  padding: 1.5rem;
+  text-align: center;
+  border-bottom: 1px solid #e8eaed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.menu-perfil-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8b6914 0%, #d4af37 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.menu-perfil-info {
+  text-align: center;
+}
+
+.menu-perfil-nombre {
+  margin: 0;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.95rem;
+}
+
+.menu-perfil-rol {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.8rem;
+  color: #8b7500;
+  font-weight: 500;
+}
+
+/* Navegación */
+.menu-sidebar-nav {
+  flex: 1;
+  padding: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.menu-nav-item {
+  background: none;
+  border: none;
+  padding: 0.85rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  color: #555;
+  transition: all 0.2s ease;
+  text-align: left;
+  font-size: 0.95rem;
+  margin: 0 0.5rem;
+  border-radius: 6px;
+}
+
+.menu-nav-item:hover {
+  background-color: #f5f5f5;
+  color: #2c3e50;
+}
+
+.menu-nav-item.activo {
+  background-color: #e8f4f8;
+  color: #1a6b7a;
+  border-left: 3px solid #1a6b7a;
+  font-weight: 500;
+  padding-left: calc(1.5rem - 3px);
+}
+
+.menu-item-icono {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.menu-item-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.menu-item-nombre {
+  margin: 0;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.menu-item-descripcion {
+  margin: 0;
+  font-size: 0.75rem;
+  opacity: 0.65;
+}
+
+/* Footer del Sidebar */
+.menu-sidebar-footer {
+  padding: 1rem;
+  border-top: 1px solid #e8eaed;
+}
+
+.menu-btn-cerrar-sesion {
+  width: 100%;
+  background: #f8f9fa;
+  color: #d32f2f;
+  border: 1px solid #e0e0e0;
+  padding: 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.menu-btn-cerrar-sesion:hover {
+  background: #fff5f5;
+  border-color: #d32f2f;
+  color: #c62828;
+}
+
+/* Overlay para móvil */
+.menu-overlay {
+  display: none;
+  position: fixed;
+  top: 70px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 40;
+}
+
+/* ==================== CONTENIDO PRINCIPAL ==================== */
+.menu-admin-contenido {
+  flex: 1;
+  margin-left: 280px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.menu-admin-contenido-vacio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #999;
+  font-size: 1.1rem;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1024px) {
+  .menu-admin-sidebar {
+    width: 260px;
+  }
+
+  .menu-admin-contenido {
+    margin-left: 260px;
+  }
+}
+
+@media (max-width: 768px) {
+  .menu-toggle-btn {
+    display: block;
+  }
+
+  .menu-admin-header {
+    padding: 1rem;
+    height: 65px;
+  }
+
+  .menu-admin-titulo {
+    font-size: 1.1rem;
+  }
+
+  .menu-admin-usuario span {
+    display: none;
+  }
+
+  .menu-btn-logout {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+
+  .menu-admin-wrapper {
+    margin-top: 65px;
+  }
+
+  .menu-admin-sidebar {
+    width: 100%;
+    max-width: 260px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    top: 65px;
+    height: calc(100vh - 65px);
+  }
+
+  .menu-admin-sidebar.activo {
+    transform: translateX(0);
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .menu-overlay {
+    top: 65px;
+  }
+
+  .menu-admin-contenido {
+    margin-left: 0;
+  }
+
+  .menu-perfil-avatar {
+    width: 50px;
+    height: 50px;
+    font-size: 1.4rem;
+  }
+
+  .menu-nav-item {
+    padding: 0.75rem 1.2rem;
+  }
+
+  .menu-item-descripcion {
+    display: none;
+  }
+
+  .menu-item-icono {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .menu-admin-header {
+    padding: 0.75rem;
+    height: 60px;
+  }
+
+  .menu-admin-titulo {
+    font-size: 1rem;
+  }
+
+  .menu-btn-logout {
+    width: 32px;
+    height: 32px;
+  }
+
+  .menu-admin-wrapper {
+    margin-top: 60px;
+  }
+
+  .menu-admin-sidebar {
+    top: 60px;
+    height: calc(100vh - 60px);
+  }
+
+  .menu-overlay {
+    top: 60px;
+  }
+
+  .menu-sidebar-perfil {
+    padding: 1rem;
+  }
+
+  .menu-perfil-avatar {
+    width: 45px;
+    height: 45px;
+    font-size: 1.2rem;
+  }
+
+  .menu-perfil-nombre {
+    font-size: 0.9rem;
+  }
+
+  .menu-perfil-rol {
+    font-size: 0.75rem;
+  }
+
+  .menu-nav-item {
+    padding: 0.65rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .menu-item-icono {
+    font-size: 1.1rem;
+  }
+}
