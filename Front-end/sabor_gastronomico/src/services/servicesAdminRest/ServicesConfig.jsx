@@ -8,3 +8,4 @@ const ConfigService = {
 };
 
 export default ConfigService;
+//config
