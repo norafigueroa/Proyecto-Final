@@ -10,7 +10,7 @@ const MenuService = {
     }),
   
   actualizarPlatillo: (id, data) =>
-    axios.put(`/platillos/${id}/`, data, {
+    axios.patch(`/platillos/${id}/`, data, {
       headers: { "Content-Type": "multipart/form-data" },
     }),
   

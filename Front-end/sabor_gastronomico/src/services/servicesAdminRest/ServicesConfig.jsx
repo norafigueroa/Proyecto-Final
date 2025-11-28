@@ -1,11 +1,10 @@
-import axiosInstance from "../AxiosConfig";
+import axios from "../AxiosConfig";
 
 const ConfigService = {
-  obtenerConfig: () => axiosInstance.get("/restaurante/config/"),
+  obtenerConfig: () => axios.get("/restaurante/config/"),
 
   actualizarConfig: (data) =>
-    axiosInstance.put("/restaurante/config/", data),
+    axios.patch("/restaurante/config/", data),
 };
 
 export default ConfigService;
-//config

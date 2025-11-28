@@ -84,17 +84,30 @@ function Perfil() {
 
   // Guardar nueva contraseña
   async function handleCambiarPassword() {
-    if (!nuevaPassword) {
-      alert("Debe ingresar una contraseña.");
-      return;
-    }
-
     try {
-      await PerfilService.cambiarPassword({ password: nuevaPassword });
+
+      console.log("Nueva password:", nuevaPassword);
+
+      // Validación
+      if (!nuevaPassword || nuevaPassword.trim() === "") {
+        alert("Debe ingresar una contraseña.");
+        return;
+      }
+
+      // Llamada al backend
+      const res = await PerfilService.cambiarPassword(info.id, {
+        password: nuevaPassword,
+      });
+
+      console.log("Respuesta cambiarPassword:", res);
+
+      // Actualizar UI
       alert("Contraseña cambiada con éxito");
       setMostrarModal(false);
       setNuevaPassword("");
+
     } catch (err) {
+      console.error("Error al cambiar contraseña:", err);
       alert("Error al cambiar contraseña");
     }
   }
