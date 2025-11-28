@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from "react-router-dom";
 import './Perfil.css';
 import PerfilService from "../../../../services/servicesAdminRest/ServicesPerfil";
 
@@ -13,6 +14,8 @@ function Perfil() {
     foto_perfil: null,
   });
 
+  const { id } = useParams();
+
   const [esEditando, setEsEditando] = useState(false);
   const [datosOriginales, setDatosOriginales] = useState({});
 
@@ -23,7 +26,7 @@ function Perfil() {
   // Cargar datos desde la API 
   async function cargarPerfil() {
     try {
-      const res = await PerfilService.obtenerPerfil(idRestaurante);
+      const res = await PerfilService.obtenerPerfil(id);
       setPerfil(res.data);
       setDatosOriginales(res.data);
     } catch (err) {
@@ -63,7 +66,7 @@ function Perfil() {
         }
       });
 
-      const res = await PerfilService.actualizarPerfil(formData);
+      const res = await PerfilService.actualizarPerfil(id, formData);
 
       setEsEditando(false);
       setPerfil(res.data);

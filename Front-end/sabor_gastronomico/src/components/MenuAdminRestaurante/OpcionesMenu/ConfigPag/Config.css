@@ -1,13 +1,8 @@
-/* --- CONTENEDOR GENERAL --- */
-.config-wrapper {
-  padding: 20px;
-  display: flex;
-  justify-content: center;
-}
-
+/* --- WRAPPER GENERAL --- */
 .config-container {
   width: 100%;
-  max-width: 750px;
+  max-width: 780px;
+  margin: 0 auto;
   background: #ffffff;
   padding: 25px;
   border-radius: 18px;
@@ -15,17 +10,32 @@
   border: 1px solid #e8e8e8;
 }
 
-/* --- TÍTULO --- */
+/* --- TITULOS --- */
 .config-title {
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 20px;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-align: center;
+  color: #222;
+  margin-bottom: 25px;
 }
 
-/* --- GRUPOS DE INPUT --- */
-.config-group {
+.config-section h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
   margin-bottom: 18px;
+  border-left: 4px solid #4a90e2;
+  padding-left: 10px;
+}
+
+/* --- FORMULARIO VERTICAL --- */
+.config-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.config-group {
   display: flex;
   flex-direction: column;
 }
@@ -38,72 +48,50 @@
 }
 
 /* --- INPUTS --- */
-.config-input {
+.config-input,
+.config-textarea,
+.config-input-disabled {
   width: 100%;
-  padding: 12px 14px;
+  padding: 12px 1px;
   border-radius: 10px;
   border: 1px solid #d4d4d4;
   background: #f9f9f9;
   font-size: 0.95rem;
-  transition: 0.2s ease;
+  transition: 0.2s;
 }
 
-.config-input:focus {
+.config-input:focus,
+.config-textarea:focus {
   border-color: #4a90e2;
   background: #fff;
   outline: none;
   box-shadow: 0 0 4px rgba(74, 144, 226, 0.3);
 }
 
-/* --- SWITCHES --- */
-.switch-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid #eee;
+.config-textarea {
+  min-height: 90px;
+  resize: vertical;
 }
 
-.switch-label {
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #444;
+.config-input-disabled {
+  background: #ececec;
+  cursor: not-allowed;
 }
 
-.switch-toggle {
-  width: 46px;
-  height: 23px;
-  background: #ccc;
-  border-radius: 20px;
-  position: relative;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.switch-toggle.active {
-  background: #4caf50;
-}
-
-.switch-circle {
-  position: absolute;
-  top: 2px;
-  left: 3px;
-  width: 19px;
-  height: 19px;
-  background: #fff;
-  border-radius: 50%;
-  transition: 0.3s;
-}
-
-.switch-toggle.active .switch-circle {
-  transform: translateX(22px);
+/* --- IMAGEN PREVIEW --- */
+.config-logo-preview {
+  margin-top: 10px;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid #ccc;
 }
 
 /* --- BOTÓN GUARDAR --- */
-.config-save-btn {
-  margin-top: 18px;
-  padding: 12px;
-  width: 100%;
+.config-btn {
+  margin-top: 10px;
+  padding: 14px;
   background: #4a90e2;
   color: #fff;
   border: none;
@@ -114,6 +102,28 @@
   transition: 0.25s;
 }
 
-.config-save-btn:hover {
-  background: #3c7dc0;
+.config-btn:hover {
+  background: #3b7ac5;
+}
+
+/* --- VISTA PREVIA --- */
+.config-summary-box {
+  margin-top: 35px;
+  padding: 20px;
+  background: #f8f9fb;
+  border-radius: 14px;
+  border: 1px solid #e2e2e2;
+}
+
+.config-summary-title {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+
+.config-summary p {
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+  color: #444;
 }

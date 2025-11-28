@@ -1,78 +1,52 @@
-import React, { useState, useEffect } from "react";
-import ResenaService from "../../../../services/servicesAdminRest/ServicesResena";
+import React, { useEffect, useState } from "react";
+import ServicesResena from "../../../../services/servicesAdminRest/ServicesResena"
 import "./Resenas.css";
 
 function Resenas() {
   const [resenas, setResenas] = useState([]);
-  const [datos, setDatos] = useState({
-    usuario: "",
-    restaurante: "",
-    calificacion: "",
-    comentario: ""
-  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const cambiarValor = (e) => {
-    setDatos({ ...datos, [e.target.name]: e.target.value });
-  };
-
-  const enviarResena = async () => {
-    if (!datos.usuario || !datos.restaurante || !datos.calificacion) {
-      alert("Completa todos los campos obligatorios.");
-      return;
-    }
-
-    try {
-      await ResenaService.crearResena(datos);
-      obtenerResenas();
-
-      setDatos({
-        usuario: "",
-        restaurante: "",
-        calificacion: "",
-        comentario: ""
-      });
-
-    } catch (error) {
-      console.error("Error al enviar reseña:", error);
-    }
-  };
-
-  const obtenerResenas = async () => {
-    try {
-      const respuesta = await ResenaService.obtenerResenas();
-      setResenas(respuesta.data);
-    } catch (error) {
-      console.error("Error al cargar reseñas:", error);
-    }
-  };
-
+  // 🔵 Cargar reseñas al entrar en la página
   useEffect(() => {
-    obtenerResenas();
+    cargarResenas();
   }, []);
 
+  const cargarResenas = async () => {
+    try {
+      const response = await ResenaService.obtenerResenas();
+      console.log("Reseñas obtenidas:", response.data);
+      setResenas(response.data);
+      setLoading(false);
+    } catch (err) {
+      setError("No se pudieron cargar las reseñas.");
+      setLoading(false);
+    }
+  };
+
+  if (loading) return <p className="cargando">Cargando reseñas...</p>;
+  if (error) return <p className="error">{error}</p>;
+
   return (
-    <div className="resena-contenedor">
-      <h2 className="titulo">Opiniones y Calificaciones</h2>
-
-      <div className="datos-grid">
-        <input type="number" name="usuario" placeholder="ID Usuario" value={datos.usuario} onChange={cambiarValor} />
-
-        <input type="number" name="restaurante" placeholder="ID Restaurante" value={datos.restaurante} onChange={cambiarValor} />
-
-        <input type="number" min="1" max="5" name="calificacion" placeholder="Calificación (1-5)" value={datos.calificacion} onChange={cambiarValor} />
-
-        <input type="text" name="comentario" placeholder="Comentario" value={datos.comentario} onChange={cambiarValor} />
-      </div>
-
-      <button className="btn" onClick={enviarResena}> Agregar Reseña </button>
-
-      <h3 className="subtitulo">Reseñas Recientes</h3>
-
-      <ul className="lista-resenas">
-        {resenas.map((r) => (
-          <li key={r.id} className="item-resena"> ⭐ {r.calificacion} — {r.comentario} </li>
-        ))}
-      </ul>
+    <div className="resenas-container">
+      <h2>Reseñas de Clientes</h2>
+      
+      {resenas.length === 0 ? (
+        <p className="no-resenas">Aún no hay reseñas.</p>
+      ) : (
+        <div className="resenas-lista">
+          {resenas.map((r) => (
+            <div key={r.id} className="resena-card">
+              <div className="resena-header">
+                <h4>{r.usuario_nombre || "Cliente Anónimo"}</h4>
+                <span className="calificacion">⭐ {r.calificacion}/5</span>
+              </div>
+              <p className="comentario">{r.comentario}</p>
+              <p className="fecha">{new Date(r.fecha).toLocaleDateString()}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

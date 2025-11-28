@@ -1,8 +1,8 @@
 import axios from "../AxiosConfig";
 
 const PerfilService = {
-  obtenerPerfil: () => axios.get("/perfil/"),
-  actualizarPerfil: (data) => axios.put("/perfil/", data),
+  obtenerPerfil: (id) => axios.get(`/perfiles/${id}`),
+  actualizarPerfil: (id, data) => axios.put(`/perfiles/${id}`, data),
   cambiarPassword: (data) => axios.post("/cambiar-password/", data),
 };
 
