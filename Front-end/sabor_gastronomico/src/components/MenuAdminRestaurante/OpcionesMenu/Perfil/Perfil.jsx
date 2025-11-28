@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from "react-router-dom";
 import './Perfil.css';
 import PerfilService from "../../../../services/servicesAdminRest/ServicesPerfil";
 
@@ -14,7 +13,7 @@ function Perfil() {
     foto_perfil: null,
   });
 
-  const { id } = useParams();
+  const id = localStorage.getItem("userId");
 
   const [esEditando, setEsEditando] = useState(false);
   const [datosOriginales, setDatosOriginales] = useState({});
