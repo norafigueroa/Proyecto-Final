@@ -84,6 +84,9 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('token/refresh/', token_refresh_view, name='token_refresh'),
     path('register-cliente/', register_cliente, name='register_cliente'),
+
+    #Configuración
+    path('configuracion/', VistaConfiguracionPlataforma.as_view(), name="obtener y actualizar configuracion"),
 ]
 
   

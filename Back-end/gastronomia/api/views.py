@@ -1,9 +1,10 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView, CreateAPIView, DestroyAPIView, UpdateAPIView, RetrieveAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView, CreateAPIView, DestroyAPIView, UpdateAPIView, RetrieveAPIView, RetrieveUpdateAPIView
 from .models import *
 from .serializers import *
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from django.contrib.auth.models import Group
 
 # --- USUARIOS ---
 class PerfilUsuarioListCreateView(ListCreateAPIView):
@@ -256,3 +257,50 @@ class RestauranteRegistrationView(CreateAPIView):
             }
         }
         return Response(respuesta, status=status.HTTP_201_CREATED)
+    
+# --- CONFIGURACION ---   
+class VistaConfiguracionPlataforma(RetrieveUpdateAPIView):
+    """
+    Vista para obtener y actualizar la configuración de la plataforma.
+    Solo Admin General puede actualizar.
+    GET: Cualquiera puede ver
+    PUT/PATCH: Solo Admin General
+    """
+    serializador_clase = SerializadorConfiguracionPlataforma
+    
+    def get_object(self):
+        return ConfiguracionPlataforma.obtener_instancia()
+    
+    def get_permissions(self):
+        # GET (retrieve) es público
+        if self.request.method == 'GET':
+            return []
+        # PUT/PATCH solo para Admin General
+        else:
+            return [IsAuthenticated()]
+    
+    def verificar_admin_general(self):
+        """Verifica si el usuario es Admin General"""
+        try:
+            grupo_admin = Group.objects.get(name='Admin General')
+            if grupo_admin not in self.request.user.groups.all():
+                return False
+            return True
+        except Group.DoesNotExist:
+            return False
+    
+    def update(self, request, *args, **kwargs):
+        if not self.verificar_admin_general():
+            return Response(
+                {'error': 'Solo Admin General puede actualizar la configuración'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        return super().update(request, *args, **kwargs)
+    
+    def partial_update(self, request, *args, **kwargs):
+        if not self.verificar_admin_general():
+            return Response(
+                {'error': 'Solo Admin General puede actualizar la configuración'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        return super().partial_update(request, *args, **kwargs)

@@ -310,3 +310,64 @@ class MensajesContacto(models.Model):
 
     def __str__(self):
         return f"Mensaje de {self.nombre} - {self.asunto}"
+
+#CONFIGURACIÓN
+class ConfiguracionPlataforma(models.Model):
+    """
+    Modelo singleton para almacenar la configuración global de la plataforma.
+    Solo debe existir UNA instancia de este modelo.
+    """
+    
+    # Información General
+    nombre_plataforma = models.CharField(max_length=200, default="El Sabor de la Perla del Pacífico")
+    logo = CloudinaryField('logo_plataforma', blank=True, null=True)
+    correo_contacto = models.EmailField(default="contacto@elsabor.com")
+    telefono_contacto = models.CharField(max_length=20, blank=True, null=True)
+    
+    # Dirección
+    direccion_general = models.CharField(max_length=255, blank=True, null=True)
+    horarios_atencion = models.CharField(max_length=255, blank=True, null=True)
+    
+    # Misión, Visión y Valores
+    mision = models.TextField(blank=True, null=True)
+    vision = models.TextField(blank=True, null=True)
+    valores = models.TextField(blank=True, null=True)
+    
+    # Redes Sociales
+    url_facebook = models.URLField(max_length=255, blank=True, null=True)
+    url_instagram = models.URLField(max_length=255, blank=True, null=True)
+    url_twitter = models.URLField(max_length=255, blank=True, null=True)
+    url_tiktok = models.URLField(max_length=255, blank=True, null=True)
+    url_youtube = models.URLField(max_length=255, blank=True, null=True)
+    url_whatsapp = models.URLField(max_length=255, blank=True, null=True)
+    
+    # Fechas
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_ultima_actualizacion = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = "Configuración de la Plataforma"
+        verbose_name_plural = "Configuración de la Plataforma"
+    
+    def __str__(self):
+        return f"Configuración - {self.nombre_plataforma}"
+    
+    def save(self, *args, **kwargs):
+        """
+        Sobrescribe el método save para asegurar que solo existe UNA instancia.
+        Si se intenta crear otra, actualiza la existente.
+        """
+        if not self.pk and ConfiguracionPlataforma.objects.exists():
+            # Si no tiene ID (es nueva) pero ya existe una configuración,
+            # actualizar la existente en lugar de crear nueva
+            self.pk = ConfiguracionPlataforma.objects.first().pk
+        super().save(*args, **kwargs)
+    
+    @classmethod
+    def obtener_instancia(cls):
+        """
+        Método para obtener la instancia única de la configuración.
+        Si no existe, la crea con valores por defecto.
+        """
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj

@@ -208,6 +208,16 @@ def register_cliente(request):
             )
         
         data = request.data.copy()   # Aquí sí es mutable
+        
+        # ✅ CAPITALIZAR NOMBRE Y APELLIDO AQUÍ
+        if 'first_name' in data and data['first_name']:
+            data['first_name'] = data['first_name'].strip().lower()
+            data['first_name'] = data['first_name'][0].upper() + data['first_name'][1:]
+        
+        if 'last_name' in data and data['last_name']:
+            data['last_name'] = data['last_name'].strip().lower()
+            data['last_name'] = data['last_name'][0].upper() + data['last_name'][1:]
+        
         data['groups'] = [grupo_cliente.id]
         
         # Serializar y validar datos

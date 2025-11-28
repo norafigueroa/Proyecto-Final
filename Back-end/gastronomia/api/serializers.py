@@ -390,3 +390,39 @@ class RestauranteRegistrationSerializer(serializers.Serializer):
         
         #Devolver la instancia del Restaurante y el Usuario asociado
         return {'user': user, 'restaurante': restaurante}
+    
+ # CONFIGURACIÓN
+class SerializadorConfiguracionPlataforma(serializers.ModelSerializer):
+    class Meta:
+        model = ConfiguracionPlataforma
+        fields = [
+            'id',
+            'nombre_plataforma',
+            'logo',
+            'correo_contacto',
+            'telefono_contacto',
+            'direccion_general',
+            'horarios_atencion',
+            'mision',
+            'vision',
+            'valores',
+            'url_facebook',
+            'url_instagram',
+            'url_twitter',
+            'url_tiktok',
+            'url_youtube',
+            'url_whatsapp',
+            'fecha_creacion',
+            'fecha_ultima_actualizacion',
+        ]
+        read_only_fields = ['id', 'fecha_creacion', 'fecha_ultima_actualizacion']
+    
+    def validar_nombre_plataforma(self, valor):
+        if not valor.strip():
+            raise serializers.ValidationError("El nombre de la plataforma no puede estar vacío.")
+        return valor.strip()
+    
+    def validar_correo_contacto(self, valor):
+        if valor and '@' not in valor:
+            raise serializers.ValidationError("Ingresa un correo válido.")
+        return valor
