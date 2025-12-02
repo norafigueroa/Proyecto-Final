@@ -6,8 +6,8 @@ import Swal from 'sweetalert2';
 // Importar componentes de opciones
 import DashboardGeneral from './OpcionesMenuGeneral/DashboardGeneral/DashboardGeneral';
 import RestauranteAdminGeneral from './OpcionesMenuGeneral/RestauranteAdminGeneral/RestauranteAdminGeneral';
-//import UsuariosGeneral from './OpcionesMenuGeneral/UsuariosGeneral/UsuariosGeneral';
-//import BlogGeneral from './OpcionesMenuGeneral/BlogGeneral/BlogGeneral';
+import UsuarioAdminGeneral from './OpcionesMenuGeneral/UsuarioAdminGeneral/UsuarioAdminGeneral';
+import BlogAdminGeneral from './OpcionesMenuGeneral/BlogAdminGeneral/BlogAdminGeneral';
 //import SitiosTuristicosGeneral from './OpcionesMenuGeneral/SitiosTuristicosGeneral/SitiosTuristicosGeneral';
 //import ConfiguracionGeneral from './OpcionesMenuGeneral/ConfiguracionGeneral/ConfiguracionGeneral';
 
@@ -89,11 +89,11 @@ function MenuAdminGeneral() {
       return <DashboardGeneral />;
     case 'restaurantes':
       return <RestauranteAdminGeneral />;
-    /*case 'usuarios':
-      return <UsuariosGeneral />;
+    case 'usuarios':
+      return <UsuarioAdminGeneral />;
     case 'blog':
-      return <BlogGeneral />;
-    case 'sitios':
+      return <BlogAdminGeneral />;
+    /*case 'sitios':
       return <SitiosTuristicosGeneral />;
     case 'configuracion':
       return <ConfiguracionGeneral />;*/

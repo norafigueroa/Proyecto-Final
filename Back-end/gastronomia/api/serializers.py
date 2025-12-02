@@ -23,7 +23,8 @@ class PerfilUsuarioSerializer(serializers.ModelSerializer):
             'telefono',
             'foto_perfil',
             'groups',
-            'password'
+            'password',
+            'is_active'
         ]
         extra_kwargs = {
             'password': {'write_only': True},
@@ -34,6 +35,7 @@ class PerfilUsuarioSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         groups_data = validated_data.pop('groups', [])
         validated_data['password'] = make_password(validated_data['password'])
+        validated_data['is_active'] = True 
         user = PerfilUsuario.objects.create(**validated_data)
         user.groups.set(groups_data)
         return user
@@ -181,9 +183,14 @@ class CategoriaBlogSerializer(serializers.ModelSerializer):
 
 
 class ArticuloBlogSerializer(serializers.ModelSerializer):
+    categoria_nombre = serializers.CharField(source='categoria_blog.nombre_categoria', read_only=True)
+    
     class Meta:
         model = ArticuloBlog
-        fields = '__all__'
+        fields = [
+            'id', 'categoria_blog', 'categoria_nombre', 'titulo', 'contenido', 
+            'resumen', 'imagen_portada', 'fecha_publicacion', 'vistas', 'estado', 'destacado'
+        ]
 
     def validate_titulo(self, value):
         if not value.strip():

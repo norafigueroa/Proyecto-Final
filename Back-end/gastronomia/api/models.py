@@ -221,7 +221,6 @@ class ArticuloBlog(models.Model):
         ('inactivo', 'Inactivo'),
     ]
 
-    autor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     categoria_blog = models.ForeignKey(CategoriaBlog, on_delete=models.CASCADE)
     titulo = models.CharField(max_length=150, unique=True)
     contenido = models.TextField()

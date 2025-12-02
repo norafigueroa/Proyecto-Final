@@ -13,7 +13,7 @@ export const obtenerArticulosBlog = async () => {
 
 export const obtenerArticuloPorId = async (id) => {
   try {
-    const respuesta = await axiosInstance.get(`articulos-blog${id}/`);
+    const respuesta = await axiosInstance.get(`articulos-blog/${id}`);
     return respuesta.data;
   } catch (error) {
     console.error('❌ Error al obtener artículo:', error);
@@ -33,7 +33,7 @@ export const crearArticulo = async (datos) => {
 
 export const actualizarArticulo = async (id, datos) => {
   try {
-    const respuesta = await axiosInstance.put(`articulos-blog${id}/`, datos);
+    const respuesta = await axiosInstance.patch(`articulos-blog/${id}`, datos);
     return respuesta.data;
   } catch (error) {
     console.error('❌ Error al actualizar artículo:', error);
@@ -43,7 +43,7 @@ export const actualizarArticulo = async (id, datos) => {
 
 export const actualizarParcialArticulo = async (id, datos) => {
   try {
-    const respuesta = await axiosInstance.patch(`articulos-blog${id}/`, datos);
+    const respuesta = await axiosInstance.patch(`articulos-blog/${id}`, datos);
     return respuesta.data;
   } catch (error) {
     console.error('❌ Error al actualizar parcialmente artículo:', error);
@@ -53,7 +53,7 @@ export const actualizarParcialArticulo = async (id, datos) => {
 
 export const eliminarArticulo = async (id) => {
   try {
-    await axiosInstance.delete(`articulos-blog/${id}/`);
+    await axiosInstance.delete(`articulos-blog/${id}`);
     return { mensaje: 'Artículo eliminado correctamente' };
   } catch (error) {
     console.error('❌ Error al eliminar artículo:', error);
@@ -84,7 +84,7 @@ export const crearCategoriaBlog = async (datos) => {
 
 export const actualizarCategoriaBlog = async (id, datos) => {
   try {
-    const respuesta = await axiosInstance.put(`categorias-blog${id}/`, datos);
+    const respuesta = await axiosInstance.patch(`categorias-blog/${id}`, datos);
     return respuesta.data;
   } catch (error) {
     console.error('❌ Error al actualizar categoría:', error);
@@ -94,7 +94,7 @@ export const actualizarCategoriaBlog = async (id, datos) => {
 
 export const eliminarCategoriaBlog = async (id) => {
   try {
-    await axiosInstance.delete(`categorias-blog${id}/`);
+    await axiosInstance.delete(`categorias-blog/${id}`);
     return { mensaje: 'Categoría eliminada correctamente' };
   } catch (error) {
     console.error('❌ Error al eliminar categoría:', error);

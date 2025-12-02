@@ -3,7 +3,7 @@ import axiosInstance from "../AxiosConfig";
 // ==================== RESTAURANTES ====================
 export const obtenerRestaurantes = async () => {
   try {
-    const respuesta = await axiosInstance.get('restaurantes/');
+    const respuesta = await axiosInstance.get('restaurantes');
     return respuesta.data;
   } catch (error) {
     console.error('❌ Error al obtener restaurantes:', error);
@@ -13,7 +13,7 @@ export const obtenerRestaurantes = async () => {
 
 export const obtenerRestaurantePorId = async (id) => {
   try {
-    const respuesta = await axiosInstance.get(`restaurantes/${id}/`);
+    const respuesta = await axiosInstance.get(`restaurantes/${id}`);
     return respuesta.data;
   } catch (error) {
     console.error('❌ Error al obtener restaurante:', error);
@@ -23,7 +23,7 @@ export const obtenerRestaurantePorId = async (id) => {
 
 export const crearRestaurante = async (datos) => {
   try {
-    const respuesta = await axiosInstance.post('restaurantes/', datos);
+    const respuesta = await axiosInstance.post('restaurantes', datos);
     return respuesta.data;
   } catch (error) {
     console.error('❌ Error al crear restaurante:', error);
@@ -33,7 +33,7 @@ export const crearRestaurante = async (datos) => {
 
 export const actualizarRestaurante = async (id, datos) => {
   try {
-    const respuesta = await axiosInstance.put(`restaurantes/${id}/`, datos);
+    const respuesta = await axiosInstance.patch(`restaurantes/${id}`, datos);
     return respuesta.data;
   } catch (error) {
     console.error('❌ Error al actualizar restaurante:', error);
@@ -43,7 +43,7 @@ export const actualizarRestaurante = async (id, datos) => {
 
 export const actualizarParcialRestaurante = async (id, datos) => {
   try {
-    const respuesta = await axiosInstance.patch(`restaurantes/${id}/`, datos);
+    const respuesta = await axiosInstance.patch(`restaurantes/${id}`, datos);
     return respuesta.data;
   } catch (error) {
     console.error('❌ Error al actualizar parcialmente restaurante:', error);
@@ -53,7 +53,7 @@ export const actualizarParcialRestaurante = async (id, datos) => {
 
 export const eliminarRestaurante = async (id) => {
   try {
-    await axiosInstance.delete(`restaurantes/${id}/`);
+    await axiosInstance.delete(`restaurantes/${id}`);
     return { mensaje: 'Restaurante eliminado correctamente' };
   } catch (error) {
     console.error('❌ Error al eliminar restaurante:', error);
@@ -65,7 +65,7 @@ export const eliminarRestaurante = async (id) => {
 // ==================== CATEGORÍAS (para restaurantes) ====================
 export const obtenerCategorias = async () => {
   try {
-    const respuesta = await axiosInstance.get('categorias/');
+    const respuesta = await axiosInstance.get('categorias');
     return respuesta.data;
   } catch (error) {
     console.error('❌ Error al obtener categorías:', error);
@@ -99,6 +99,17 @@ export const eliminarCategoria = async (id) => {
     return { mensaje: 'Categoría eliminada correctamente' };
   } catch (error) {
     console.error('❌ Error al eliminar categoría:', error);
+    throw error;
+  }
+};
+
+// ==================== REGISTRO COMBINADO ====================
+export const registrarRestauranteConPropietario = async (datos) => {
+  try {
+    const respuesta = await axiosInstance.post('register-restaurante', datos);
+    return respuesta.data;
+  } catch (error) {
+    console.error('❌ Error al registrar restaurante con propietario:', error);
     throw error;
   }
 };

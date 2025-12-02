@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import {
   obtenerRestaurantes,
-  crearRestaurante,
   actualizarRestaurante,
   eliminarRestaurante,
   obtenerCategorias,
+  registrarRestauranteConPropietario,
 } from '../../../../services/ServicesAdminGeneral/ServicesRestaurantesGeneral';
 import './RestauranteAdminGeneral.css';
 
@@ -22,11 +22,24 @@ function RestaurantesGeneral() {
   const itemsPorPagina = 10;
 
   const [formulario, setFormulario] = useState({
+    first_name: '',
+    last_name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    telefono_propietario: '',
     nombre_restaurante: '',
     descripcion: '',
+    historia_negocio: '',
     direccion: '',
+    longitud: '',
+    latitud: '',
     telefono: '',
-    email: '',
+    email_restaurante: '',
+    sitio_web: '',
+    horario_apertura: '',
+    horario_cierre: '',
+    dias_operacion: '',
     categoria: '',
     estado: 'pendiente',
   });
@@ -47,7 +60,6 @@ function RestaurantesGeneral() {
         obtenerCategorias(),
       ]);
       
-      // Convertir a arrays si es necesario
       const restaurantesArray = Array.isArray(restaurantesData) ? restaurantesData : restaurantesData.results || [];
       const categoriasArray = Array.isArray(categoriasData) ? categoriasData : categoriasData.results || [];
       
@@ -83,22 +95,48 @@ function RestaurantesGeneral() {
     if (restaurante) {
       setEditando(restaurante);
       setFormulario({
-        nombre_restaurante: restaurante.nombre_restaurante,
+        first_name: '',
+        last_name: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        telefono_propietario: '',
+        nombre_restaurante: restaurante.nombre_restaurante || '',
         descripcion: restaurante.descripcion || '',
-        direccion: restaurante.direccion,
+        historia_negocio: restaurante.historia_negocio || '',
+        direccion: restaurante.direccion || '',
+        longitud: restaurante.longitud || '',
+        latitud: restaurante.latitud || '',
         telefono: restaurante.telefono || '',
-        email: restaurante.email || '',
+        email_restaurante: restaurante.email || '',
+        sitio_web: restaurante.sitio_web || '',
+        horario_apertura: restaurante.horario_apertura || '',
+        horario_cierre: restaurante.horario_cierre || '',
+        dias_operacion: restaurante.dias_operacion || '',
         categoria: restaurante.categoria || '',
-        estado: restaurante.estado,
+        estado: restaurante.estado || 'pendiente',
       });
     } else {
       setEditando(null);
       setFormulario({
+        first_name: '',
+        last_name: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        telefono_propietario: '',
         nombre_restaurante: '',
         descripcion: '',
+        historia_negocio: '',
         direccion: '',
+        longitud: '',
+        latitud: '',
         telefono: '',
-        email: '',
+        email_restaurante: '',
+        sitio_web: '',
+        horario_apertura: '',
+        horario_cierre: '',
+        dias_operacion: '',
         categoria: '',
         estado: 'pendiente',
       });
@@ -117,18 +155,86 @@ function RestaurantesGeneral() {
   };
 
   const handleGuardar = async () => {
-    if (!formulario.nombre_restaurante || !formulario.direccion) {
-      Swal.fire('Error', 'Nombre y dirección son obligatorios', 'error');
+    // Validar campos obligatorios
+    if (!formulario.nombre_restaurante || !formulario.direccion || !formulario.telefono || !formulario.email_restaurante) {
+      Swal.fire('Error', 'Nombre, dirección, teléfono y email del restaurante son obligatorios', 'error');
       return;
+    }
+
+    // Si es nuevo, validar campos del propietario
+    if (!editando) {
+      if (!formulario.first_name || !formulario.last_name || !formulario.email || !formulario.password) {
+        Swal.fire('Error', 'Nombre, apellido, email y contraseña del propietario son obligatorios', 'error');
+        return;
+      }
+
+      if (formulario.password.length < 8) {
+        Swal.fire('Error', 'Contraseña debe tener mínimo 8 caracteres', 'error');
+        return;
+      }
+
+      if (formulario.password !== formulario.confirmPassword) {
+        Swal.fire('Error', 'Las contraseñas no coinciden', 'error');
+        return;
+      }
+
+      if (!formulario.email.includes('@')) {
+        Swal.fire('Error', 'Email del propietario inválido', 'error');
+        return;
+      }
+
+      if (!formulario.email_restaurante.includes('@')) {
+        Swal.fire('Error', 'Email del restaurante inválido', 'error');
+        return;
+      }
     }
 
     try {
       if (editando) {
-        await actualizarRestaurante(editando.id, formulario);
-        Swal.fire('Éxito', 'Restaurante actualizado', 'success');
+        // Editar restaurante existente
+        const datosActualizar = {
+          nombre_restaurante: formulario.nombre_restaurante,
+          descripcion: formulario.descripcion,
+          historia_negocio: formulario.historia_negocio,
+          direccion: formulario.direccion,
+          longitud: formulario.longitud || null,
+          latitud: formulario.latitud || null,
+          telefono: formulario.telefono,
+          email: formulario.email_restaurante,
+          sitio_web: formulario.sitio_web || null,
+          horario_apertura: formulario.horario_apertura || null,
+          horario_cierre: formulario.horario_cierre || null,
+          dias_operacion: formulario.dias_operacion || null,
+          categoria: formulario.categoria || null,
+          estado: formulario.estado,
+        };
+        await actualizarRestaurante(editando.id, datosActualizar);
+        Swal.fire('Éxito', 'Restaurante actualizado correctamente', 'success');
       } else {
-        await crearRestaurante(formulario);
-        Swal.fire('Éxito', 'Restaurante creado', 'success');
+        // Crear nuevo restaurante con propietario
+        const datosRegistro = {
+          first_name: formulario.first_name,
+          last_name: formulario.last_name,
+          email: formulario.email,
+          password: formulario.password,
+          telefono: formulario.telefono_propietario,
+          username: formulario.first_name.toLowerCase().replace(' ', '_'),
+          nombre_restaurante: formulario.nombre_restaurante,
+          descripcion: formulario.descripcion,
+          historia_negocio: formulario.historia_negocio,
+          direccion: formulario.direccion,
+          longitud: formulario.longitud || null,
+          latitud: formulario.latitud || null,
+          telefono_restaurante: formulario.telefono,
+          email_restaurante: formulario.email_restaurante,
+          sitio_web: formulario.sitio_web || null,
+          horario_apertura: formulario.horario_apertura || null,
+          horario_cierre: formulario.horario_cierre || null,
+          dias_operacion: formulario.dias_operacion || null,
+          categoria: formulario.categoria || null,
+        };
+        await registrarRestauranteConPropietario(datosRegistro);
+        Swal.fire('Éxito', 'Restaurante y propietario creados correctamente', 'success');
       }
       handleCerrarModal();
       cargarDatos();
@@ -151,9 +257,10 @@ function RestaurantesGeneral() {
     if (resultado.isConfirmed) {
       try {
         await eliminarRestaurante(id);
-        Swal.fire('Éxito', 'Restaurante eliminado', 'success');
+        Swal.fire('Éxito', 'Restaurante eliminado correctamente', 'success');
         cargarDatos();
       } catch (error) {
+        console.error('Error al eliminar:', error);
         Swal.fire('Error', 'No se pudo eliminar el restaurante', 'error');
       }
     }
@@ -162,9 +269,10 @@ function RestaurantesGeneral() {
   const handleCambiarEstado = async (id, nuevoEstado) => {
     try {
       await actualizarRestaurante(id, { estado: nuevoEstado });
-      Swal.fire('Éxito', `Restaurante ${nuevoEstado}`, 'success');
+      Swal.fire('Éxito', `Restaurante ${nuevoEstado} correctamente`, 'success');
       cargarDatos();
     } catch (error) {
+      console.error('Error al cambiar estado:', error);
       Swal.fire('Error', 'No se pudo cambiar el estado', 'error');
     }
   };
@@ -175,43 +283,36 @@ function RestaurantesGeneral() {
   const totalPaginas = Math.ceil(restaurantesFiltrados.length / itemsPorPagina);
 
   if (cargando) {
-    return <div className="restaurantes-cargando">Cargando restaurantes...</div>;
+    return <div className="rga-cargando-unico">Cargando restaurantes...</div>;
   }
 
   return (
-    <div className="restaurantes-contenedor">
-      <div className="restaurantes-encabezado">
-        <h2>Gestión de Restaurantes</h2>
-        <button
-          className="restaurantes-btn-crear"
-          onClick={() => handleAbrirModal()}
-        >
+    <div className="rga-contenedor-principal-unico">
+      <div className="rga-seccion-titulo-boton-unico">
+        <h2 className="rga-titulo-unico">Gestión de Restaurantes</h2>
+        <button className="rga-btn-nuevo-unico" onClick={() => handleAbrirModal()}>
           + Nuevo Restaurante
         </button>
       </div>
 
-      <div className="restaurantes-filtros">
-        <input
-          type="text"
-          placeholder="Buscar por nombre o dirección..."
-          value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
-          className="restaurantes-input-busqueda"
-        />
-        <select
-          value={filtroEstado}
-          onChange={(e) => setFiltroEstado(e.target.value)}
-          className="restaurantes-select-filtro"
-        >
+      <div className="rga-seccion-filtros-unico">
+        <select value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)} className="rga-select-estado-unico">
           <option value="todos">Todos los estados</option>
           <option value="pendiente">Pendiente</option>
           <option value="activo">Activo</option>
           <option value="inactivo">Inactivo</option>
         </select>
+        <input
+          type="text"
+          placeholder="Buscar por nombre o dirección..."
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+          className="rga-input-buscar-unico"
+        />
       </div>
 
-      <div className="restaurantes-tabla-contenedor">
-        <table className="restaurantes-tabla">
+      <div className="rga-contenedor-tabla-unico">
+        <table className="rga-tabla-unico">
           <thead>
             <tr>
               <th>Nombre</th>
@@ -229,13 +330,13 @@ function RestaurantesGeneral() {
                   <td>{restaurante.direccion}</td>
                   <td>{restaurante.telefono || '-'}</td>
                   <td>
-                    <span className={`restaurantes-badge estado-${restaurante.estado}`}>
+                    <span className={`rga-badge-unico estado-${restaurante.estado}`}>
                       {restaurante.estado}
                     </span>
                   </td>
-                  <td className="restaurantes-acciones">
+                  <td className="rga-acciones-unico">
                     <button
-                      className="restaurantes-btn-accion editar"
+                      className="rga-btn-accion-unico editar"
                       onClick={() => handleAbrirModal(restaurante)}
                       title="Editar"
                     >
@@ -244,14 +345,14 @@ function RestaurantesGeneral() {
                     {restaurante.estado === 'pendiente' && (
                       <>
                         <button
-                          className="restaurantes-btn-accion aprobar"
+                          className="rga-btn-accion-unico aprobar"
                           onClick={() => handleCambiarEstado(restaurante.id, 'activo')}
                           title="Aprobar"
                         >
                           ✓
                         </button>
                         <button
-                          className="restaurantes-btn-accion rechazar"
+                          className="rga-btn-accion-unico rechazar"
                           onClick={() => handleCambiarEstado(restaurante.id, 'inactivo')}
                           title="Rechazar"
                         >
@@ -259,8 +360,26 @@ function RestaurantesGeneral() {
                         </button>
                       </>
                     )}
+                    {restaurante.estado === 'activo' && (
+                      <button
+                        className="rga-btn-accion-unico desactivar"
+                        onClick={() => handleCambiarEstado(restaurante.id, 'inactivo')}
+                        title="Desactivar"
+                      >
+                        ⊘
+                      </button>
+                    )}
+                    {restaurante.estado === 'inactivo' && (
+                      <button
+                        className="rga-btn-accion-unico reactivar"
+                        onClick={() => handleCambiarEstado(restaurante.id, 'activo')}
+                        title="Reactivar"
+                      >
+                        ⟲
+                      </button>
+                    )}
                     <button
-                      className="restaurantes-btn-accion eliminar"
+                      className="rga-btn-accion-unico eliminar"
                       onClick={() => handleEliminar(restaurante.id)}
                       title="Eliminar"
                     >
@@ -271,7 +390,7 @@ function RestaurantesGeneral() {
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="restaurantes-sin-datos">
+                <td colSpan="5" className="rga-sin-datos-unico">
                   No hay restaurantes que coincidan con los filtros
                 </td>
               </tr>
@@ -281,142 +400,162 @@ function RestaurantesGeneral() {
       </div>
 
       {totalPaginas > 1 && (
-        <div className="restaurantes-paginacion">
-          <button
-            disabled={paginaActual === 1}
-            onClick={() => setPaginaActual(paginaActual - 1)}
-          >
+        <div className="rga-paginacion-unico">
+          <button disabled={paginaActual === 1} onClick={() => setPaginaActual(paginaActual - 1)}>
             ← Anterior
           </button>
-          <span>
-            Página {paginaActual} de {totalPaginas}
-          </span>
-          <button
-            disabled={paginaActual === totalPaginas}
-            onClick={() => setPaginaActual(paginaActual + 1)}
-          >
+          <span>Página {paginaActual} de {totalPaginas}</span>
+          <button disabled={paginaActual === totalPaginas} onClick={() => setPaginaActual(paginaActual + 1)}>
             Siguiente →
           </button>
         </div>
       )}
 
-      {/* MODAL */}
       {modalAbierto && (
-        <div className="restaurantes-modal-overlay" onClick={handleCerrarModal}>
-          <div className="restaurantes-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="restaurantes-modal-encabezado">
+        <div className="rga-modal-overlay-unico" onClick={handleCerrarModal}>
+          <div className="rga-modal-unico" onClick={(e) => e.stopPropagation()}>
+            <div className="rga-modal-header-unico">
               <h3>{editando ? 'Editar Restaurante' : 'Nuevo Restaurante'}</h3>
-              <button
-                className="restaurantes-modal-cerrar"
-                onClick={handleCerrarModal}
-              >
-                ✕
-              </button>
+              <button className="rga-modal-cerrar-unico" onClick={handleCerrarModal}>✕</button>
             </div>
 
-            <div className="restaurantes-modal-contenido">
-              <div className="restaurantes-form-grupo">
-                <label>Nombre *</label>
-                <input
-                  type="text"
-                  name="nombre_restaurante"
-                  value={formulario.nombre_restaurante}
-                  onChange={handleCambioFormulario}
-                  placeholder="Nombre del restaurante"
-                />
+            <div className="rga-modal-contenido-unico">
+              {!editando && (
+                <>
+                  <div className="rga-form-grupo-unico">
+                    <label style={{fontWeight: 'bold', color: '#1a4d6d'}}>Datos del Propietario</label>
+                  </div>
+
+                  <div className="rga-form-fila-unico">
+                    <div className="rga-form-grupo-unico">
+                      <label>Nombre *</label>
+                      <input type="text" name="first_name" value={formulario.first_name} onChange={handleCambioFormulario} placeholder="Nombre del propietario" />
+                    </div>
+                    <div className="rga-form-grupo-unico">
+                      <label>Apellido *</label>
+                      <input type="text" name="last_name" value={formulario.last_name} onChange={handleCambioFormulario} placeholder="Apellido del propietario" />
+                    </div>
+                  </div>
+
+                  <div className="rga-form-grupo-unico">
+                    <label>Email del Propietario *</label>
+                    <input type="email" name="email" value={formulario.email} onChange={handleCambioFormulario} placeholder="Email" />
+                  </div>
+
+                  <div className="rga-form-fila-unico">
+                    <div className="rga-form-grupo-unico">
+                      <label>Contraseña *</label>
+                      <input type="password" name="password" value={formulario.password} onChange={handleCambioFormulario} placeholder="Contraseña" />
+                    </div>
+                    <div className="rga-form-grupo-unico">
+                      <label>Confirmar Contraseña *</label>
+                      <input type="password" name="confirmPassword" value={formulario.confirmPassword} onChange={handleCambioFormulario} placeholder="Confirmar contraseña" />
+                    </div>
+                  </div>
+
+                  <div className="rga-form-grupo-unico">
+                    <label>Teléfono del Propietario</label>
+                    <input type="tel" name="telefono_propietario" value={formulario.telefono_propietario} onChange={handleCambioFormulario} placeholder="Teléfono" />
+                  </div>
+
+                  <hr style={{margin: '1rem 0', border: 'none', borderTop: '1px solid #e0e0e0'}} />
+                </>
+              )}
+
+              <div className="rga-form-grupo-unico">
+                <label style={{fontWeight: 'bold', color: '#1a4d6d'}}>Datos del Restaurante</label>
               </div>
 
-              <div className="restaurantes-form-grupo">
+              <div className="rga-form-grupo-unico">
+                <label>Nombre del Restaurante *</label>
+                <input type="text" name="nombre_restaurante" value={formulario.nombre_restaurante} onChange={handleCambioFormulario} placeholder="Nombre del restaurante" />
+              </div>
+
+              <div className="rga-form-grupo-unico">
                 <label>Descripción</label>
-                <textarea
-                  name="descripcion"
-                  value={formulario.descripcion}
-                  onChange={handleCambioFormulario}
-                  placeholder="Descripción del restaurante"
-                  rows="3"
-                />
+                <textarea name="descripcion" value={formulario.descripcion} onChange={handleCambioFormulario} placeholder="Descripción del restaurante" rows="2" />
               </div>
 
-              <div className="restaurantes-form-grupo">
+              <div className="rga-form-grupo-unico">
+                <label>Historia del Negocio</label>
+                <textarea name="historia_negocio" value={formulario.historia_negocio} onChange={handleCambioFormulario} placeholder="Cuéntanos la historia del negocio" rows="2" />
+              </div>
+
+              <div className="rga-form-grupo-unico">
                 <label>Dirección *</label>
-                <input
-                  type="text"
-                  name="direccion"
-                  value={formulario.direccion}
-                  onChange={handleCambioFormulario}
-                  placeholder="Dirección"
-                />
+                <input type="text" name="direccion" value={formulario.direccion} onChange={handleCambioFormulario} placeholder="Dirección" />
               </div>
 
-              <div className="restaurantes-form-fila">
-                <div className="restaurantes-form-grupo">
-                  <label>Teléfono</label>
-                  <input
-                    type="tel"
-                    name="telefono"
-                    value={formulario.telefono}
-                    onChange={handleCambioFormulario}
-                    placeholder="Teléfono"
-                  />
+              <div className="rga-form-fila-unico">
+                <div className="rga-form-grupo-unico">
+                  <label>Longitud</label>
+                  <input type="number" name="longitud" value={formulario.longitud} onChange={handleCambioFormulario} placeholder="Longitud" step="0.000001" />
                 </div>
-
-                <div className="restaurantes-form-grupo">
-                  <label>Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formulario.email}
-                    onChange={handleCambioFormulario}
-                    placeholder="Email"
-                  />
+                <div className="rga-form-grupo-unico">
+                  <label>Latitud</label>
+                  <input type="number" name="latitud" value={formulario.latitud} onChange={handleCambioFormulario} placeholder="Latitud" step="0.000001" />
                 </div>
               </div>
 
-              <div className="restaurantes-form-fila">
-                <div className="restaurantes-form-grupo">
+              <div className="rga-form-fila-unico">
+                <div className="rga-form-grupo-unico">
+                  <label>Teléfono *</label>
+                  <input type="tel" name="telefono" value={formulario.telefono} onChange={handleCambioFormulario} placeholder="Teléfono del restaurante" />
+                </div>
+                <div className="rga-form-grupo-unico">
+                  <label>Email *</label>
+                  <input type="email" name="email_restaurante" value={formulario.email_restaurante} onChange={handleCambioFormulario} placeholder="Email del restaurante" />
+                </div>
+              </div>
+
+              <div className="rga-form-grupo-unico">
+                <label>Sitio Web</label>
+                <input type="url" name="sitio_web" value={formulario.sitio_web} onChange={handleCambioFormulario} placeholder="https://ejemplo.com" />
+              </div>
+
+              <div className="rga-form-fila-unico">
+                <div className="rga-form-grupo-unico">
+                  <label>Horario de Apertura</label>
+                  <input type="time" name="horario_apertura" value={formulario.horario_apertura} onChange={handleCambioFormulario} />
+                </div>
+                <div className="rga-form-grupo-unico">
+                  <label>Horario de Cierre</label>
+                  <input type="time" name="horario_cierre" value={formulario.horario_cierre} onChange={handleCambioFormulario} />
+                </div>
+              </div>
+
+              <div className="rga-form-grupo-unico">
+                <label>Días de Operación</label>
+                <input type="text" name="dias_operacion" value={formulario.dias_operacion} onChange={handleCambioFormulario} placeholder="Ej: Lunes a Viernes" />
+              </div>
+
+              <div className="rga-form-fila-unico">
+                <div className="rga-form-grupo-unico">
                   <label>Categoría</label>
-                  <select
-                    name="categoria"
-                    value={formulario.categoria}
-                    onChange={handleCambioFormulario}
-                  >
+                  <select name="categoria" value={formulario.categoria} onChange={handleCambioFormulario}>
                     <option value="">Seleccionar categoría</option>
                     {categorias.map((cat) => (
-                      <option key={cat.id} value={cat.id}>
-                        {cat.nombre_categoria}
-                      </option>
+                      <option key={cat.id} value={cat.id}>{cat.nombre_categoria}</option>
                     ))}
                   </select>
                 </div>
 
-                <div className="restaurantes-form-grupo">
-                  <label>Estado</label>
-                  <select
-                    name="estado"
-                    value={formulario.estado}
-                    onChange={handleCambioFormulario}
-                  >
-                    <option value="pendiente">Pendiente</option>
-                    <option value="activo">Activo</option>
-                    <option value="inactivo">Inactivo</option>
-                  </select>
-                </div>
+                {editando && (
+                  <div className="rga-form-grupo-unico">
+                    <label>Estado *</label>
+                    <select name="estado" value={formulario.estado} onChange={handleCambioFormulario}>
+                      <option value="pendiente">Pendiente</option>
+                      <option value="activo">Activo</option>
+                      <option value="inactivo">Inactivo</option>
+                    </select>
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="restaurantes-modal-footer">
-              <button
-                className="restaurantes-btn-cancelar"
-                onClick={handleCerrarModal}
-              >
-                Cancelar
-              </button>
-              <button
-                className="restaurantes-btn-guardar"
-                onClick={handleGuardar}
-              >
-                {editando ? 'Actualizar' : 'Crear'}
-              </button>
+            <div className="rga-modal-footer-unico">
+              <button className="rga-btn-cancelar-unico" onClick={handleCerrarModal}>Cancelar</button>
+              <button className="rga-btn-guardar-unico" onClick={handleGuardar}>{editando ? 'Actualizar' : 'Crear Restaurante'}</button>
             </div>
           </div>
         </div>

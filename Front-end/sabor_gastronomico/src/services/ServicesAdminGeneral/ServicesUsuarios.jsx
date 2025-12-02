@@ -1,6 +1,7 @@
 import axiosInstance from "../AxiosConfig";
 
 // ==================== USUARIOS ====================
+
 export const obtenerUsuarios = async () => {
   try {
     const respuesta = await axiosInstance.get('perfiles');
@@ -13,7 +14,7 @@ export const obtenerUsuarios = async () => {
 
 export const obtenerUsuarioPorId = async (id) => {
   try {
-    const respuesta = await axiosInstance.get(`perfiles/${id}/`);
+    const respuesta = await axiosInstance.get(`perfiles/${id}`);
     return respuesta.data;
   } catch (error) {
     console.error('❌ Error al obtener usuario:', error);
@@ -33,7 +34,7 @@ export const crearUsuario = async (datos) => {
 
 export const actualizarUsuario = async (id, datos) => {
   try {
-    const respuesta = await axiosInstance.put(`perfiles${id}/`, datos);
+    const respuesta = await axiosInstance.put(`perfiles/${id}`, datos);
     return respuesta.data;
   } catch (error) {
     console.error('❌ Error al actualizar usuario:', error);
@@ -43,7 +44,7 @@ export const actualizarUsuario = async (id, datos) => {
 
 export const actualizarParcialUsuario = async (id, datos) => {
   try {
-    const respuesta = await axiosInstance.patch(`perfiles${id}/`, datos);
+    const respuesta = await axiosInstance.patch(`perfiles/${id}`, datos);
     return respuesta.data;
   } catch (error) {
     console.error('❌ Error al actualizar parcialmente usuario:', error);
@@ -53,7 +54,7 @@ export const actualizarParcialUsuario = async (id, datos) => {
 
 export const eliminarUsuario = async (id) => {
   try {
-    await axiosInstance.delete(`perfiles${id}/`);
+    await axiosInstance.delete(`perfiles/${id}`);
     return { mensaje: 'Usuario eliminado correctamente' };
   } catch (error) {
     console.error('❌ Error al eliminar usuario:', error);
