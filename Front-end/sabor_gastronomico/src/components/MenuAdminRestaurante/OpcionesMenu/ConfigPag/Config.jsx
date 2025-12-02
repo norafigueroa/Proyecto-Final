@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import "./Config.css";
-import ConfigService from "../../../../services/servicesAdminRest/ServicesConfig";
+import {getRestauranteById} from "../../../../../src/services/ServicesRestaurantes"
 
 function Config() {
   const [restaurante, setRestaurante] = useState({
@@ -11,39 +12,48 @@ function Config() {
     telefono: "",
     sitio_web: "",
     email: "",
-    horario_apertura: "",
-    horario_cierre: "",
-    dias_operacion: "",
-    logo: null,
-    foto_portada: "",
+    logo: null, 
+    foto_portada: null, 
   });
 
   const [datosOriginales, setDatosOriginales] = useState({});
   const [previewLogo, setPreviewLogo] = useState(null);
-
+  const [previewPortada, setPreviewPortada] = useState(null); // Nuevo estado para la portada
   const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState(false);
+  const [mensajeError, setMensajeError] = useState(null);
+  const [mensajeExito, setMensajeExito] = useState(null);
 
- 
-  // Cargar configuración del backend
+  const { id } = useParams();
+  console.log(id);
+  
 
+  //Cargar configuración del backend 
   useEffect(() => {
     async function cargarConfig() {
       try {
-        console.log("🔵 Cargando configuración del restaurante...");
-        const res = await ConfigService.obtenerConfig();
+        setCargando(true);
+        setMensajeError(null);
+        console.log("Cargando configuración del restaurante...");
+        const res = await getRestauranteById(id);
+        console.log(res);
+        
+        console.log("Datos recibidos:", res);
 
-        console.log("🔵 Datos recibidos:", res.data);
+        setRestaurante(res);
+        setDatosOriginales(res);
 
-        setRestaurante(res.data);
-        setDatosOriginales(res.data);
-
-        if (res.data.logo) {
-          setPreviewLogo(res.data.logo);
+        // Inicializar vistas previas con las URLs del backend
+        if (res.logo) {
+          setPreviewLogo(res.logo);
+        }
+        if (res.foto_portada) { // Corregido: Inicializar previewPortada
+          setPreviewPortada(res.foto_portada);
         }
 
       } catch (err) {
         console.error("❌ Error cargando config:", err);
+        setMensajeError("Error al cargar los datos del restaurante.");
       } finally {
         setCargando(false);
       }
@@ -53,8 +63,7 @@ function Config() {
   }, []);
 
 
-  //Manejo de cambios de inputs
-
+  // --- Manejo de cambios de inputs de texto ---
   const handleChange = (e) => {
     const { name, value } = e.target;
     setRestaurante((prev) => ({
@@ -64,8 +73,7 @@ function Config() {
   };
 
 
-  //Cambiar logo
-
+  // --- Manejo de cambios de Logo ---
   const handleLogoChange = (e) => {
     const file = e.target.files[0];
 
@@ -73,55 +81,98 @@ function Config() {
 
     setRestaurante((prev) => ({
       ...prev,
-      logo: file,
+      logo: file, // Guarda el objeto File
     }));
 
+    // Muestra la vista previa
     setPreviewLogo(URL.createObjectURL(file));
   };
 
 
-  //Guardar cambios
+  // --- Manejo de cambios de Foto de Portada (Nuevo) ---
+  const handlePortadaChange = (e) => {
+    const file = e.target.files[0];
 
+    if (!file) return;
+
+    setRestaurante((prev) => ({
+      ...prev,
+      foto_portada: file, // Guarda el objeto File
+    }));
+
+    // Muestra la vista previa
+    setPreviewPortada(URL.createObjectURL(file));
+  };
+
+
+  // --- Guardar cambios ---
   const guardarCambios = async () => {
-    try {
-      setGuardando(true);
+    setGuardando(true);
+    setMensajeError(null);
+    setMensajeExito(null);
 
+    try {
       console.log("Guardando datos:", restaurante);
 
+      // Crear FormData para enviar archivos y texto juntos
       const formData = new FormData();
 
       for (const [key, value] of Object.entries(restaurante)) {
-        formData.append(key, value);
+        // Excluir el campo 'email' si no es editable, o verificar si el valor es null/""
+        if (key === 'email') continue;
+
+        // Si el valor es una URL o string, no es un File. 
+        // Solo enviamos si es un File, o si es un campo de texto (string).
+        // Si el campo de imagen fue actualizado, 'logo' será un objeto File.
+        if (value instanceof File) {
+            formData.append(key, value);
+        } else if (value !== null && value !== undefined) {
+             // Envía los campos de texto
+             formData.append(key, value);
+        }
       }
 
       const res = await ConfigService.actualizarConfig(formData);
 
       console.log("Config actualizada:", res.data);
 
-      alert("Configuración actualizada correctamente");
-
+      // Sincronizar el estado con la respuesta del backend (contiene las nuevas URLs)
       setDatosOriginales(res.data);
       setRestaurante(res.data);
+      setPreviewLogo(res.data.logo); // Asegura que se muestre la nueva URL
+      setPreviewPortada(res.data.foto_portada); // Asegura que se muestre la nueva URL
 
+      setMensajeExito("Configuración actualizada correctamente.");
+      
     } catch (err) {
       console.error("❌ Error guardando:", err);
-      alert("Error al guardar cambios");
+      // Asumir que el backend devuelve un objeto de error legible
+      const errorMsg = err.response?.data?.message || "Error al guardar cambios. Revisa los datos.";
+      setMensajeError(errorMsg);
     } finally {
       setGuardando(false);
+      // Limpiar mensajes después de un tiempo
+      setTimeout(() => {
+          setMensajeExito(null);
+          setMensajeError(null);
+      }, 5000);
     }
   };
 
   if (cargando) return <p>Cargando configuración...</p>;
 
+  // --- Renderizado del Componente ---
   return (
     <div className="config-container">
       <h1 className="config-title">Ajustes del Restaurante</h1>
+
+      {mensajeError && <div className="config-message error">{mensajeError}</div>}
+      {mensajeExito && <div className="config-message success">{mensajeExito}</div>}
 
       <div className="config-section">
         <h2>Información General</h2>
 
         <div className="config-form">
-
           {/* Nombre */}
           <div className="config-group">
             <label className="config-label">Nombre del Restaurante</label>
@@ -188,7 +239,7 @@ function Config() {
             />
           </div>
 
-          {/* Email */}
+          {/* Email (No editable) */}
           <div className="config-group">
             <label className="config-label">Email (no editable)</label>
             <input
@@ -204,7 +255,17 @@ function Config() {
             <input type="file" accept="image/*" onChange={handleLogoChange} />
 
             {previewLogo && (
-              <img src={previewLogo} className="config-logo-preview" />
+              <img src={previewLogo} className="config-logo-preview" alt="Vista previa del logo" />
+            )}
+          </div>
+
+          {/* Foto de Portada (Corregido: Incluido) */}
+          <div className="config-group">
+            <label className="config-label">Foto de Portada</label>
+            <input type="file" accept="image/*" onChange={handlePortadaChange} />
+
+            {previewPortada && (
+              <img src={previewPortada} className="config-portada-preview" alt="Vista previa de portada" />
             )}
           </div>
 
@@ -215,16 +276,6 @@ function Config() {
           >
             {guardando ? "Guardando..." : "Guardar Cambios"}
           </button>
-
-        </div>
-      </div>
-
-      <div className="config-summary-box">
-        <h2 className="config-summary-title">Vista previa</h2>
-        <div className="config-summary">
-          <p><strong>Nombre:</strong> {restaurante.nombre_restaurante}</p>
-          <p><strong>Teléfono:</strong> {restaurante.telefono}</p>
-          <p><strong>Dirección:</strong> {restaurante.direccion}</p>
         </div>
       </div>
     </div>

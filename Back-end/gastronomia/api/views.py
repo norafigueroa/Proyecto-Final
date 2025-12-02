@@ -266,7 +266,7 @@ class VistaConfiguracionPlataforma(RetrieveUpdateAPIView):
     GET: Cualquiera puede ver
     PUT/PATCH: Solo Admin General
     """
-    serializador_clase = SerializadorConfiguracionPlataforma
+    serializer_class = SerializadorConfiguracionPlataforma
     
     def get_object(self):
         return ConfiguracionPlataforma.obtener_instancia()

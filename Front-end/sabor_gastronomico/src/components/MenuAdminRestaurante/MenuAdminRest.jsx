@@ -58,17 +58,33 @@ function MenuAdminRest() {
     // Opciones de menú (vendrá del backend si gustas)
 
     const opcionesMenu = [
-        { clave: "Inicio", label: "Inicio" },
-        { clave: "menu", label: "Gestionar Menú" },
-        { clave: "galeria", label: "Galería / Fotos" },
-        { clave: "perfil", label: "Mi Perfil" },
-        { clave: "promos", label: "Promociones" },
-        { clave: "pedidos", label: "Pedidos" },
-        { clave: "resenas", label: "Reseñas" },
-        { clave: "stats", label: "Estadísticas" },
-        { clave: "config", label: "Configuración" },
-    ];
+        { clave: "Inicio", label: "Inicio", icon: "🏠",
+        descripcion: "Resumen general." },
 
+        { clave: "menu", label: "Gestionar Menú", icon: "📋",
+        descripcion: "Edita tus platillos." },
+
+        { clave: "galeria", label: "Galería / Fotos", icon: "🖼️",
+        descripcion: "Sube imágenes." },
+
+        { clave: "perfil", label: "Mi Perfil", icon: "👤",
+        descripcion: "Tu información." },
+
+        { clave: "promos", label: "Promociones", icon: "💸",
+        descripcion: "Ofertas activas." },
+
+        { clave: "pedidos", label: "Pedidos", icon: "🛒",
+        descripcion: "Gestión de pedidos." },
+
+        { clave: "resenas", label: "Reseñas", icon: "⭐",
+        descripcion: "Opiniones de clientes." },
+
+        { clave: "stats", label: "Estadísticas", icon: "📊",
+        descripcion: "Datos del negocio." },
+
+        { clave: "config", label: "Configuración", icon: "⚙️",
+        descripcion: "Ajustes del sistema." },
+    ];
 
     // Render dinámico del contenido
 
@@ -88,39 +104,46 @@ function MenuAdminRest() {
     };
 
     return (
-        <div className="menu-admin-container">
+        <div className="menu-admin-contenedor">
 
             {/* ---------- SIDEBAR ---------- */}
             <aside className="menu-admin-sidebar">
 
-                <div className="sidebar-header">
-                    <div className="Menu-logo-wrapper">
-                        <img
-                            src={restaurante?.logo}
-                            alt="Logo del Restaurante"
-                            className="Menu-logo"
-                        />
+                {/* PERFIL / HEADER DEL SIDEBAR */}
+                <div className="menu-sidebar-perfil">
+                    <div className="menu-perfil-avatar">
+                        {restaurante?.logo
+                            ? <img src={restaurante.logo} alt="Logo" className="Menu-logo" />
+                            : restaurante?.nombre_restaurante?.[0] || "R"}
                     </div>
 
-                    <div>
-                        <h2>{restaurante?.nombre_restaurante || "Cargando..."}</h2>
-                        <p>PANEL ADMINISTRATIVO</p>
+                    <div className="menu-perfil-info">
+                        <h3 className="menu-perfil-nombre">
+                            {restaurante?.nombre_restaurante || "Cargando..."}
+                        </h3>
+                        <p className="menu-perfil-rol">PANEL ADMINISTRATIVO</p>
                     </div>
                 </div>
 
-                <ul className="sidebar-menu">
+                {/* MENÚ */}
+                <ul className="menu-sidebar-nav">
                     {opcionesMenu.map((opcion) => (
                         <li
                             key={opcion.clave}
-                            className={selected === opcion.clave ? "active" : ""}
+                            className={`menu-nav-item ${selected === opcion.clave ? "activo" : ""}`}
                             onClick={() => setSelected(opcion.clave)}
                         >
-                            {opcion.label}
+                            <span className="menu-item-icono">{opcion.icon}</span>
+
+                            <div className="menu-item-textos">
+                                <span className="menu-item-nombre">{opcion.label}</span>
+                                <p className="menu-item-descripcion">{opcion.descripcion}</p>
+                            </div>
                         </li>
                     ))}
 
                     <button
-                        className="logout-btn"
+                        className="menu-btn-cerrar-sesion"
                         onClick={handleLogout}
                         disabled={cargandoLogout}
                     >
@@ -130,11 +153,13 @@ function MenuAdminRest() {
 
             </aside>
 
-            <main className="menu-admin-main">
+            {/* ---------- CONTENIDO PRINCIPAL ---------- */}
+            <main className="menu-admin-contenido">
                 {renderContent()}
             </main>
 
         </div>
+
     );
 }
 

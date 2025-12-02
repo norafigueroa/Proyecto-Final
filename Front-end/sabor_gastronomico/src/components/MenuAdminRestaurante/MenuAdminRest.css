@@ -1,144 +1,207 @@
-/* ======== CONTENEDOR GENERAL ======== */
+/* ==================== RESET Y BASE ==================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+/* ==================== CONTENEDOR PRINCIPAL ==================== */
 .menu-admin-container {
-    display: flex;
-    min-height: 100vh;
-    background: #f5f5f5;
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-/* ======== SIDEBAR ======== */
-.menu-admin-sidebar {
-    width: 260px;
-    background: #111827;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    padding: 20px 0;
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-}
-
-.sidebar-header {
-    text-align: center;
-    margin-bottom: 40px;
-}
-
-.sidebar-header h2 {
-    font-size: 25px;
-    margin: 0;
-    font-weight: 700;
-}
-
-.sidebar-header p {
-    font-size: 15px;
-    opacity: 0.8;
-}
-
-/* ======== MENÚ DE OPCIONES ======== */
-.sidebar-menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.sidebar-menu li {
-    padding: 15px 20px;
-    cursor: pointer;
-    transition: 0.3s ease;
-    font-size: 17px;
-}
-
-.sidebar-menu li:hover {
-    background: #1f2937;
-}
-
-.sidebar-menu li.active {
-    background: #2563eb;
-    font-weight: bold;
-}
-
-/* ================================
-   LOGO
-=================================*/
-.Menu-logo-wrapper {
   display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
+  height: 100vh;
+  background-color: #fafbfc;
+  overflow: hidden;
+}
+
+/* ==================== SIDEBAR ==================== */
+.menu-admin-sidebar {
+  width: 280px;
+  background: #ffffff;
+  border-right: 1px solid #e8eaed;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding-bottom: 2rem;
+}
+
+/* Scrollbar personalizada */
+.menu-admin-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.menu-admin-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.menu-admin-sidebar::-webkit-scrollbar-thumb {
+  background: #d0d0d0;
+  border-radius: 3px;
+}
+
+.menu-admin-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #b0b0b0;
+}
+
+/* HEADER DEL SIDEBAR */
+.sidebar-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e8eaed;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: center;
+}
+
+.Menu-logo-wrapper {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #d4af37;
 }
 
 .Menu-logo {
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border: 4px solid #ddd;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
 }
 
-/* ======== BOTÓN CERRAR SESIÓN ======== */
+.sidebar-header h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.sidebar-header p {
+  font-size: 0.85rem;
+  color: #8b7500;
+  font-weight: 500;
+}
+
+/* ==================== MENÚ ==================== */
+.sidebar-menu {
+  flex: 1;
+  list-style: none;
+  padding: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.sidebar-menu li {
+  padding: 0.9rem 1.5rem;
+  cursor: pointer;
+  border-radius: 6px;
+  margin: 0 0.6rem;
+  color: #555;
+  transition: 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.sidebar-menu li:hover {
+  background-color: #f5f5f5;
+  color: #2c3e50;
+}
+
+.sidebar-menu li.active {
+  background-color: #e8f4f8;
+  color: #1a6b7a;
+  border-left: 3px solid #1a6b7a;
+  padding-left: calc(1.5rem - 3px);
+  font-weight: 600;
+}
+
+/* BOTÓN DE LOGOUT */
 .logout-btn {
-    margin: 30px 20px 0 20px;
-    padding: 12px;
-    background: #dc2626;
-    border: none;
-    width: calc(100% - 40px);
-    color: #fff;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.3s ease;
-    font-size: 20px;
+  margin: 1rem auto 0;
+  width: 85%;
+  padding: 0.8rem;
+  border-radius: 6px;
+  background: #f8f9fa;
+  color: #d32f2f;
+  border: 1px solid #e0e0e0;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s ease;
+  font-size: 0.95rem;
 }
 
 .logout-btn:hover {
-    background: #b91c1c;
+  background: #fff5f5;
+  border-color: #d32f2f;
+  color: #c62828;
 }
 
-/* ======== CONTENIDO PRINCIPAL ======== */
+/* ==================== CONTENIDO PRINCIPAL ==================== */
 .menu-admin-main {
-    flex: 1;
-    margin-left: 260px;
-    padding: 30px;
-    background: #f8fafc;
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+  background-color: #fafbfc;
 }
 
-.menu-admin-main h1 {
-    font-size: 26px;
-    margin-bottom: 10px;
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1024px) {
+  .menu-admin-sidebar {
+    width: 260px;
+  }
 }
 
-.menu-admin-main p {
-    font-size: 16px;
-    color: #555;
-}
-
-/* ======== RESPONSIVE ======== */
 @media (max-width: 768px) {
-    .menu-admin-sidebar {
-        width: 220px;
-    }
+  .menu-admin-container {
+    flex-direction: column;
+  }
 
-    .menu-admin-main {
-        margin-left: 220px;
-        padding: 20px;
-    }
+  .menu-admin-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    max-width: 260px;
+    z-index: 1000;
+  }
+
+  .menu-admin-sidebar.activo {
+    transform: translateX(0);
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .menu-admin-main {
+    padding: 1rem;
+  }
 }
 
-@media (max-width: 600px) {
-    .menu-admin-sidebar {
-        position: absolute;
-        transform: translateX(-100%);
-        transition: 0.3s ease;
-        z-index: 100;
-    }
+@media (max-width: 480px) {
+  .sidebar-header h2 {
+    font-size: 1rem;
+  }
 
-    .menu-admin-sidebar.show {
-        transform: translateX(0);
-    }
+  .sidebar-header p {
+    font-size: 0.75rem;
+  }
 
-    .menu-admin-main {
-        margin-left: 0;
-    }
+  .sidebar-menu li {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .logout-btn {
+    width: 90%;
+    font-size: 0.9rem;
+  }
 }
