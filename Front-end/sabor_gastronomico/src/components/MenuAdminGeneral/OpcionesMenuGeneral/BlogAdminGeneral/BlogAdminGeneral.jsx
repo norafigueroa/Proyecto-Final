@@ -23,6 +23,8 @@ function BlogAdminGeneral() {
   const [editandoCategoria, setEditandoCategoria] = useState(null);
   const [filtroEstado, setFiltroEstado] = useState('todos');
   const [busqueda, setBusqueda] = useState('');
+  const [imagenSubir, setimagenSubir] = useState('');
+  const [imagenPreview, setimagenPreview] = useState('');
   const [paginaActual, setPaginaActual] = useState(1);
   const itemsPorPagina = 10;
 
@@ -50,31 +52,8 @@ function BlogAdminGeneral() {
     const file = e.target.files[0];
     if (!file) return;
 
-    setCargandoImagen(true);
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', 'el_sabor_de_la_perla');
-
-    try {
-      const response = await fetch('https://api.cloudinary.com/v1_1/dujs1kx4w/image/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await response.json();
-      if (data.secure_url) {
-        setFormularioArticulo({
-          ...formularioArticulo,
-          imagen_portada: data.secure_url,
-        });
-        Swal.fire('Éxito', 'Imagen subida correctamente', 'success');
-      }
-    } catch (error) {
-      console.error('Error al subir imagen:', error);
-      Swal.fire('Error', 'No se pudo subir la imagen', 'error');
-    } finally {
-      setCargandoImagen(false);
-    }
+    setimagenSubir(file)
+    setimagenPreview(URL.createObjectURL(file))
   };
 
   useEffect(() => {
@@ -214,7 +193,30 @@ function BlogAdminGeneral() {
       return;
     }
 
+    const formData = new FormData();
+    formData.append('file', imagenSubir);
+    formData.append('upload_preset', 'el_sabor_de_la_perla');
+
     try {
+      const response = await fetch('https://api.cloudinary.com/v1_1/dujs1kx4w/image/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await response.json();
+      if (data.secure_url) {
+        setFormularioArticulo({
+          ...formularioArticulo,
+          imagen_portada: data.secure_url,
+        });
+      }
+    } catch (error) {
+      console.error('Error al subir imagen:', error);
+
+      //setCargandoImagen(false);
+    }
+
+    try {
+      //await handleSubirImagen()
       const datos = {
         titulo: formularioArticulo.titulo,
         contenido: formularioArticulo.contenido,
@@ -462,9 +464,9 @@ function BlogAdminGeneral() {
 
               <div className="bag-form-grupo-unico">
                 <label>Imagen de Portada</label>
-                {formularioArticulo.imagen_portada && (
+                {imagenPreview && (
                   <div className="bag-imagen-preview-unico">
-                    <img src={formularioArticulo.imagen_portada} alt="Preview" />
+                    <img src={imagenPreview} alt="Preview" />
                   </div>
                 )}
                 <input

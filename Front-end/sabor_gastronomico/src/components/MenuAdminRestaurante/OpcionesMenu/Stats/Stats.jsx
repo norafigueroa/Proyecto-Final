@@ -26,10 +26,22 @@ function Stats() {
   const obtenerDatos = async () => {
     try {
       const res = await StatsService.obtenerEstadisticas();
-      setStats(res.data);
+
+      // Prevención si el backend devuelve null o faltan datos
+      const data = res?.data || {};
+
+      setStats({
+        ventasTotales: data.ventasTotales ?? 0,
+        pedidosHoy: data.pedidosHoy ?? 0,
+        clientesNuevos: data.clientesNuevos ?? 0,
+        ventasMensuales: Array.isArray(data.ventasMensuales) ? data.ventasMensuales : [],
+        pedidosCategoria: Array.isArray(data.pedidosCategoria) ? data.pedidosCategoria : [],
+      });
+
       setLoading(false);
     } catch (err) {
       console.error("Error cargando estadísticas:", err);
+      setStats(null);
       setLoading(false);
     }
   };
@@ -46,7 +58,11 @@ function Stats() {
       <div className="est-cards">
         <div className="est-card">
           <p>Ventas Totales</p>
-          <h2>₡{stats.ventasTotales}</h2>
+          <h2>
+            ₡{Number(stats.ventasTotales).toLocaleString("es-CR", {
+              minimumFractionDigits: 2,
+            })}
+          </h2>
         </div>
 
         <div className="est-card">
@@ -70,7 +86,12 @@ function Stats() {
               <XAxis dataKey="mes" />
               <YAxis />
               <Tooltip />
-              <Line type="monotone" dataKey="ventas" stroke="#8884d8" strokeWidth={3} />
+              <Line
+                type="monotone"
+                dataKey="ventas"
+                stroke="#8884d8"
+                strokeWidth={3}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>

@@ -1,8 +1,9 @@
-import axiosInstance from "../AxiosConfig";
+import axios from "../AxiosConfig";
 
 const StatsService = {
-  obtenerEstadisticas: () => axiosInstance.get("/stats"), 
+  obtenerEstadisticas() {
+    return axios.get("/estadisticas/");
+  },
 };
 
 export default StatsService;
-//Estadisticas

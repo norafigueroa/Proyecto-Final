@@ -68,7 +68,7 @@ urlpatterns = [
     path('mensajes-contacto', MensajesContactoListCreateView.as_view(), name="crear y listar mensajes de contacto"),
     path('mensajes-contacto/<int:pk>', MensajesContactoDetailView.as_view(), name="actualizar y eliminar mensaje de contacto"),
 
-      # Redes Sociales
+    # Redes Sociales
     path('redes-sociales', RedSocialListCreateView.as_view(), name="crear y listar redes sociales"),
     path('redes-sociales/<int:pk>', RedSocialDetailView.as_view(), name="actualizar y eliminar red social"),
 

@@ -67,14 +67,16 @@ async function updateRestaurante(id, restauranteData) {
     }
 }
 
-async function patchRestaurante(id, partialData) {
+async function patchRestaurante(id, formData) {
+    console.log(formData);
+    
     try {
-        const response = await fetch(`${API_URL}${id}/`, {
+        const response = await fetch(`${API_URL}${id}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(partialData)
+            body: JSON.stringify(formData)
         });
 
         if (!response.ok) {

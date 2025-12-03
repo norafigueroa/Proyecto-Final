@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import "./Config.css";
-import {getRestauranteById} from "../../../../../src/services/ServicesRestaurantes"
+import {getRestauranteById , patchRestaurante} from "../../../../../src/services/ServicesRestaurantes"
 
 function Config() {
   const [restaurante, setRestaurante] = useState({
@@ -115,39 +115,40 @@ function Config() {
       console.log("Guardando datos:", restaurante);
 
       // Crear FormData para enviar archivos y texto juntos
-      const formData = new FormData();
+          //const formData = new FormData();
 
-      for (const [key, value] of Object.entries(restaurante)) {
+      /* for (const [key, value] of Object.entries(restaurante)) {
         // Excluir el campo 'email' si no es editable, o verificar si el valor es null/""
         if (key === 'email') continue;
-
+      */
         // Si el valor es una URL o string, no es un File. 
         // Solo enviamos si es un File, o si es un campo de texto (string).
         // Si el campo de imagen fue actualizado, 'logo' será un objeto File.
-        if (value instanceof File) {
+        /* if (value instanceof File) {
             formData.append(key, value);
         } else if (value !== null && value !== undefined) {
              // Envía los campos de texto
              formData.append(key, value);
         }
       }
+      console.log(formData); */
+      
+      const res = await patchRestaurante(id, restaurante);
 
-      const res = await ConfigService.actualizarConfig(formData);
-
-      console.log("Config actualizada:", res.data);
+      console.log("Config actualizada:", res);
 
       // Sincronizar el estado con la respuesta del backend (contiene las nuevas URLs)
-      setDatosOriginales(res.data);
-      setRestaurante(res.data);
-      setPreviewLogo(res.data.logo); // Asegura que se muestre la nueva URL
-      setPreviewPortada(res.data.foto_portada); // Asegura que se muestre la nueva URL
+      setDatosOriginales(res);
+      setRestaurante(res);
+      setPreviewLogo(res.logo); // Asegura que se muestre la nueva URL
+      setPreviewPortada(res.foto_portada); // Asegura que se muestre la nueva URL
 
       setMensajeExito("Configuración actualizada correctamente.");
       
     } catch (err) {
-      console.error("❌ Error guardando:", err);
+      console.error("Error guardando:", err);
       // Asumir que el backend devuelve un objeto de error legible
-      const errorMsg = err.response?.data?.message || "Error al guardar cambios. Revisa los datos.";
+      const errorMsg = err.response?.message || "Error al guardar cambios. Revisa los datos.";
       setMensajeError(errorMsg);
     } finally {
       setGuardando(false);
@@ -182,6 +183,7 @@ function Config() {
               value={restaurante.nombre_restaurante || ""}
               onChange={handleChange}
             />
+            
           </div>
 
           {/* Descripción */}

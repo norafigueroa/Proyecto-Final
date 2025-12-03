@@ -1,8 +1,36 @@
-import React, { useState } from 'react';
-import LogoTiki from "../../../../assets/LogoTiki.jpg";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import "./Inicio.css";
+import { ServicesInicio } from "../../../../services/servicesAdminRest/ServicesInicio";
+
 
 function Inicio() {
+  const { id } = useParams(); // ID DEL RESTAURANTE
+  const [loading, setLoading] = useState(true);
+
+  // === ESTADOS DEL BACKEND ===
+  const [restaurante, setRestaurante] = useState({
+    horario_apertura: "",
+    horario_cierre: "",
+    dias_operacion: "",
+    foto: "",
+  });
+
+  // === MODALES ===
+  const [modalEditar, setModalEditar] = useState(false);
+  const [modalCrear, setModalCrear] = useState(false);
+  const [modalFoto, setModalFoto] = useState(false);
+
+  // === ESTADOS TEMPORALES PARA EDITAR ===
+  const [editData, setEditData] = useState({
+    horario_apertura: "",
+    horario_cierre: "",
+    dias_operacion: "",
+  });
+
+  // === FOTO PREVIEW ===
+  const [foto, setFoto] = useState(null);
+  const [previewFoto, setPreviewFoto] = useState(null);
 
   // === FECHA ===
   const fechaHora = new Date().toLocaleString("es-CR", {
@@ -10,70 +38,102 @@ function Inicio() {
     timeStyle: "short",
   });
 
-  // === HORARIOS (Editable) ===
-  const [horarios, setHorarios] = useState({
-    0: ["09:30", "23:00"], // Domingo
-    1: ["11:00", "23:00"], // Lunes
-    2: ["11:00", "23:00"], // Martes
-    3: ["11:00", "23:00"], // Miércoles
-    4: ["11:00", "23:00"], // Jueves
-    5: ["11:00", "23:59"], // Viernes
-    6: ["09:30", "23:59"], // Sábado
-  });
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await ServicesInicio.obtenerRestaurante(id);
+        console.log(res);
+        
+        setRestaurante(res.data);
 
-  // Estado de los modales
-  const [modalEditar, setModalEditar] = useState(false);
-  const [modalEliminar, setModalEliminar] = useState(false);
+        setEditData({
+          horario_apertura: res.data.horario_apertura || "",
+          horario_cierre: res.data.horario_cierre || "",
+          dias_operacion: res.data.dias_operacion || "",
+        });
+      } catch (err) {
+        console.error("Error cargando restaurante:", err);
+      }
+      setLoading(false);
+    };
 
-  // Horarios temporales durante edición
-  const [horariosEditando, setHorariosEditando] = useState({ ...horarios });
+    fetchData();
+  }, [id]);
 
-  // === CALCULAR ESTADO ACTUAL ===
   const verificarEstado = () => {
+    if (!restaurante.horario_apertura || !restaurante.horario_cierre) return "Sin horario";
+
     const ahora = new Date();
-    const dia = ahora.getDay();
     const horaActual = ahora.getHours() * 60 + ahora.getMinutes();
 
-    const [inicio, fin] = horarios[dia];
-    const [hInicio, mInicio] = inicio.split(":").map(Number);
-    const [hFin, mFin] = fin.split(":").map(Number);
+    const [hInicio, mInicio] = restaurante.horario_apertura.split(":");
+    const [hFin, mFin] = restaurante.horario_cierre.split(":");
 
-    const inicioMin = hInicio * 60 + mInicio;
-    const finMin = hFin * 60 + mFin;
+    const inicioMin = parseInt(hInicio) * 60 + parseInt(mInicio);
+    const finMin = parseInt(hFin) * 60 + parseInt(mFin);
 
-    return horaActual >= inicioMin && horaActual <= finMin
-      ? "Abierto"
-      : "Cerrado";
+    return horaActual >= inicioMin && horaActual <= finMin ? "Abierto" : "Cerrado";
   };
 
   const estadoActual = verificarEstado();
 
-  // === GUARDAR CAMBIOS ===
-  const guardarCambios = () => {
-    setHorarios(horariosEditando);
-    setModalEditar(false);
+  const guardarHorario = async () => {
+    try {
+      await ServicesInicio.actualizarRestaurante(id, editData);
+
+      setRestaurante({
+        ...restaurante,
+        ...editData,
+      });
+
+      setModalEditar(false);
+      setModalCrear(false);
+    } catch (err) {
+      console.error("Error guardando horario:", err);
+    }
   };
 
-  // === ELIMINAR DATOS ===
-  const eliminarDatos = () => {
-    setHorarios({});
-    setModalEliminar(false);
+  const subirFoto = async () => {
+    if (!foto) return;
+
+    const formData = new FormData();
+    formData.append("url_foto", foto);
+    formData.append("descripcion", "prueba");
+    formData.append("restaurante", id);
+
+    try {
+      const res = await ServicesInicio.subirFoto(formData);
+      setRestaurante((prev) => ({ ...prev, foto: res.data.url_foto }));
+
+      setModalFoto(false);
+    } catch (error) {
+      console.error("Error subiendo foto:", error);
+    }
   };
 
-  // === DÍAS PARA MOSTRAR EN EL MODAL ===
-  const diasSemana = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+  if (loading) return <p>Cargando...</p>;
 
   return (
     <div>
-      <div className='Inicio-container'>
-        <div className='Inicio-logo-wrapper'>
-          <img src={LogoTiki} alt="Logo del Restaurante" className='Inicio-logo' />
+      <div className="Inicio-container">
+
+        {/* FOTO */}
+        <div className="Inicio-logo-wrapper">
+          <img
+            src={previewFoto || restaurante.foto || "/no-image.png"}
+            alt="Logo"
+            className="Inicio-logo"
+          />
+          <button className="btn-cambiar-foto" onClick={() => setModalFoto(true)}>
+            Cambiar Foto
+          </button>
         </div>
 
-        <h2 className='Inicio-titulo'>Bienvenido, Administrador</h2>
-        <p className='Inicio-fecha'>{fechaHora}</p>
+        <h2 className="Inicio-titulo">Bienvenido, Administrador</h2>
+        <p className="Inicio-fecha">{fechaHora}</p>
 
-        <div className='Inicio-resumen'>
+        {/* RESUMEN */}
+        <div className="Inicio-resumen">
           <h3>Resumen del Restaurante</h3>
 
           <p>
@@ -83,75 +143,100 @@ function Inicio() {
             </span>
           </p>
 
-          <p><strong>Horario de hoy:</strong></p>
+          <p><strong>Días de operación:</strong> {restaurante.dias_operacion || "No registrado"}</p>
+          <p><strong>Horario:</strong> {restaurante.horario_apertura} - {restaurante.horario_cierre}</p>
 
-          <ul className="Inicio-horario-list">
-            {Object.keys(horarios).length === 0 ? (
-              <p style={{ color: "red" }}>Datos eliminados</p>
-            ) : (
-              diasSemana.map((dia, index) => (
-                <li key={index}>
-                  {dia}: {horarios[index][0]} - {horarios[index][1]}
-                </li>
-              ))
-            )}
-          </ul>
-
-          {/* Botones de acciones */}
           <div className="Inicio-botones">
-            <button className="btn-editar" onClick={() => setModalEditar(true)}>Editar información</button>
-            <button className="btn-eliminar" onClick={() => setModalEliminar(true)}>Eliminar datos</button>
+            <button className="btn-editar" onClick={() => setModalEditar(true)}>Editar Horario</button>
+            <button className="btn-crear" onClick={() => setModalCrear(true)}>Crear Horario</button>
           </div>
         </div>
       </div>
 
-      {/* === MODAL EDITAR === */}
+      {/* MODAL EDITAR */}
       {modalEditar && (
         <div className="modal-overlay">
           <div className="modal-contenido">
-            <h3>Editar Horarios</h3>
+            <h3>Editar Horario</h3>
 
-            {diasSemana.map((dia, i) => (
-              <div key={i} className="modal-item">
-                <label>{dia}</label>
-                <input
-                  type="time"
-                  value={horariosEditando[i][0]}
-                  onChange={(e) => {
-                    const nuevo = { ...horariosEditando };
-                    nuevo[i][0] = e.target.value;
-                    setHorariosEditando(nuevo);
-                  }}
-                />
-                <input
-                  type="time"
-                  value={horariosEditando[i][1]}
-                  onChange={(e) => {
-                    const nuevo = { ...horariosEditando };
-                    nuevo[i][1] = e.target.value;
-                    setHorariosEditando(nuevo);
-                  }}
-                />
-              </div>
-            ))}
+            <label>Días Operación</label>
+            <input
+              type="text"
+              value={editData.dias_operacion}
+              onChange={(e) => setEditData({ ...editData, dias_operacion: e.target.value })}
+            />
 
-            <div className="modal-buttons">
-              <button className="btn-guardar" onClick={guardarCambios}>Guardar</button>
-              <button className="btn-cerrar" onClick={() => setModalEditar(false)}>Cancelar</button>
-            </div>
+            <label>Apertura</label>
+            <input
+              type="time"
+              value={editData.horario_apertura}
+              onChange={(e) => setEditData({ ...editData, horario_apertura: e.target.value })}
+            />
+
+            <label>Cierre</label>
+            <input
+              type="time"
+              value={editData.horario_cierre}
+              onChange={(e) => setEditData({ ...editData, horario_cierre: e.target.value })}
+            />
+
+            <button className="btn-guardar" onClick={guardarHorario}>Guardar</button>
+            <button className="btn-cerrar" onClick={() => setModalEditar(false)}>Cancelar</button>
           </div>
         </div>
       )}
 
-      {/* === MODAL ELIMINAR === */}
-      {modalEliminar && (
+      {/* MODAL CREAR */}
+      {modalCrear && (
         <div className="modal-overlay">
           <div className="modal-contenido">
-            <h3>¿Eliminar toda la información?</h3>
-            <p>Esta acción no se puede deshacer.</p>
+            <h3>Crear Horario</h3>
 
-            <button className="btn-eliminar" onClick={eliminarDatos}>Eliminar</button>
-            <button className="btn-cerrar" onClick={() => setModalEliminar(false)}>Cancelar</button>
+            <label>Días Operación</label>
+            <input
+              type="text"
+              placeholder="Ej: Lunes a Domingo"
+              value={editData.dias_operacion}
+              onChange={(e) => setEditData({ ...editData, dias_operacion: e.target.value })}
+            />
+
+            <label>Apertura</label>
+            <input
+              type="time"
+              value={editData.horario_apertura}
+              onChange={(e) => setEditData({ ...editData, horario_apertura: e.target.value })}
+            />
+
+            <label>Cierre</label>
+            <input
+              type="time"
+              value={editData.horario_cierre}
+              onChange={(e) => setEditData({ ...editData, horario_cierre: e.target.value })}
+            />
+
+            <button className="btn-guardar" onClick={guardarHorario}>Crear</button>
+            <button className="btn-cerrar" onClick={() => setModalCrear(false)}>Cancelar</button>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL FOTO */}
+      {modalFoto && (
+        <div className="modal-overlay">
+          <div className="modal-contenido">
+            <h3>Cambiar Foto</h3>
+
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                setFoto(e.target.files[0]);
+                setPreviewFoto(URL.createObjectURL(e.target.files[0]));
+              }}
+            />
+
+            <button className="btn-guardar" onClick={subirFoto}>Guardar</button>
+            <button className="btn-cerrar" onClick={() => setModalFoto(false)}>Cancelar</button>
           </div>
         </div>
       )}
