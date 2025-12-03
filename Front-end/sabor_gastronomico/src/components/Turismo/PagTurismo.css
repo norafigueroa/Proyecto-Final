@@ -4,12 +4,18 @@
   background: linear-gradient(to bottom, #f8f8f8, #e8e3dc);
   padding: 40px 0 0 0;
   text-align: center;
+  min-height: 100vh;  
+  display: flex;
+  flex-direction: column;
 }
 
 .turismo-page h1 {
   font-size: 3rem;
   color: #333;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
+  margin-top: 0; 
+  padding: 0 20px;  
+  word-wrap: break-word;
 }
 .turismo-page span {
   color: orangered;
@@ -17,7 +23,7 @@
 
 .turismo-page p {
   font-size: 1.5rem;
-  margin-bottom: 35px;
+  margin-bottom: 60px;
 }
 
 .carrusel-container {
@@ -25,6 +31,7 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
+  margin-bottom: 60px;
 }
 
 .btn-scroll {
@@ -90,7 +97,12 @@
 /* 🔹 Responsive */
 @media (max-width: 768px) {
   .turismo-page h1 {
-    font-size: 2rem;
+    font-size: 2rem;  /* ← Reducir más en mobile */
+    padding: 0 15px;
+  }
+
+  .turismo-page p {
+    padding: 0 10px;
   }
 
   .lugar-card {
@@ -102,13 +114,19 @@
   }
 }
 
+@media (max-width: 480px) {
+  .turismo-page h1 {
+    font-size: 1.5rem;  
+  }
+}
+
 .footer-turismo {
   margin-top: 60px;
-  background-color:#243746; /* igual que el de Turismo */
+  background-color:#243746; 
   color: white;
   text-align: center;
   padding: 18px 10px;
-  
+  margin-top: auto; 
   border-top: 3px solid #90e0ef;
   box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
   border-radius: 8px 8px 0 0;
@@ -119,4 +137,51 @@
   letter-spacing: 0.5px;
   font-weight: 500;
   font-size: 20px;
+}
+
+/* ==================== MODAL - ARREGLOS ==================== */
+.pt-modal {
+  background: white;
+  border-radius: 8px;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.pt-modal-contenido {
+  padding: 2rem;
+  padding-top: 1rem; /* ← Reducir padding superior para que no corte */
+}
+
+.pt-modal-contenido h2 {
+  font-size: 2rem;
+  color: #2c3e50;
+  margin: 0 0 1rem 0; /* ← Sin margin-top */
+  padding-top: 0;
+}
+
+.pt-modal-cerrar {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.pt-modal-cerrar:hover {
+  background: white;
+  transform: scale(1.1);
 }

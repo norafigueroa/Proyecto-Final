@@ -13,7 +13,7 @@ export const obtenerSitiosTuristicos = async () => {
 
 export const obtenerSitioTuristicoPorId = async (id) => {
   try {
-    const respuesta = await axiosInstance.get(`lugares-turisticos${id}/`);
+    const respuesta = await axiosInstance.get(`lugares-turisticos/${id}`);
     return respuesta.data;
   } catch (error) {
     console.error('❌ Error al obtener sitio turístico:', error);
@@ -33,7 +33,7 @@ export const crearSitioTuristico = async (datos) => {
 
 export const actualizarSitioTuristico = async (id, datos) => {
   try {
-    const respuesta = await axiosInstance.put(`lugares-turisticos${id}/`, datos);
+    const respuesta = await axiosInstance.put(`lugares-turisticos/${id}`, datos);
     return respuesta.data;
   } catch (error) {
     console.error('❌ Error al actualizar sitio turístico:', error);
@@ -43,7 +43,7 @@ export const actualizarSitioTuristico = async (id, datos) => {
 
 export const actualizarParcialSitioTuristico = async (id, datos) => {
   try {
-    const respuesta = await axiosInstance.patch(`lugares-turisticos${id}/`, datos);
+    const respuesta = await axiosInstance.patch(`lugares-turisticos/${id}`, datos);
     return respuesta.data;
   } catch (error) {
     console.error('❌ Error al actualizar parcialmente sitio turístico:', error);
@@ -53,7 +53,7 @@ export const actualizarParcialSitioTuristico = async (id, datos) => {
 
 export const eliminarSitioTuristico = async (id) => {
   try {
-    await axiosInstance.delete(`lugares-turisticos/${id}/`);
+    await axiosInstance.delete(`lugares-turisticos/${id}`);
     return { mensaje: 'Sitio turístico eliminado correctamente' };
   } catch (error) {
     console.error('❌ Error al eliminar sitio turístico:', error);

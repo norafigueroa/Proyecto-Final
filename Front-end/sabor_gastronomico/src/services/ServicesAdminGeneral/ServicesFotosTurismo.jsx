@@ -23,7 +23,7 @@ export const crearFotoSitio = async (datos) => {
 
 export const eliminarFotoSitio = async (id) => {
   try {
-    await axiosInstance.delete(`fotos-lugares${id}/`);
+    await axiosInstance.delete(`fotos-lugares/${id}`);
     return { mensaje: 'Foto eliminada correctamente' };
   } catch (error) {
     console.error('❌ Error al eliminar foto:', error);
