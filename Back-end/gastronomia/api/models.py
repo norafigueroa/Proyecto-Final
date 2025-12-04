@@ -58,6 +58,30 @@ class Restaurante(models.Model):
     def __str__(self):
         return self.nombre_restaurante
 
+class HorarioRestaurante(models.Model):
+    DIAS_SEMANA = [
+        ('LUN', 'Lunes'),
+        ('MAR', 'Martes'),
+        ('MIE', 'Miércoles'),
+        ('JUE', 'Jueves'),
+        ('VIE', 'Viernes'),
+        ('SAB', 'Sábado'),
+        ('DOM', 'Domingo'),
+    ]
+
+    restaurante = models.ForeignKey(Restaurante, related_name='horarios', on_delete=models.CASCADE)
+    dia = models.CharField(max_length=3, choices=DIAS_SEMANA)
+    abre = models.TimeField(null=True, blank=True)
+    cierra = models.TimeField(null=True, blank=True)
+    cerrado = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('restaurante', 'dia')  # evita duplicar días
+
+    def _str_(self):
+        estado = "Cerrado" if self.cerrado else f"{self.abre} - {self.cierra}"
+        return f"{self.get_dia_display()} | {estado}"        
+
 
 # REDES SOCIALES
 class RedSocial(models.Model):

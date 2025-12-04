@@ -24,6 +24,10 @@ urlpatterns = [
     path('fotos-restaurante', FotoRestauranteListCreateView.as_view(), name="crear y listar fotos de restaurante"),
     path('fotos-restaurante/<int:pk>', FotoRestauranteDetailView.as_view(), name="actualizar y eliminar foto de restaurante"),
 
+    # --- URLs HORARIOS ---
+    path('restaurantes/<int:restaurante_id>/horarios/', HorarioRestauranteListCreateView.as_view(), name='horarios-restaurante'),
+    path('horarios/<int:pk>/', HorarioRestauranteDetailView.as_view(), name='horario-detalle'),
+    
     # Menú y platillos
     path('categorias-menu/', CategoriaMenuListCreateView.as_view(), name="crear y listar categorias de menú"),
     path('categorias-menu/<int:pk>/', CategoriaMenuDetailView.as_view(), name="actualizar y eliminar categoria de menú"),

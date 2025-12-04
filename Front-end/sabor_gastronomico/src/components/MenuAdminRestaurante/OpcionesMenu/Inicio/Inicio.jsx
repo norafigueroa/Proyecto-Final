@@ -16,6 +16,27 @@ function Inicio() {
     foto: "",
   });
 
+  const diasSemana = [
+  "lunes",
+  "martes",
+  "miercoles",
+  "jueves",
+  "viernes",
+  "sabado",
+  "domingo"
+];
+
+  const [horarios, setHorarios] = useState({
+    lunes: { apertura: "", cierre: "", cerrado: false },
+    martes: { apertura: "", cierre: "", cerrado: false },
+    miercoles: { apertura: "", cierre: "", cerrado: false },
+    jueves: { apertura: "", cierre: "", cerrado: false },
+    viernes: { apertura: "", cierre: "", cerrado: false },
+    sabado: { apertura: "", cierre: "", cerrado: false },
+    domingo: { apertura: "", cierre: "", cerrado: false }
+  });
+
+
   // === MODALES ===
   const [modalEditar, setModalEditar] = useState(false);
   const [modalCrear, setModalCrear] = useState(false);
@@ -45,6 +66,10 @@ function Inicio() {
         console.log(res);
         
         setRestaurante(res.data);
+
+        if (res.data.horarios) {
+          setHorarios(res.data.horarios);
+        }
 
         setEditData({
           horario_apertura: res.data.horario_apertura || "",
@@ -77,21 +102,49 @@ function Inicio() {
 
   const estadoActual = verificarEstado();
 
-  const guardarHorario = async () => {
-    try {
-      await ServicesInicio.actualizarRestaurante(id, editData);
-
-      setRestaurante({
-        ...restaurante,
-        ...editData,
-      });
-
-      setModalEditar(false);
-      setModalCrear(false);
-    } catch (err) {
-      console.error("Error guardando horario:", err);
-    }
+  const toggleCerrado = (dia) => {
+    setHorarios((prev) => ({
+      ...prev,
+      [dia]: {
+        ...prev[dia],
+        cerrado: !prev[dia].cerrado,
+        apertura: !prev[dia].cerrado ? "" : prev[dia].apertura,
+        cierre: !prev[dia].cerrado ? "" : prev[dia].cierre
+      }
+    }));
   };
+
+  const validarHoras = (apertura, cierre) => {
+    if (!apertura || !cierre) return true;
+    return apertura < cierre;
+  };
+
+  const guardarHorarios = async () => {
+  // Validar horas
+  for (const dia of diasSemana) {
+    const { apertura, cierre, cerrado } = horarios[dia];
+
+    if (!cerrado && !validarHoras(apertura, cierre)) {
+      alert(`La hora de cierre debe ser mayor a la de apertura en ${dia}`);
+      return;
+    }
+  }
+
+  try {
+    await ServicesInicio.actualizarRestaurante(id, { horarios });
+
+    setRestaurante({
+      ...restaurante,
+      ...editData,
+    });
+
+    setModalEditar(false);
+    setModalCrear(false);
+  } catch (err) {
+    console.error("Error guardando horarios:", err);
+  }
+};
+
 
   const subirFoto = async () => {
     if (!foto) return;
@@ -143,8 +196,18 @@ function Inicio() {
             </span>
           </p>
 
-          <p><strong>Días de operación:</strong> {restaurante.dias_operacion || "No registrado"}</p>
-          <p><strong>Horario:</strong> {restaurante.horario_apertura} - {restaurante.horario_cierre}</p>
+          <h4>Horarios por Día</h4>
+
+          <div className="lista-horarios">
+            {diasSemana.map((dia) => (
+              <p key={dia}>
+                <strong>{dia.charAt(0).toUpperCase() + dia.slice(1)}:</strong>{" "}
+                {horarios[dia].apertura && horarios[dia].cierre
+                  ? `${horarios[dia].apertura} - ${horarios[dia].cierre}`
+                  : "Sin horario"}
+              </p>
+            ))}
+          </div>
 
           <div className="Inicio-botones">
             <button className="btn-editar" onClick={() => setModalEditar(true)}>Editar Horario</button>
@@ -157,31 +220,49 @@ function Inicio() {
       {modalEditar && (
         <div className="modal-overlay">
           <div className="modal-contenido">
-            <h3>Editar Horario</h3>
+            <h3>Editar Horarios</h3>
 
-            <label>Días Operación</label>
-            <input
-              type="text"
-              value={editData.dias_operacion}
-              onChange={(e) => setEditData({ ...editData, dias_operacion: e.target.value })}
-            />
+            {diasSemana.map((dia) => (
+              <div key={dia} className="grupo-dia">
+                <label><strong>{dia.toUpperCase()}</strong></label>
 
-            <label>Apertura</label>
-            <input
-              type="time"
-              value={editData.horario_apertura}
-              onChange={(e) => setEditData({ ...editData, horario_apertura: e.target.value })}
-            />
+                <label>Apertura</label>
+                <input
+                  type="time"
+                  disabled={horarios[dia].cerrado}
+                  value={horarios[dia].apertura}
+                  onChange={(e) =>
+                    setHorarios({
+                      ...horarios,
+                      [dia]: { ...horarios[dia], apertura: e.target.value }
+                    })
+                  }
+                />
 
-            <label>Cierre</label>
-            <input
-              type="time"
-              value={editData.horario_cierre}
-              onChange={(e) => setEditData({ ...editData, horario_cierre: e.target.value })}
-            />
+                <label>Cierre</label>
+                <input
+                  type="time"
+                  disabled={horarios[dia].cerrado}
+                  value={horarios[dia].cierre}
+                  onChange={(e) =>
+                    setHorarios({
+                      ...horarios,
+                      [dia]: { ...horarios[dia], cierre: e.target.value }
+                    })
+                  }
+                />
 
-            <button className="btn-guardar" onClick={guardarHorario}>Guardar</button>
-            <button className="btn-cerrar" onClick={() => setModalEditar(false)}>Cancelar</button>
+                <hr />
+              </div>
+            ))}
+
+
+            <button className="btn-guardar" onClick={guardarHorarios}>
+              Guardar Cambios
+            </button>
+            <button className="btn-cerrar" onClick={() => setModalEditar(false)}>
+              Cancelar
+            </button>
           </div>
         </div>
       )}
@@ -190,36 +271,52 @@ function Inicio() {
       {modalCrear && (
         <div className="modal-overlay">
           <div className="modal-contenido">
-            <h3>Crear Horario</h3>
+            <h3>Crear Horarios</h3>
 
-            <label>Días Operación</label>
-            <input
-              type="text"
-              placeholder="Ej: Lunes a Domingo"
-              value={editData.dias_operacion}
-              onChange={(e) => setEditData({ ...editData, dias_operacion: e.target.value })}
-            />
+            {diasSemana.map((dia) => (
+              <div key={dia} className="grupo-dia">
+                <label><strong>{dia.toUpperCase()}</strong></label>
 
-            <label>Apertura</label>
-            <input
-              type="time"
-              value={editData.horario_apertura}
-              onChange={(e) => setEditData({ ...editData, horario_apertura: e.target.value })}
-            />
+                <label>Apertura</label>
+                <input
+                  type="time"
+                  disabled={horarios[dia].cerrado}
+                  value={horarios[dia].apertura}
+                  onChange={(e) =>
+                    setHorarios({
+                      ...horarios,
+                      [dia]: { ...horarios[dia], apertura: e.target.value }
+                    })
+                  }
+                />
 
-            <label>Cierre</label>
-            <input
-              type="time"
-              value={editData.horario_cierre}
-              onChange={(e) => setEditData({ ...editData, horario_cierre: e.target.value })}
-            />
+                <label>Cierre</label>
+                <input
+                  type="time"
+                  disabled={horarios[dia].cerrado}
+                  value={horarios[dia].cierre}
+                  onChange={(e) =>
+                    setHorarios({
+                      ...horarios,
+                      [dia]: { ...horarios[dia], cierre: e.target.value }
+                    })
+                  }
+                />
 
-            <button className="btn-guardar" onClick={guardarHorario}>Crear</button>
-            <button className="btn-cerrar" onClick={() => setModalCrear(false)}>Cancelar</button>
+                <hr />
+              </div>
+            ))}
+
+
+            <button className="btn-guardar" onClick={guardarHorarios}>
+              Crear Horarios
+            </button>
+            <button className="btn-cerrar" onClick={() => setModalCrear(false)}>
+              Cancelar
+            </button>
           </div>
         </div>
       )}
-
       {/* MODAL FOTO */}
       {modalFoto && (
         <div className="modal-overlay">

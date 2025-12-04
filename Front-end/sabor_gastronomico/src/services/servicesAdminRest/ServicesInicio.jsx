@@ -6,7 +6,7 @@ export const ServicesInicio = {
   },
 
   actualizarRestaurante(id, datos) {
-    return axios.put(`/restaurantes/${id}`, datos);
+    return axios.patch(`/restaurantes/${id}`, datos);
   },
 
   subirFoto(formData) {

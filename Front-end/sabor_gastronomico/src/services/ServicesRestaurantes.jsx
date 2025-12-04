@@ -68,8 +68,6 @@ async function updateRestaurante(id, restauranteData) {
 }
 
 async function patchRestaurante(id, formData) {
-    console.log(formData);
-    
     try {
         const response = await fetch(`${API_URL}${id}`, {
             method: 'PATCH',

@@ -93,6 +93,12 @@ class RestauranteSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("La calificación debe estar entre 0 y 5.")
         return value
 
+class HorarioRestauranteSerializer(serializers.ModelSerializer):
+    dia_display = serializers.CharField(source='get_dia_display', read_only=True)
+
+    class Meta:
+        model = HorarioRestaurante
+        fields = ['id', 'restaurante', 'dia', 'dia_display', 'abre', 'cierra', 'cerrado']
 
 class CategoriaRestauranteSerializer(serializers.ModelSerializer):
     class Meta:

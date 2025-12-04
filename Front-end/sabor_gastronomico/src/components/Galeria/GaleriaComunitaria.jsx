@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import "./GaleriaComunitaria.css";
 
-import Letras from "../../assets/LetrasGaleria.jpg";
-import Anfiteatro from "../../assets/AnfiteatroGaleria.jpg";
-import Faro from "../../assets/FaroGaleria.jpg";
 
 function GaleriaComunitaria() {
   const [isModalOpen, setIsModalOpen] = useState(false);
