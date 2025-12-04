@@ -4,10 +4,33 @@ import axiosInstance from "../AxiosConfig";
 export const obtenerFotosSitio = async (sitioId) => {
   try {
     const respuesta = await axiosInstance.get('fotos-lugares');
-    return respuesta.data.filter(foto => foto.lugar === sitioId);
+    
+    // Manejar diferentes estructuras de respuesta
+    let fotos = [];
+    
+    if (Array.isArray(respuesta.data)) {
+      // Si respuesta.data es un array directo
+      fotos = respuesta.data;
+    } else if (respuesta.data.results && Array.isArray(respuesta.data.results)) {
+      // Si viene en {results: [...]}
+      fotos = respuesta.data.results;
+    } else if (respuesta.data.data && Array.isArray(respuesta.data.data)) {
+      // Si viene en {data: [...]}
+      fotos = respuesta.data.data;
+    } else {
+      // Si no es un array, retornar vacío
+      console.warn('⚠️ Estructura de respuesta no reconocida:', respuesta.data);
+      fotos = [];
+    }
+    
+    // Filtrar por sitio y loguear
+    const fotosFiltradas = fotos.filter(foto => foto.lugar === sitioId);
+    console.log(`✅ Fotos obtenidas para sitio ${sitioId}:`, fotosFiltradas);
+    
+    return fotosFiltradas;
   } catch (error) {
     console.error('❌ Error al obtener fotos:', error);
-    throw error;
+    return []; // Retornar array vacío en caso de error
   }
 };
 
