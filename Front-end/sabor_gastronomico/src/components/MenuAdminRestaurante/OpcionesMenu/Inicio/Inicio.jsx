@@ -26,7 +26,7 @@ function Inicio() {
   "domingo"
 ];
 
-  const [horarios, setHorarios] = useState({
+  const [horario, setHorario] = useState({
     lunes: { apertura: "", cierre: "", cerrado: false },
     martes: { apertura: "", cierre: "", cerrado: false },
     miercoles: { apertura: "", cierre: "", cerrado: false },
@@ -63,19 +63,14 @@ function Inicio() {
     const fetchData = async () => {
       try {
         const res = await ServicesInicio.obtenerRestaurante(id);
+        const horarioRes = await ServicesInicio.obtenerHorario(id);
+
+
+
+        console.log(horarioRes.data.horario);
         console.log(res);
-        
+        setHorario(horarioRes.data.horario)
         setRestaurante(res.data);
-
-        if (res.data.horarios) {
-          setHorarios(res.data.horarios);
-        }
-
-        setEditData({
-          horario_apertura: res.data.horario_apertura || "",
-          horario_cierre: res.data.horario_cierre || "",
-          dias_operacion: res.data.dias_operacion || "",
-        });
       } catch (err) {
         console.error("Error cargando restaurante:", err);
       }
@@ -103,7 +98,7 @@ function Inicio() {
   const estadoActual = verificarEstado();
 
   const toggleCerrado = (dia) => {
-    setHorarios((prev) => ({
+    setHorario((prev) => ({
       ...prev,
       [dia]: {
         ...prev[dia],
@@ -120,9 +115,11 @@ function Inicio() {
   };
 
   const guardarHorarios = async () => {
+
+  
   // Validar horas
   for (const dia of diasSemana) {
-    const { apertura, cierre, cerrado } = horarios[dia];
+    const { apertura, cierre, cerrado } = horario[dia];
 
     if (!cerrado && !validarHoras(apertura, cierre)) {
       alert(`La hora de cierre debe ser mayor a la de apertura en ${dia}`);
@@ -131,7 +128,7 @@ function Inicio() {
   }
 
   try {
-    await ServicesInicio.actualizarRestaurante(id, { horarios });
+    await ServicesInicio.actualizarRestaurante(id, { horario });
 
     setRestaurante({
       ...restaurante,
@@ -202,8 +199,8 @@ function Inicio() {
             {diasSemana.map((dia) => (
               <p key={dia}>
                 <strong>{dia.charAt(0).toUpperCase() + dia.slice(1)}:</strong>{" "}
-                {horarios[dia].apertura && horarios[dia].cierre
-                  ? `${horarios[dia].apertura} - ${horarios[dia].cierre}`
+                {horario[dia].apertura && horario[dia].cierre
+                  ? `${horario[dia].apertura} - ${horario[dia].cierre}`
                   : "Sin horario"}
               </p>
             ))}
@@ -225,6 +222,15 @@ function Inicio() {
             {diasSemana.map((dia) => (
               <div key={dia} className="grupo-dia">
                 <label><strong>{dia.toUpperCase()}</strong></label>
+
+                {/* BOTÓN PARA CERRAR/ABRIR EL DÍA */}
+                <button
+                  className="btn-cerrar-dia"
+                  onClick={() => toggleCerrado(dia)}
+                  style={{ marginBottom: "8px" }}
+                >
+                  {horarios[dia].cerrado ? "Abrir este día" : "Cerrar este día"}
+                </button>
 
                 <label>Apertura</label>
                 <input
@@ -276,6 +282,15 @@ function Inicio() {
             {diasSemana.map((dia) => (
               <div key={dia} className="grupo-dia">
                 <label><strong>{dia.toUpperCase()}</strong></label>
+
+                {/* BOTÓN PARA CERRAR/ABRIR EL DÍA */}
+                <button
+                  className="btn-cerrar-dia"
+                  onClick={() => toggleCerrado(dia)}
+                  style={{ marginBottom: "8px" }}
+                >
+                  {horarios[dia].cerrado ? "Abrir este día" : "Cerrar este día"}
+                </button>
 
                 <label>Apertura</label>
                 <input

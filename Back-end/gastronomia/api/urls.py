@@ -25,8 +25,11 @@ urlpatterns = [
     path('fotos-restaurante/<int:pk>', FotoRestauranteDetailView.as_view(), name="actualizar y eliminar foto de restaurante"),
 
     # --- URLs HORARIOS ---
-    path('restaurantes/<int:restaurante_id>/horarios/', HorarioRestauranteListCreateView.as_view(), name='horarios-restaurante'),
-    path('horarios/<int:pk>/', HorarioRestauranteDetailView.as_view(), name='horario-detalle'),
+    # path('restaurantes/<int:restaurante_id>/horarios/', HorarioRestauranteListCreateView.as_view(), name='horarios-restaurante'),
+    # path('horarios/<int:pk>/', HorarioRestauranteDetailView.as_view(), name='horario-detalle'),
+
+    path('restaurantes/horarios/', HorarioListCreateView.as_view(), name='horarios-restaurante'),
+    path('restaurantes/<int:restaurante_id>/horarios/', HorarioDetailView.as_view(), name='horario'),
     
     # Menú y platillos
     path('categorias-menu/', CategoriaMenuListCreateView.as_view(), name="crear y listar categorias de menú"),

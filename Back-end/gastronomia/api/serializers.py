@@ -94,11 +94,9 @@ class RestauranteSerializer(serializers.ModelSerializer):
         return value
 
 class HorarioRestauranteSerializer(serializers.ModelSerializer):
-    dia_display = serializers.CharField(source='get_dia_display', read_only=True)
-
     class Meta:
         model = HorarioRestaurante
-        fields = ['id', 'restaurante', 'dia', 'dia_display', 'abre', 'cierra', 'cerrado']
+        fields = ['id', 'restaurante', 'horario']
 
 class CategoriaRestauranteSerializer(serializers.ModelSerializer):
     class Meta:
