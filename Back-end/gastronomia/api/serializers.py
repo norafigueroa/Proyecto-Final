@@ -400,6 +400,7 @@ class RestauranteRegistrationSerializer(serializers.Serializer):
         )
         
         #Devolver la instancia del Restaurante y el Usuario asociado
+        #Devolver la instancia del Restaurante y el Usuario
         return {'user': user, 'restaurante': restaurante}
     
  # CONFIGURACIÓN
