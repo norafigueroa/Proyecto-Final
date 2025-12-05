@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Swal from 'sweetalert2';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import {
   obtenerSitiosTuristicos,
   crearSitioTuristico,
@@ -12,6 +15,16 @@ import {
   eliminarFotoSitio,
 } from '../../../../services/ServicesAdminGeneral/ServicesFotosTurismo';
 import './SitiosTuristicosGeneral.css';
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
 
 function SitiosTuristicosGeneral() {
   const [sitios, setSitios] = useState([]);
@@ -34,7 +47,11 @@ function SitiosTuristicosGeneral() {
   });
 
   const [fotos, setFotos] = useState([]);
+  const [fotosTemporales, setFotosTemporales] = useState([]); // Para fotos antes de crear
   const [sitioSeleccionado, setSitioSeleccionado] = useState(null);
+  const [mapAbierto, setMapAbierto] = useState(false);
+  const searchInputRef = useRef(null);
+  const [sugerencias, setSugerencias] = useState([]);
 
   useEffect(() => {
     cargarDatos();
@@ -48,7 +65,9 @@ function SitiosTuristicosGeneral() {
     try {
       setCargando(true);
       const sitiosData = await obtenerSitiosTuristicos();
-      const sitiosArray = Array.isArray(sitiosData) ? sitiosData : sitiosData.results || [];
+      const sitiosArray = Array.isArray(sitiosData)
+        ? sitiosData
+        : sitiosData.results || [];
       setSitios(sitiosArray);
     } catch (error) {
       console.error('Error al cargar datos:', error);
@@ -60,14 +79,13 @@ function SitiosTuristicosGeneral() {
 
   const filtrarSitios = () => {
     let filtrados = sitios;
-
     if (busqueda) {
-      filtrados = filtrados.filter(s =>
-        s.nombre_lugar.toLowerCase().includes(busqueda.toLowerCase()) ||
-        s.descripcion.toLowerCase().includes(busqueda.toLowerCase())
+      filtrados = filtrados.filter(
+        (s) =>
+          s.nombre_lugar.toLowerCase().includes(busqueda.toLowerCase()) ||
+          s.descripcion.toLowerCase().includes(busqueda.toLowerCase())
       );
     }
-
     setSitiosFiltrados(filtrados);
     setPaginaActual(1);
   };
@@ -77,7 +95,6 @@ function SitiosTuristicosGeneral() {
     if (!files || files.length === 0) return;
 
     if (tipo === 'principal') {
-      // Principal: solo una imagen
       const file = files[0];
       setCargandoImagen(true);
       const formData = new FormData();
@@ -85,17 +102,13 @@ function SitiosTuristicosGeneral() {
       formData.append('upload_preset', 'el_sabor_de_la_perla');
 
       try {
-        const response = await fetch('https://api.cloudinary.com/v1_1/dujs1kx4w/image/upload', {
-          method: 'POST',
-          body: formData,
-        });
-
+        const response = await fetch(
+          'https://api.cloudinary.com/v1_1/dujs1kx4w/image/upload',
+          { method: 'POST', body: formData }
+        );
         const data = await response.json();
         if (data.secure_url) {
-          setFormulario({
-            ...formulario,
-            imagen_principal: data.secure_url,
-          });
+          setFormulario({ ...formulario, imagen_principal: data.secure_url });
           Swal.fire('Éxito', 'Imagen subida correctamente', 'success');
         }
       } catch (error) {
@@ -105,9 +118,10 @@ function SitiosTuristicosGeneral() {
         setCargandoImagen(false);
       }
     } else {
-      // Fotos: múltiples imágenes
+      // Fotos adicionales
       setCargandoFoto(true);
       let fotosSubidas = 0;
+      let fotosNuevas = [];
 
       Array.from(files).forEach(async (file) => {
         const formData = new FormData();
@@ -115,24 +129,37 @@ function SitiosTuristicosGeneral() {
         formData.append('upload_preset', 'el_sabor_de_la_perla');
 
         try {
-          const response = await fetch('https://api.cloudinary.com/v1_1/dujs1kx4w/image/upload', {
-            method: 'POST',
-            body: formData,
-          });
-
+          const response = await fetch(
+            'https://api.cloudinary.com/v1_1/dujs1kx4w/image/upload',
+            { method: 'POST', body: formData }
+          );
           const data = await response.json();
-          if (data.secure_url && sitioSeleccionado) {
-            const nuevaFoto = {
-              lugar: sitioSeleccionado.id,
-              url_foto: data.secure_url,
-              descripcion: '',
-            };
-            await crearFotoSitio(nuevaFoto);
+          if (data.secure_url) {
+            fotosNuevas.push(data.secure_url);
             fotosSubidas++;
 
+            if (editando) {
+              // Si estamos editando, guardar en BD
+              const nuevaFoto = {
+                lugar: sitioSeleccionado.id,
+                url_foto: data.secure_url,
+                descripcion: '',
+              };
+              await crearFotoSitio(nuevaFoto);
+            } else {
+              // Si estamos creando, guardar temporalmente
+              setFotosTemporales((prev) => [...prev, data.secure_url]);
+            }
+
             if (fotosSubidas === files.length) {
-              await cargarFotosSitio(sitioSeleccionado.id);
-              Swal.fire('Éxito', `${fotosSubidas} foto(s) subida(s) correctamente`, 'success');
+              if (editando) {
+                await cargarFotosSitio(sitioSeleccionado.id);
+              }
+              Swal.fire(
+                'Éxito',
+                `${fotosSubidas} foto(s) subida(s) correctamente`,
+                'success'
+              );
               setCargandoFoto(false);
             }
           }
@@ -148,7 +175,17 @@ function SitiosTuristicosGeneral() {
   const cargarFotosSitio = async (sitioId) => {
     try {
       const fotosData = await obtenerFotosSitio(sitioId);
-      setFotos(Array.isArray(fotosData) ? fotosData : []);
+      let fotosArray = Array.isArray(fotosData) ? fotosData : [];
+      
+      // Limpiar URLs de fotos
+      fotosArray = fotosArray.map(foto => ({
+        ...foto,
+        url_foto: foto.url_foto?.includes('image/upload/') 
+          ? foto.url_foto.replace('image/upload/', '') 
+          : foto.url_foto
+      }));
+      
+      setFotos(fotosArray);
     } catch (error) {
       console.error('Error al cargar fotos:', error);
       setFotos([]);
@@ -167,6 +204,7 @@ function SitiosTuristicosGeneral() {
         imagen_principal: sitio.imagen_principal || '',
       });
       await cargarFotosSitio(sitio.id);
+      setFotosTemporales([]);
     } else {
       setEditando(null);
       setSitioSeleccionado(null);
@@ -178,7 +216,9 @@ function SitiosTuristicosGeneral() {
         imagen_principal: '',
       });
       setFotos([]);
+      setFotosTemporales([]);
     }
+    setMapAbierto(false);
     setModalAbierto(true);
   };
 
@@ -187,11 +227,97 @@ function SitiosTuristicosGeneral() {
     setEditando(null);
     setSitioSeleccionado(null);
     setFotos([]);
+    setFotosTemporales([]);
+    setMapAbierto(false);
   };
 
   const handleCambioFormulario = (e) => {
     const { name, value } = e.target;
     setFormulario({ ...formulario, [name]: value });
+  };
+
+  function SelectorMapa({ lat, lng }) {
+    const [position, setPosition] = useState(
+      lat && lng ? [lat, lng] : [9.934739, -84.087502]
+    );
+
+    useMapEvents({
+      click(e) {
+        setPosition([e.latlng.lat, e.latlng.lng]);
+        setFormulario((prev) => ({
+          ...prev,
+          latitud: e.latlng.lat.toFixed(6),
+          longitud: e.latlng.lng.toFixed(6),
+        }));
+      },
+    });
+
+    return <Marker position={position} />;
+  }
+
+  const buscarLugar = async () => {
+    const nombre = searchInputRef.current?.value;
+    if (!nombre) {
+      Swal.fire('Error', 'Por favor escribe un nombre de lugar', 'error');
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(nombre)}`
+      );
+      const data = await res.json();
+      if (data && data.length > 0) {
+        const lugar = data[0];
+        const lat = parseFloat(lugar.lat).toFixed(6);
+        const lon = parseFloat(lugar.lon).toFixed(6);
+        setFormulario((prev) => ({
+          ...prev,
+          latitud: lat,
+          longitud: lon,
+        }));
+        setSugerencias([]);
+        searchInputRef.current.value = '';
+        Swal.fire('Éxito', `Ubicación encontrada: ${lugar.name}`, 'success');
+      } else {
+        Swal.fire('No encontrado', 'No se encontró el lugar buscado', 'info');
+      }
+    } catch (error) {
+      console.error('Error buscando lugar:', error);
+      Swal.fire('Error', 'No se pudo buscar el lugar', 'error');
+    }
+  };
+
+  const handleBuscarAutocomplete = async (valor) => {
+    searchInputRef.current.value = valor;
+    
+    if (valor.length < 3) {
+      setSugerencias([]);
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(valor)}&limit=5`
+      );
+      const data = await res.json();
+      setSugerencias(data || []);
+    } catch (error) {
+      console.error('Error en autocomplete:', error);
+      setSugerencias([]);
+    }
+  };
+
+  const seleccionarSugerencia = (lugar) => {
+    const lat = parseFloat(lugar.lat).toFixed(6);
+    const lon = parseFloat(lugar.lon).toFixed(6);
+    setFormulario((prev) => ({
+      ...prev,
+      latitud: lat,
+      longitud: lon,
+    }));
+    setSugerencias([]);
+    searchInputRef.current.value = lugar.name || lugar.display_name;
   };
 
   const handleGuardar = async () => {
@@ -211,16 +337,32 @@ function SitiosTuristicosGeneral() {
 
       if (editando) {
         await actualizarParcialSitioTuristico(editando.id, datos);
-        await Swal.fire('Éxito', 'Sitio turístico actualizado correctamente', 'success');
+        await Swal.fire(
+          'Éxito',
+          'Sitio turístico actualizado correctamente',
+          'success'
+        );
       } else {
-        await crearSitioTuristico(datos);
+        const nuevoSitio = await crearSitioTuristico(datos);
+        
+        // Si hay fotos temporales, guardarlas ahora
+        if (fotosTemporales.length > 0 && nuevoSitio.id) {
+          for (const fotoUrl of fotosTemporales) {
+            await crearFotoSitio({
+              lugar: nuevoSitio.id,
+              url_foto: fotoUrl,
+              descripcion: '',
+            });
+          }
+        }
+
         await Swal.fire('Éxito', 'Sitio turístico creado correctamente', 'success');
       }
 
       handleCerrarModal();
       cargarDatos();
     } catch (error) {
-      console.error('Error al guardar:', error);
+      console.error('Error:', error);
       Swal.fire('Error', 'No se pudo guardar el sitio turístico', 'error');
     }
   };
@@ -238,7 +380,11 @@ function SitiosTuristicosGeneral() {
     if (resultado.isConfirmed) {
       try {
         await eliminarSitioTuristico(id);
-        await Swal.fire('Éxito', 'Sitio turístico eliminado correctamente', 'success');
+        await Swal.fire(
+          'Éxito',
+          'Sitio turístico eliminado correctamente',
+          'success'
+        );
         cargarDatos();
       } catch (error) {
         console.error('Error al eliminar:', error);
@@ -269,6 +415,10 @@ function SitiosTuristicosGeneral() {
         Swal.fire('Error', 'No se pudo eliminar la foto', 'error');
       }
     }
+  };
+
+  const handleEliminarFotoTemporal = (index) => {
+    setFotosTemporales((prev) => prev.filter((_, i) => i !== index));
   };
 
   const indiceInicio = (paginaActual - 1) * itemsPorPagina;
@@ -316,10 +466,9 @@ function SitiosTuristicosGeneral() {
                   <td>{sitio.nombre_lugar}</td>
                   <td>{sitio.descripcion || '-'}</td>
                   <td>
-                    {sitio.latitud && sitio.longitud 
+                    {sitio.latitud && sitio.longitud
                       ? `${sitio.latitud}, ${sitio.longitud}`
-                      : '-'
-                    }
+                      : '-'}
                   </td>
                   <td className="stg-acciones-unico">
                     <button
@@ -352,11 +501,19 @@ function SitiosTuristicosGeneral() {
 
       {totalPaginas > 1 && (
         <div className="stg-paginacion-unico">
-          <button disabled={paginaActual === 1} onClick={() => setPaginaActual(paginaActual - 1)}>
+          <button
+            disabled={paginaActual === 1}
+            onClick={() => setPaginaActual(paginaActual - 1)}
+          >
             ← Anterior
           </button>
-          <span>Página {paginaActual} de {totalPaginas}</span>
-          <button disabled={paginaActual === totalPaginas} onClick={() => setPaginaActual(paginaActual + 1)}>
+          <span>
+            Página {paginaActual} de {totalPaginas}
+          </span>
+          <button
+            disabled={paginaActual === totalPaginas}
+            onClick={() => setPaginaActual(paginaActual + 1)}
+          >
             Siguiente →
           </button>
         </div>
@@ -368,7 +525,9 @@ function SitiosTuristicosGeneral() {
           <div className="stg-modal-unico" onClick={(e) => e.stopPropagation()}>
             <div className="stg-modal-header-unico">
               <h3>{editando ? 'Editar Sitio Turístico' : 'Nuevo Sitio Turístico'}</h3>
-              <button className="stg-modal-cerrar-unico" onClick={handleCerrarModal}>✕</button>
+              <button className="stg-modal-cerrar-unico" onClick={handleCerrarModal}>
+                ✕
+              </button>
             </div>
 
             <div className="stg-modal-contenido-unico">
@@ -394,30 +553,94 @@ function SitiosTuristicosGeneral() {
                 />
               </div>
 
-              <div className="stg-form-fila-unico">
-                <div className="stg-form-grupo-unico">
-                  <label>Latitud</label>
-                  <input
-                    type="number"
-                    name="latitud"
-                    value={formulario.latitud}
-                    onChange={handleCambioFormulario}
-                    placeholder="Latitud"
-                    step="0.000001"
-                  />
-                </div>
-                <div className="stg-form-grupo-unico">
-                  <label>Longitud</label>
-                  <input
-                    type="number"
-                    name="longitud"
-                    value={formulario.longitud}
-                    onChange={handleCambioFormulario}
-                    placeholder="Longitud"
-                    step="0.000001"
-                  />
-                </div>
+              <div className="stg-form-grupo-unico">
+                <button
+                  type="button"
+                  className="stg-btn-nuevo-unico"
+                  onClick={() => setMapAbierto(!mapAbierto)}
+                >
+                  {mapAbierto ? 'Cerrar mapa' : 'Seleccionar en mapa'}
+                </button>
               </div>
+
+              {mapAbierto && (
+                <>
+                  <div className="stg-form-grupo-unico" style={{ zIndex: 1005, position: 'relative' }}>
+                    <label>Buscar Lugar</label>
+                    <div style={{ display: 'flex', gap: '0.5rem', position: 'relative', zIndex: 1005 }}>
+                      <div style={{ flex: 1, position: 'relative', zIndex: 1005 }}>
+                        <input
+                          type="text"
+                          ref={searchInputRef}
+                          placeholder="Ej: Playa Doña Ana, Costa Rica"
+                          className="stg-input-buscar-unico"
+                          onChange={(e) => handleBuscarAutocomplete(e.target.value)}
+                          onKeyPress={(e) => e.key === 'Enter' && buscarLugar()}
+                          style={{ width: '100%' }}
+                        />
+                        
+                        {sugerencias.length > 0 && (
+                          <div style={{
+                            position: 'fixed',
+                            background: 'white',
+                            border: '1px solid #ddd',
+                            borderRadius: '4px',
+                            maxHeight: '200px',
+                            overflowY: 'auto',
+                            zIndex: 9999,
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                            minWidth: '300px'
+                          }}>
+                            {sugerencias.map((lugar, idx) => (
+                              <div
+                                key={idx}
+                                onClick={() => seleccionarSugerencia(lugar)}
+                                style={{
+                                  padding: '10px',
+                                  borderBottom: '1px solid #eee',
+                                  cursor: 'pointer',
+                                  fontSize: '0.9rem',
+                                  color: '#333'
+                                }}
+                                onMouseEnter={(e) => e.target.style.backgroundColor = '#f0f0f0'}
+                                onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
+                              >
+                                {lugar.name || lugar.display_name}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        className="stg-btn-nuevo-unico"
+                        onClick={buscarLugar}
+                        style={{ zIndex: 1005 }}
+                      >
+                        Buscar
+                      </button>
+                    </div>
+                  </div>
+
+                  <div style={{ height: '300px', marginBottom: '1rem', position: 'relative', zIndex: 1 }}>
+                    <MapContainer
+                      center={
+                        formulario.latitud && formulario.longitud
+                          ? [formulario.latitud, formulario.longitud]
+                          : [9.934739, -84.087502]
+                      }
+                      zoom={13}
+                      style={{ height: '100%', width: '100%' }}
+                    >
+                      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                      <SelectorMapa
+                        lat={formulario.latitud}
+                        lng={formulario.longitud}
+                      />
+                    </MapContainer>
+                  </div>
+                </>
+              )}
 
               <div className="stg-form-grupo-unico">
                 <label>Imagen Principal</label>
@@ -433,50 +656,66 @@ function SitiosTuristicosGeneral() {
                   disabled={cargandoImagen}
                   className="stg-input-file-unico"
                 />
-                {cargandoImagen && <small style={{color: '#1a4d6d'}}>Subiendo imagen...</small>}
+                {cargandoImagen && (
+                  <small style={{ color: '#1a4d6d' }}>Subiendo imagen...</small>
+                )}
               </div>
 
-              {editando && (
-                <div className="stg-fotos-seccion-unico">
-                  <h4>Fotos del Sitio</h4>
-                  
-                  <div className="stg-form-grupo-unico">
-                    <label>Agregar Nueva Foto</label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={(e) => handleSubirImagen(e, 'foto')}
-                      disabled={cargandoFoto}
-                      className="stg-input-file-unico"
-                    />
-                    {cargandoFoto && <small style={{color: '#1a4d6d'}}>Subiendo foto(s)...</small>}
-                  </div>
+              <div className="stg-fotos-seccion-unico">
+                <h4>Fotos Adicionales (Galería)</h4>
 
-                  {fotos.length > 0 ? (
-                    <div className="stg-galeria-fotos-unico">
-                      {fotos.map((foto) => (
-                        <div key={foto.id} className="stg-foto-item-unico">
-                          <img src={foto.url_foto} alt="Foto del sitio" />
-                          <button
-                            className="stg-btn-eliminar-foto-unico"
-                            onClick={() => handleEliminarFoto(foto.id)}
-                            title="Eliminar foto"
-                          >
-                            🗑️
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p style={{textAlign: 'center', color: '#999'}}>Sin fotos agregadas</p>
+                <div className="stg-form-grupo-unico">
+                  <label>Agregar Foto</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(e) => handleSubirImagen(e, 'foto')}
+                    disabled={cargandoFoto}
+                    className="stg-input-file-unico"
+                  />
+                  {cargandoFoto && (
+                    <small style={{ color: '#1a4d6d' }}>Subiendo foto(s)...</small>
                   )}
                 </div>
-              )}
+
+                {fotos.length > 0 || fotosTemporales.length > 0 ? (
+                  <div className="stg-galeria-fotos-unico">
+                    {fotos.map((foto) => (
+                      <div key={foto.id} className="stg-foto-item-unico">
+                        <img src={foto.url_foto} alt="Foto del sitio" />
+                        <button
+                          className="stg-btn-eliminar-foto-unico"
+                          onClick={() => handleEliminarFoto(foto.id)}
+                          title="Eliminar foto"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    ))}
+                    {fotosTemporales.map((foto, index) => (
+                      <div key={`temp-${index}`} className="stg-foto-item-unico">
+                        <img src={foto} alt="Foto temporal" />
+                        <button
+                          className="stg-btn-eliminar-foto-unico"
+                          onClick={() => handleEliminarFotoTemporal(index)}
+                          title="Eliminar foto"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p style={{ textAlign: 'center', color: '#999' }}>Sin fotos agregadas</p>
+                )}
+              </div>
             </div>
 
             <div className="stg-modal-footer-unico">
-              <button className="stg-btn-cancelar-unico" onClick={handleCerrarModal}>Cancelar</button>
+              <button className="stg-btn-cancelar-unico" onClick={handleCerrarModal}>
+                Cancelar
+              </button>
               <button className="stg-btn-guardar-unico" onClick={handleGuardar}>
                 {editando ? 'Actualizar' : 'Crear Sitio'}
               </button>
