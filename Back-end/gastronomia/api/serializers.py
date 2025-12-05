@@ -3,7 +3,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth.hashers import make_password
 from .models import *
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
+from decimal import Decimal, ROUND_HALF_UP
 
 
 class PerfilUsuarioSerializer(serializers.ModelSerializer):
@@ -256,7 +256,32 @@ class LugaresTuristicosSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("El nombre del lugar no puede estar vacío.")
         return value.title()
 
+    def validate_latitud(self, value):
+        # Si viene vacío desde React ("") lo convertimos en None
+        if value in ["", None]:
+            return None
 
+        try:
+            value = Decimal(str(value).strip())
+            value = value.quantize(Decimal('0.000001'), rounding=ROUND_HALF_UP)
+        except:
+            raise serializers.ValidationError("La latitud debe ser un número válido.")
+
+        return value
+
+    def validate_longitud(self, value):
+        # Si viene vacío desde React ("") lo convertimos en None
+        if value in ["", None]:
+            return None
+
+        try:
+            value = Decimal(str(value).strip())
+            value = value.quantize(Decimal('0.000001'), rounding=ROUND_HALF_UP)
+        except:
+            raise serializers.ValidationError("La longitud debe ser un número válido.")
+
+        return value
+    
 class FotosLugaresSerializer(serializers.ModelSerializer):
     class Meta:
         model = FotosLugares
