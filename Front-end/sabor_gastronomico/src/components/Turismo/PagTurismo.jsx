@@ -10,6 +10,7 @@ function PagTurismo() {
   const [modalAbierto, setModalAbierto] = useState(false);
   const [lugarSeleccionado, setLugarSeleccionado] = useState(null);
   const [fotos, setFotos] = useState([]);
+  const [fotoSeleccionadaLightbox, setFotoSeleccionadaLightbox] = useState(null);
 
   // Cargar lugares
   useEffect(() => {
@@ -18,6 +19,14 @@ function PagTurismo() {
         setCargando(true);
         const data = await obtenerSitiosTuristicos();
         const lugaresArray = Array.isArray(data) ? data : data.results || [];
+        
+        // Arreglar URLs de Cloudinary que tienen "image/upload/" al inicio
+        lugaresArray.forEach(lugar => {
+          if (lugar.imagen_principal && lugar.imagen_principal.includes("image/upload/")) {
+            lugar.imagen_principal = lugar.imagen_principal.replace("image/upload/", "");
+          }
+        });
+        
         setLugares(lugaresArray);
       } catch (error) {
         console.error("Error cargando lugares:", error);
@@ -33,23 +42,21 @@ function PagTurismo() {
   const cargarFotos = async (sitioId) => {
     try {
       const fotosData = await obtenerFotosSitio(sitioId);
-      setFotos(fotosData || []);
+      const fotosArray = fotosData || [];
+      
+      // Arreglar URLs que tienen "image/upload/" al inicio
+      fotosArray.forEach(foto => {
+        if (foto.url_foto && foto.url_foto.includes("image/upload/")) {
+          foto.url_foto = foto.url_foto.replace("image/upload/", "");
+        }
+      });
+      
+      setFotos(fotosArray);
     } catch (error) {
       console.error("Error cargando fotos:", error);
       setFotos([]);
     }
   };
-
-  // Effect para procesar las URLs de las fotos
-  useEffect(() => {
-    if (fotos.length > 0) {
-      const fotosProcessadas = fotos.map(foto => ({
-        ...foto,
-        url_foto: foto.url_foto.replace("image/upload/", "")
-      }));
-      setFotos(fotosProcessadas);
-    }
-  }, [lugarSeleccionado]);
 
   const handleAbrirModal = async (lugar) => {
     setLugarSeleccionado(lugar);
@@ -61,6 +68,25 @@ function PagTurismo() {
     setModalAbierto(false);
     setLugarSeleccionado(null);
     setFotos([]);
+    setFotoSeleccionadaLightbox(null);
+  };
+
+  const handleAbrirLightbox = (fotoUrl) => {
+    setFotoSeleccionadaLightbox(fotoUrl);
+  };
+
+  const handleCerrarLightbox = () => {
+    setFotoSeleccionadaLightbox(null);
+  };
+
+  const navegarLightbox = (direccion) => {
+    const indiceActual = fotos.findIndex(f => f.url_foto === fotoSeleccionadaLightbox);
+    let nuevoIndice = indiceActual + direccion;
+    
+    if (nuevoIndice < 0) nuevoIndice = fotos.length - 1;
+    if (nuevoIndice >= fotos.length) nuevoIndice = 0;
+    
+    setFotoSeleccionadaLightbox(fotos[nuevoIndice].url_foto);
   };
 
   const scrollIzquierda = () => {
@@ -183,44 +209,67 @@ function PagTurismo() {
                 {lugarSeleccionado.descripcion || "Sin descripción disponible"}
               </p>
 
-              {(lugarSeleccionado.latitud || lugarSeleccionado.longitud) && (
-                <div className="pt-coordenadas">
-                  <p>
-                    <strong>📍 Coordenadas:</strong>
-                  </p>
-                  <p>
-                    Latitud: {lugarSeleccionado.latitud || "No especificada"}
-                  </p>
-                  <p>
-                    Longitud: {lugarSeleccionado.longitud || "No especificada"}
-                  </p>
-                  <a
-                    href={`https://www.google.com/maps?q=${lugarSeleccionado.latitud},${lugarSeleccionado.longitud}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="pt-mapa-link"
-                  >
-                    Abrir en Google Maps
-                  </a>
+              {/* MAPA DE GOOGLE MAPS */}
+              {lugarSeleccionado.latitud && lugarSeleccionado.longitud && (
+                <div className="pt-mapa-contenedor">
+                  <h3>📍 Ubicación</h3>
+                  <iframe
+                    width="100%"
+                    height="300"
+                    style={{ border: 0, borderRadius: '6px' }}
+                    loading="lazy"
+                    allowFullScreen=""
+                    referrerPolicy="no-referrer-when-downgrade"
+                    src={`https://maps.google.com/maps?q=${lugarSeleccionado.latitud},${lugarSeleccionado.longitud}&output=embed`}
+                  ></iframe>
                 </div>
               )}
 
+              {/* GALERÍA DE FOTOS */}
               {fotos.length > 0 && (
                 <div className="pt-fotos-galeria">
-                  <h3>Galería de Fotos</h3>
+                  <h3>🖼️ Galería de Fotos</h3>
                   <div className="pt-galeria-grid">
-                    {fotos.map((foto) => (
-                      <img
-                        key={foto.id}
-                        src={foto.url_foto}
-                        alt="Foto del lugar"
-                        className="pt-foto-miniatura"
-                      />
+                    {fotos.map((foto, index) => (
+                      <div 
+                        key={index} 
+                        className="pt-foto-item"
+                        onClick={() => handleAbrirLightbox(foto.url_foto)}
+                      >
+                        <img
+                          src={foto.url_foto}
+                          alt="Foto del lugar"
+                          className="pt-foto-miniatura"
+                        />
+                        <div className="pt-foto-overlay">🔍</div>
+                      </div>
                     ))}
                   </div>
                 </div>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* LIGHTBOX */}
+      {fotoSeleccionadaLightbox && (
+        <div className="pt-lightbox-overlay" onClick={handleCerrarLightbox}>
+          <div className="pt-lightbox" onClick={(e) => e.stopPropagation()}>
+            <button className="pt-lightbox-cerrar" onClick={handleCerrarLightbox}>
+              ✕
+            </button>
+            <button className="pt-lightbox-nav pt-lightbox-izq" onClick={() => navegarLightbox(-1)}>
+              ◀
+            </button>
+            <img 
+              src={fotoSeleccionadaLightbox} 
+              alt="Foto ampliada"
+              className="pt-lightbox-imagen"
+            />
+            <button className="pt-lightbox-nav pt-lightbox-der" onClick={() => navegarLightbox(1)}>
+              ▶
+            </button>
           </div>
         </div>
       )}

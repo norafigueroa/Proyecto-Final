@@ -73,46 +73,75 @@ function SitiosTuristicosGeneral() {
   };
 
   const handleSubirImagen = async (e, tipo = 'principal') => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
-    tipo === 'principal' ? setCargandoImagen(true) : setCargandoFoto(true);
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', 'el_sabor_de_la_perla');
+    if (tipo === 'principal') {
+      // Principal: solo una imagen
+      const file = files[0];
+      setCargandoImagen(true);
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', 'el_sabor_de_la_perla');
 
-    try {
-      const response = await fetch('https://api.cloudinary.com/v1_1/dujs1kx4w/image/upload', {
-        method: 'POST',
-        body: formData,
-      });
+      try {
+        const response = await fetch('https://api.cloudinary.com/v1_1/dujs1kx4w/image/upload', {
+          method: 'POST',
+          body: formData,
+        });
 
-      const data = await response.json();
-      if (data.secure_url) {
-        if (tipo === 'principal') {
+        const data = await response.json();
+        if (data.secure_url) {
           setFormulario({
             ...formulario,
             imagen_principal: data.secure_url,
           });
-        } else {
-          // Agregar foto del sitio
-          if (sitioSeleccionado) {
+          Swal.fire('Éxito', 'Imagen subida correctamente', 'success');
+        }
+      } catch (error) {
+        console.error('Error al subir imagen:', error);
+        Swal.fire('Error', 'No se pudo subir la imagen', 'error');
+      } finally {
+        setCargandoImagen(false);
+      }
+    } else {
+      // Fotos: múltiples imágenes
+      setCargandoFoto(true);
+      let fotosSubidas = 0;
+
+      Array.from(files).forEach(async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', 'el_sabor_de_la_perla');
+
+        try {
+          const response = await fetch('https://api.cloudinary.com/v1_1/dujs1kx4w/image/upload', {
+            method: 'POST',
+            body: formData,
+          });
+
+          const data = await response.json();
+          if (data.secure_url && sitioSeleccionado) {
             const nuevaFoto = {
               lugar: sitioSeleccionado.id,
               url_foto: data.secure_url,
               descripcion: '',
             };
             await crearFotoSitio(nuevaFoto);
-            await cargarFotosSitio(sitioSeleccionado.id);
-            Swal.fire('Éxito', 'Foto subida correctamente', 'success');
+            fotosSubidas++;
+
+            if (fotosSubidas === files.length) {
+              await cargarFotosSitio(sitioSeleccionado.id);
+              Swal.fire('Éxito', `${fotosSubidas} foto(s) subida(s) correctamente`, 'success');
+              setCargandoFoto(false);
+            }
           }
+        } catch (error) {
+          console.error('Error al subir foto:', error);
+          setCargandoFoto(false);
+          Swal.fire('Error', 'No se pudo subir una o más fotos', 'error');
         }
-      }
-    } catch (error) {
-      console.error('Error al subir imagen:', error);
-      Swal.fire('Error', 'No se pudo subir la imagen', 'error');
-    } finally {
-      tipo === 'principal' ? setCargandoImagen(false) : setCargandoFoto(false);
+      });
     }
   };
 
@@ -416,11 +445,12 @@ function SitiosTuristicosGeneral() {
                     <input
                       type="file"
                       accept="image/*"
+                      multiple
                       onChange={(e) => handleSubirImagen(e, 'foto')}
                       disabled={cargandoFoto}
                       className="stg-input-file-unico"
                     />
-                    {cargandoFoto && <small style={{color: '#1a4d6d'}}>Subiendo foto...</small>}
+                    {cargandoFoto && <small style={{color: '#1a4d6d'}}>Subiendo foto(s)...</small>}
                   </div>
 
                   {fotos.length > 0 ? (

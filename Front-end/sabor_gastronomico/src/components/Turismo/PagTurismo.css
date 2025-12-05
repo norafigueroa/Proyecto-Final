@@ -185,3 +185,252 @@
   background: white;
   transform: scale(1.1);
 }
+
+/* ==================== MODAL OVERLAY ==================== */
+.pt-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.pt-modal-imagen {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 8px 8px 0 0;
+}
+
+.pt-descripcion {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+.pt-coordenadas {
+  background-color: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid #1a4d6d;
+}
+
+.pt-coordenadas p {
+  margin: 0.5rem 0;
+  color: #555;
+}
+
+.pt-mapa-link {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #1a4d6d;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.pt-mapa-link:hover {
+  background-color: #0d3a54;
+}
+
+.pt-fotos-galeria {
+  margin-top: 2rem;
+}
+
+.pt-fotos-galeria h3 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.pt-galeria-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.pt-foto-miniatura {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.pt-foto-miniatura:hover {
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .pt-modal {
+    max-width: 95vw;
+  }
+
+  .pt-modal-imagen {
+    height: 250px;
+  }
+
+  .pt-modal-contenido {
+    padding: 1.5rem;
+  }
+
+  .pt-modal-contenido h2 {
+    font-size: 1.5rem;
+  }
+
+  .pt-galeria-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+}
+
+/* ==================== MAPA ==================== */
+.pt-mapa-contenedor {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+}
+
+.pt-mapa-contenedor h3 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+}
+
+/* ==================== GALERÍA FOTOS ==================== */
+.pt-foto-item {
+  position: relative;
+  cursor: pointer;
+  border-radius: 6px;
+  overflow: hidden;
+  aspect-ratio: 1;
+}
+
+.pt-foto-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.pt-foto-item:hover .pt-foto-overlay {
+  opacity: 1;
+}
+
+/* ==================== LIGHTBOX ==================== */
+.pt-lightbox-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
+}
+
+.pt-lightbox {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+}
+
+.pt-lightbox-imagen {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.pt-lightbox-cerrar {
+  position: absolute;
+  top: -2.5rem;
+  right: 0;
+  background: white;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.pt-lightbox-cerrar:hover {
+  transform: scale(1.1);
+}
+
+.pt-lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.8);
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.pt-lightbox-nav:hover {
+  background-color: white;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.pt-lightbox-izq {
+  left: -4rem;
+}
+
+.pt-lightbox-der {
+  right: -4rem;
+}
+
+@media (max-width: 768px) {
+  .pt-lightbox-izq {
+    left: 0.5rem;
+  }
+
+  .pt-lightbox-der {
+    right: 0.5rem;
+  }
+
+  .pt-lightbox-nav {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.5rem;
+  }
+
+  .pt-lightbox-cerrar {
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+}
