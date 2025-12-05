@@ -46,17 +46,19 @@ class RestauranteDetailView(RetrieveUpdateDestroyAPIView):
 
 # --- HORARIOS ---
 
-class HorarioRestauranteListCreateView(ListCreateAPIView):
+class HorarioListCreateView(ListCreateAPIView):
+    queryset = HorarioRestaurante.objects.all()
     serializer_class = HorarioRestauranteSerializer
+
+
+class HorarioDetailView(RetrieveUpdateDestroyAPIView):
+    serializer_class = HorarioRestauranteSerializer
+    lookup_field = 'restaurante_id'
+    lookup_url_kwarg = 'restaurante_id'
 
     def get_queryset(self):
         restaurante_id = self.kwargs.get('restaurante_id')
-        return HorarioRestaurante.objects.filter(restaurante_id=restaurante_id)
-
-
-class HorarioRestauranteDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = HorarioRestaurante.objects.all()
-    serializer_class = HorarioRestauranteSerializer    
+        return HorarioRestaurante.objects.filter(restaurante_id=restaurante_id)   
 
 # --- CATEGORIA-RESTAURANTE ---
 class CategoriaRestauranteListCreateView(ListCreateAPIView):
