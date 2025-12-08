@@ -207,3 +207,10 @@
 .gm-btn-save:hover {
   background: #218838;
 }
+
+.gm-descuento-etiqueta {
+  color: #e63946;
+  font-weight: bold;
+  margin-left: 8px;
+  font-size: 0.9rem;
+}

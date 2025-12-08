@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { getRestauranteById } from "../../services/ServicesRestaurantes";
+import { ServicesInicio } from "../../services/servicesAdminRest/ServicesInicio";
 import { CartContext } from "../../context/CartContext";
 import "./InfoRestaurantes.css";
 
@@ -20,11 +21,17 @@ function InfoRestaurantes() {
   const [error, setError] = useState(null);
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("General");
   const [cantidades, setCantidades] = useState({}); // Cantidades para el carrito
+  const [mostrarHorario, setMostrarHorario] = useState(false);
+  const [mostrarHora, setmostrarHora] = useState({})
 
   useEffect(() => {
     async function fetchData() {
       try {
         const data = await getRestauranteById(id);
+        const datah = await ServicesInicio.obtenerHorario(id)
+        console.log(datah.data.horario);
+        setmostrarHora(datah.data.horario)
+        
         setRestaurante(data);
       } catch (err) {
         setError("Error al cargar el restaurante.");
@@ -38,6 +45,20 @@ function InfoRestaurantes() {
   if (loading) return <p>Cargando restaurante...</p>;
   if (error) return <p>{error}</p>;
   if (!restaurante) return <p>No se encontró el restaurante.</p>;
+
+  // Horario detallado por día
+  const horarioSemana = restaurante.horarios || {
+    lunes:    { apertura: "", cierre: "", cerrado: false },
+    martes:   { apertura: "", cierre: "", cerrado: false },
+    miercoles:{ apertura: "", cierre: "", cerrado: false },
+    jueves:   { apertura: "", cierre: "", cerrado: false },
+    viernes:  { apertura: "", cierre: "", cerrado: false },
+    sabado:   { apertura: "", cierre: "", cerrado: false },
+    domingo:  { apertura: "", cierre: "", cerrado: false }
+  };
+  
+  console.log(mostrarHora.domingo);
+  
 
   // Categorías de menú
   const categorias = ["General", "Entradas", "Platos Fuertes", "Bebidas", "Postres"];
@@ -95,11 +116,9 @@ function InfoRestaurantes() {
             <strong>Dirección:</strong>
             <p>📍 {restaurante.direccion}</p>
           </div>
-          <div className="info-card">
-            <strong>Horario:</strong>
-            <p>⏰ {restaurante.horario_apertura && restaurante.horario_cierre
-                  ? `${restaurante.horario_apertura} - ${restaurante.horario_cierre}`
-                  : "No disponible"}</p>
+          <div className="info-card" onClick={() => setMostrarHorario(true)} style={{cursor:"pointer"}}>
+            <h3>Horario</h3>
+            <p> Ver detalles</p>
           </div>
           <div className="info-card">
             <strong>Reseñas:</strong>
@@ -107,6 +126,32 @@ function InfoRestaurantes() {
           </div>
         </div>
       </section>
+
+      {mostrarHorario && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+
+            <h2>Horarios del Restaurante</h2>
+
+            {Object.entries(mostrarHora).map(([dia, datos]) => (
+              <div key={dia} className="horario-item">
+                <strong>{dia.charAt(0).toUpperCase() + dia.slice(1)}:</strong>
+                
+                {datos.cerrado ? (
+                  <span> Cerrado </span>
+                ) : (
+                  <span> Apertura: {datos.apertura} - Cierre: {datos.cierre} </span>
+                )}
+              </div>
+            ))}
+
+            <button className="modal-cerrar" onClick={() => setMostrarHorario(false)}>
+              Cerrar
+            </button>
+
+          </div>
+        </div>
+      )}
 
       {/* Categorías de menú */}
       <section className="categoria-section">
@@ -170,14 +215,14 @@ function InfoRestaurantes() {
       </section>
 
       {/* Mapa */}
-      <div className="map-container">
+{/*       <div className="map-container">
         <iframe
           src={`https://www.google.com/maps/embed/v1/place?key=TU_API_KEY&q=${encodeURIComponent(restaurante.direccion)}`}
           title={restaurante.nombre_restaurante}
           allowFullScreen
           loading="lazy"
         ></iframe>
-      </div>
+      </div> */}
 
       {/* Footer */}
       <footer className="footer">

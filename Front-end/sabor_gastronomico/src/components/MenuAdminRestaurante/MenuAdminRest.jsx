@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { getRestauranteById } from "../../services/ServicesRestaurantes";
-import "./MenuAdminRest.css"; 
+import "./MenuAdminRest.css";
 
-// Importa los componentes del contenido
+// Importar componentes
 import Inicio from "./OpcionesMenu/Inicio/Inicio";
 import GestionMenu from "./OpcionesMenu/GestionMenu/GestionMenu";
 import GaleriaAdmin from "./OpcionesMenu/GaleriaAdmin/GaleriaAdmin";
 import Perfil from "./OpcionesMenu/Perfil/Perfil";
-import Promos from "./OpcionesMenu/Promos/Promos";
 import Pedidos from "./OpcionesMenu/Pedidos/Pedidos";
 import Resenas from "./OpcionesMenu/Resenas/Resenas";
 import Stats from "./OpcionesMenu/Stats/Stats";
@@ -18,16 +17,14 @@ import Config from "./OpcionesMenu/ConfigPag/Config";
 function MenuAdminRest() {
     const [selected, setSelected] = useState("Inicio");
     const [cargandoLogout, setCargandoLogout] = useState(false);
-
-    // 🌟 Estado del restaurante
+    const [menuAbierto, setMenuAbierto] = useState(false);  // ← NUEVO
     const [restaurante, setRestaurante] = useState(null);
 
     const { id } = useParams();
     const { logout } = useAuth();
     const navegar = useNavigate();
 
-    // Cargar restaurante dinámicamente
-
+    // Cargar restaurante dinámico
     useEffect(() => {
         async function obtenerDatos() {
             try {
@@ -40,9 +37,7 @@ function MenuAdminRest() {
         obtenerDatos();
     }, [id]);
 
-
     // Logout
-
     const handleLogout = async () => {
         setCargandoLogout(true);
         try {
@@ -55,46 +50,25 @@ function MenuAdminRest() {
         }
     };
 
-    // Opciones de menú (vendrá del backend si gustas)
-
+    // Opciones del menú
     const opcionesMenu = [
-        { clave: "Inicio", label: "Inicio", icon: "🏠",
-        descripcion: "Resumen general." },
-
-        { clave: "menu", label: "Gestionar Menú", icon: "📋",
-        descripcion: "Edita tus platillos." },
-
-        { clave: "galeria", label: "Galería / Fotos", icon: "🖼️",
-        descripcion: "Sube imágenes." },
-
-        { clave: "perfil", label: "Mi Perfil", icon: "👤",
-        descripcion: "Tu información." },
-
-        { clave: "promos", label: "Promociones", icon: "💸",
-        descripcion: "Ofertas activas." },
-
-        { clave: "pedidos", label: "Pedidos", icon: "🛒",
-        descripcion: "Gestión de pedidos." },
-
-        { clave: "resenas", label: "Reseñas", icon: "⭐",
-        descripcion: "Opiniones de clientes." },
-
-        { clave: "stats", label: "Estadísticas", icon: "📊",
-        descripcion: "Datos del negocio." },
-
-        { clave: "config", label: "Configuración", icon: "⚙️",
-        descripcion: "Ajustes del sistema." },
+        { clave: "Inicio", label: "Dashboard", icon: "🏠", descripcion: "Resumen general." },
+        { clave: "menu", label: "Gestionar Menú", icon: "📋", descripcion: "Edita tus platillos." },
+        { clave: "galeria", label: "Galería / Fotos", icon: "🖼️", descripcion: "Sube imágenes." },
+        { clave: "perfil", label: "Mi Perfil", icon: "👤", descripcion: "Tu información." },
+        { clave: "pedidos", label: "Pedidos", icon: "🛒", descripcion: "Gestión de pedidos." },
+        { clave: "resenas", label: "Reseñas", icon: "⭐", descripcion: "Opiniones de clientes." },
+        { clave: "stats", label: "Estadísticas", icon: "📊", descripcion: "Datos del negocio." },
+        { clave: "config", label: "Configuración", icon: "⚙️", descripcion: "Ajustes del sistema." },
     ];
 
-    // Render dinámico del contenido
-
+    // Render dinámico
     const renderContent = () => {
         switch (selected) {
             case "Inicio": return <Inicio idRestaurante={id} />;
             case "menu": return <GestionMenu idRestaurante={id} />;
             case "galeria": return <GaleriaAdmin idRestaurante={id} />;
             case "perfil": return <Perfil idRestaurante={id} />;
-            case "promos": return <Promos idRestaurante={id} />;
             case "pedidos": return <Pedidos idRestaurante={id} />;
             case "resenas": return <Resenas idRestaurante={id} />;
             case "stats": return <Stats idRestaurante={id} />;
@@ -106,60 +80,97 @@ function MenuAdminRest() {
     return (
         <div className="menu-admin-contenedor">
 
-            {/* ---------- SIDEBAR ---------- */}
-            <aside className="menu-admin-sidebar">
+            {/* ---------- HEADER ---------- */}
+            <header className="menu-admin-header">
+                <button
+                    className="menu-toggle-btn"
+                    onClick={() => setMenuAbierto(!menuAbierto)}
+                    aria-label="Abrir menú"
+                >
+                    ☰
+                </button>
 
-                {/* PERFIL / HEADER DEL SIDEBAR */}
-                <div className="menu-sidebar-perfil">
-                    <div className="menu-perfil-avatar">
-                        {restaurante?.logo
-                            ? <img src={restaurante.logo} alt="Logo" className="Menu-logo" />
-                            : restaurante?.nombre_restaurante?.[0] || "R"}
-                    </div>
+                <h1 className="menu-admin-titulo">
+                    {restaurante?.nombre_restaurante || "Mi Restaurante"}
+                </h1>
 
-                    <div className="menu-perfil-info">
-                        <h3 className="menu-perfil-nombre">
-                            {restaurante?.nombre_restaurante || "Cargando..."}
-                        </h3>
-                        <p className="menu-perfil-rol">PANEL ADMINISTRATIVO</p>
-                    </div>
-                </div>
-
-                {/* MENÚ */}
-                <ul className="menu-sidebar-nav">
-                    {opcionesMenu.map((opcion) => (
-                        <li
-                            key={opcion.clave}
-                            className={`menu-nav-item ${selected === opcion.clave ? "activo" : ""}`}
-                            onClick={() => setSelected(opcion.clave)}
-                        >
-                            <span className="menu-item-icono">{opcion.icon}</span>
-
-                            <div className="menu-item-textos">
-                                <span className="menu-item-nombre">{opcion.label}</span>
-                                <p className="menu-item-descripcion">{opcion.descripcion}</p>
-                            </div>
-                        </li>
-                    ))}
-
+                <div className="menu-admin-usuario">
+                    <span>{restaurante?.nombre_restaurante}</span>
                     <button
-                        className="menu-btn-cerrar-sesion"
+                        className="menu-btn-logout"
                         onClick={handleLogout}
                         disabled={cargandoLogout}
+                        title="Cerrar sesión"
                     >
-                        {cargandoLogout ? "Cerrando..." : "Cerrar Sesión"}
+                        🚪
                     </button>
-                </ul>
+                </div>
+            </header>
 
-            </aside>
+            <div className="menu-admin-wrapper">
 
-            {/* ---------- CONTENIDO PRINCIPAL ---------- */}
-            <main className="menu-admin-contenido">
-                {renderContent()}
-            </main>
+                {/* ---------- SIDEBAR ---------- */}
+                <aside className={`menu-admin-sidebar ${menuAbierto ? "activo" : ""}`}>
 
+                    {/* PERFIL */}
+                    <div className="menu-sidebar-perfil">
+                        <div className="menu-perfil-avatar">
+                            {restaurante?.logo
+                                ? <img src={restaurante.logo} alt="Logo" className="Menu-logo" />
+                                : restaurante?.nombre_restaurante?.[0] || "R"}
+                        </div>
+
+                        <div className="menu-perfil-info">
+                            <h3 className="menu-perfil-nombre">
+                                {restaurante?.nombre_restaurante || "Cargando..."}
+                            </h3>
+                            <p className="menu-perfil-rol">PANEL ADMINISTRATIVO</p>
+                        </div>
+                    </div>
+
+                    {/* MENÚ */}
+                    <nav className="menu-sidebar-nav">
+                        {opcionesMenu.map((opcion) => (
+                            <button
+                                key={opcion.clave}
+                                className={`menu-nav-item ${selected === opcion.clave ? "activo" : ""}`}
+                                onClick={() => {
+                                    setSelected(opcion.clave);
+                                    setMenuAbierto(false);
+                                }}
+                            >
+                                <span className="menu-item-icono">{opcion.icon}</span>
+
+                                <div className="menu-item-textos">
+                                    <span className="menu-item-nombre">{opcion.label}</span>
+                                    <p className="menu-item-descripcion">{opcion.descripcion}</p>
+                                </div>
+                            </button>
+                        ))}
+
+                        <button
+                            className="menu-btn-cerrar-sesion"
+                            onClick={handleLogout}
+                            disabled={cargandoLogout}
+                        >
+                            {cargandoLogout ? "Cerrando..." : "Cerrar Sesión"}
+                        </button>
+                    </nav>
+
+                </aside>
+
+                {/* ---------- OVERLAY MOVIL ---------- */}
+                {menuAbierto && (
+                    <div className="menu-overlay" onClick={() => setMenuAbierto(false)}></div>
+                )}
+
+                {/* ---------- CONTENIDO ---------- */}
+                <main className="menu-admin-contenido">
+                    {renderContent()}
+                </main>
+
+            </div>
         </div>
-
     );
 }
 

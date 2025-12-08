@@ -2,12 +2,23 @@ import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { registerRestaurante } from "../../services/ServicesRegistro";
 import { getCategorias } from "../../services/ServicesCategorias";
+import { ServicesInicio } from "../../services/servicesAdminRest/ServicesInicio";
 import "./FormularioRestaurante.css";
 
 function FormularioRestaurante() {
   const [cate, setCate] = useState([]);
   const [cargando, setCargando] = useState(false);
   const [cargacate, setCargaCate] = useState(false);
+
+  const esqueletoHorario = {
+    lunes: { apertura: "", cierre: "", cerrado: false },
+    martes: { apertura: "", cierre: "", cerrado: false },
+    miercoles: { apertura: "", cierre: "", cerrado: false },
+    jueves: { apertura: "", cierre: "", cerrado: false },
+    viernes: { apertura: "", cierre: "", cerrado: false },
+    sabado: { apertura: "", cierre: "", cerrado: false },
+    domingo: { apertura: "", cierre: "", cerrado: false }
+  }
 
   useEffect(() => {
     async function obtener() {
@@ -145,7 +156,16 @@ function FormularioRestaurante() {
 
       datosEnvio.username = datos.first_name.toLowerCase().replace(" ", "_");
 
-      await registerRestaurante(datosEnvio);
+      const retorno = await registerRestaurante(datosEnvio);
+      console.log(retorno);
+      
+      const datosHorario = {
+        restaurante: retorno.restaurante.id,
+        horario: esqueletoHorario
+      }
+      const retornoHorario = await ServicesInicio.crearHorario(datosHorario)
+      console.log(retornoHorario);
+      
 
       Swal.fire({
         title: "Registro exitoso",

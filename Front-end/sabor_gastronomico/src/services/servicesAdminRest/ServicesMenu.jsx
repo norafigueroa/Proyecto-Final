@@ -2,7 +2,7 @@ import axios from "../AxiosConfig";
 
 const MenuService = {
   obtenerCategorias: () => axios.get("/categorias-menu/"),
-  obtenerPlatillos: () => axios.get("/platillos/"),
+  obtenerPlatillos: (restauranteId) => axios.get(`/platillos/?restaurante=${restauranteId}`),
   
   crearPlatillo: (data) =>
     axios.post("/platillos/", data, {

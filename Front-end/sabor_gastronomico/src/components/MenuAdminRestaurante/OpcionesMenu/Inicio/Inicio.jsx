@@ -26,6 +26,7 @@ function Inicio() {
   "domingo"
 ];
 
+
   const [horario, setHorario] = useState({
     lunes: { apertura: "", cierre: "", cerrado: false },
     martes: { apertura: "", cierre: "", cerrado: false },
@@ -69,7 +70,24 @@ function Inicio() {
 
         console.log(horarioRes.data.horario);
         console.log(res);
-        setHorario(horarioRes.data.horario)
+        
+        const normalizarHorario = (raw) => {
+          const limpio = {};
+
+          diasSemana.forEach((dia) => {
+            limpio[dia] = {
+              apertura: raw[dia]?.apertura || "",
+              cierre: raw[dia]?.cierre || "",
+              cerrado: raw[dia]?.cerrado || false,
+            };
+          });
+
+          return limpio;
+        };
+
+        setHorario(normalizarHorario(horarioRes.data.horario));
+
+        console.log("HORARIO FINAL:", normalizarHorario(horarioRes.data.horario));
         setRestaurante(res.data);
       } catch (err) {
         console.error("Error cargando restaurante:", err);
@@ -79,6 +97,9 @@ function Inicio() {
 
     fetchData();
   }, [id]);
+
+  console.log(horario);
+  
 
   const verificarEstado = () => {
     if (!restaurante.horario_apertura || !restaurante.horario_cierre) return "Sin horario";
@@ -118,17 +139,17 @@ function Inicio() {
 
   
   // Validar horas
-  for (const dia of diasSemana) {
+  /* for (const dia of diasSemana) {
     const { apertura, cierre, cerrado } = horario[dia];
 
     if (!cerrado && !validarHoras(apertura, cierre)) {
       alert(`La hora de cierre debe ser mayor a la de apertura en ${dia}`);
       return;
     }
-  }
+  } */
 
   try {
-    await ServicesInicio.actualizarRestaurante(id, { horario });
+    await ServicesInicio.actualizarHorario(id, { horario });
 
     setRestaurante({
       ...restaurante,
@@ -186,6 +207,8 @@ function Inicio() {
         <div className="Inicio-resumen">
           <h3>Resumen del Restaurante</h3>
 
+          <h4>Horarios</h4>
+
           <p>
             <strong>Estado: </strong>
             <span className={estadoActual === "Abierto" ? "estado-abierto" : "estado-cerrado"}>
@@ -193,22 +216,22 @@ function Inicio() {
             </span>
           </p>
 
-          <h4>Horarios por Día</h4>
-
           <div className="lista-horarios">
             {diasSemana.map((dia) => (
               <p key={dia}>
                 <strong>{dia.charAt(0).toUpperCase() + dia.slice(1)}:</strong>{" "}
-                {horario[dia].apertura && horario[dia].cierre
-                  ? `${horario[dia].apertura} - ${horario[dia].cierre}`
-                  : "Sin horario"}
+                {horario[dia].cerrado
+                  ? "Cerrado"
+                  : horario[dia].apertura && horario[dia].cierre
+                    ? `${horario[dia].apertura} - ${horario[dia].cierre}`
+                    : "Sin horario"}
               </p>
             ))}
           </div>
 
           <div className="Inicio-botones">
             <button className="btn-editar" onClick={() => setModalEditar(true)}>Editar Horario</button>
-            <button className="btn-crear" onClick={() => setModalCrear(true)}>Crear Horario</button>
+           {/*  <button className="btn-crear" onClick={() => setModalCrear(true)}>Crear Horario</button> */}
           </div>
         </div>
       </div>
@@ -229,18 +252,18 @@ function Inicio() {
                   onClick={() => toggleCerrado(dia)}
                   style={{ marginBottom: "8px" }}
                 >
-                  {horarios[dia].cerrado ? "Abrir este día" : "Cerrar este día"}
+                  {horario[dia].cerrado ? "Abrir este día" : "Cerrar este día"}
                 </button>
 
                 <label>Apertura</label>
                 <input
                   type="time"
-                  disabled={horarios[dia].cerrado}
-                  value={horarios[dia].apertura}
+                  disabled={horario[dia].cerrado}
+                  value={horario[dia].apertura}
                   onChange={(e) =>
-                    setHorarios({
-                      ...horarios,
-                      [dia]: { ...horarios[dia], apertura: e.target.value }
+                    setHorario({
+                      ...horario,
+                      [dia]: { ...horario[dia], apertura: e.target.value }
                     })
                   }
                 />
@@ -248,12 +271,12 @@ function Inicio() {
                 <label>Cierre</label>
                 <input
                   type="time"
-                  disabled={horarios[dia].cerrado}
-                  value={horarios[dia].cierre}
+                  disabled={horario[dia].cerrado}
+                  value={horario[dia].cierre}
                   onChange={(e) =>
-                    setHorarios({
-                      ...horarios,
-                      [dia]: { ...horarios[dia], cierre: e.target.value }
+                    setHorario({
+                      ...horario,
+                      [dia]: { ...horario[dia], cierre: e.target.value }
                     })
                   }
                 />
@@ -289,18 +312,18 @@ function Inicio() {
                   onClick={() => toggleCerrado(dia)}
                   style={{ marginBottom: "8px" }}
                 >
-                  {horarios[dia].cerrado ? "Abrir este día" : "Cerrar este día"}
+                  {horario[dia].cerrado ? "Abrir este día" : "Cerrar este día"}
                 </button>
 
                 <label>Apertura</label>
                 <input
                   type="time"
-                  disabled={horarios[dia].cerrado}
-                  value={horarios[dia].apertura}
+                  disabled={horario[dia].cerrado}
+                  value={horario[dia].apertura}
                   onChange={(e) =>
-                    setHorarios({
-                      ...horarios,
-                      [dia]: { ...horarios[dia], apertura: e.target.value }
+                    setHorario({
+                      ...horario,
+                      [dia]: { ...horario[dia], apertura: e.target.value }
                     })
                   }
                 />
@@ -308,12 +331,12 @@ function Inicio() {
                 <label>Cierre</label>
                 <input
                   type="time"
-                  disabled={horarios[dia].cerrado}
-                  value={horarios[dia].cierre}
+                  disabled={horario[dia].cerrado}
+                  value={horario[dia].cierre}
                   onChange={(e) =>
-                    setHorarios({
-                      ...horarios,
-                      [dia]: { ...horarios[dia], cierre: e.target.value }
+                    setHorario({
+                      ...horario,
+                      [dia]: { ...horario[dia], cierre: e.target.value }
                     })
                   }
                 />

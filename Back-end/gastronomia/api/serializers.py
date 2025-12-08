@@ -125,14 +125,28 @@ class CategoriaMenuSerializer(serializers.ModelSerializer):
 
 
 class PlatilloSerializer(serializers.ModelSerializer):
+    precio_descuento = serializers.SerializerMethodField()
+
     class Meta:
         model = Platillo
-        fields = '__all__'
+        fields = '__all__'  # Incluye precio_descuento automáticamente
 
-    def validate_precio(self, value):
-        if value <= 0:
-            raise serializers.ValidationError("El precio debe ser mayor que 0.")
-        return value
+    def get_precio_descuento(self, obj):
+        """Calcula el precio final con promoción."""
+        if obj.promocion and obj.porcentaje:
+            try:
+                descuento = (obj.precio * obj.porcentaje) / 100
+                final = obj.precio - descuento
+                return round(final, 2)
+            except:
+                return obj.precio
+        return obj.precio
+
+    def validate(self, data):
+        """Evita activar promoción sin porcentaje."""
+        if data.get("promocion") and not data.get("porcentaje"):
+            raise serializers.ValidationError("Debe indicar un porcentaje para aplicar una promoción.")
+        return data
 
 
 class PedidoSerializer(serializers.ModelSerializer):

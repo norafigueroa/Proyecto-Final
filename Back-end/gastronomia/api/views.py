@@ -96,6 +96,10 @@ class PlatilloDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Platillo.objects.all()
     serializer_class = PlatilloSerializer
 
+class ActualizarPromocionPlatillo(UpdateAPIView):
+    queryset = Platillo.objects.all()
+    serializer_class = PlatilloSerializer    
+
 # --- PEDIDOS ---
 class PedidoListCreateView(ListCreateAPIView):
     queryset = Pedido.objects.all()

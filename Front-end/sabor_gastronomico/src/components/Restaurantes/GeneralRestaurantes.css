@@ -57,6 +57,16 @@
   color: #444;
 }
 
+.estado-abierto {
+  color: #1dbf32;     /* Verde */
+  font-weight: bold;
+}
+
+.estado-cerrado {
+  color: #d11a1a;     /* Rojo */
+  font-weight: bold;
+}
+
 /* ======= RESPONSIVE ======= */
 @media (max-width: 480px) {
   .restaurantes-contenedor {

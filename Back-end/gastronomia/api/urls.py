@@ -36,6 +36,8 @@ urlpatterns = [
     path('categorias-menu/<int:pk>/', CategoriaMenuDetailView.as_view(), name="actualizar y eliminar categoria de menú"),
     path('platillos/', PlatilloListCreateView.as_view(), name="crear y listar platillos"),
     path('platillos/<int:pk>/', PlatilloDetailView.as_view(), name="actualizar y eliminar platillo"),
+    path('platillos/<int:pk>/promocion/', ActualizarPromocionPlatillo.as_view()),
+
 
     # Pedidos
     path('pedidos', PedidoListCreateView.as_view(), name="crear y listar pedidos"),

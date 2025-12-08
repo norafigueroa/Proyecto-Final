@@ -49,7 +49,7 @@ function GeneralRestaurantes() {
         // 🔥 Soporte para ambas respuestas (lista o paginada)
         const lista = Array.isArray(data) ? data : data.results || [];
 
-        setRestaurantes(data.results);
+        setRestaurantes(lista);
 
       } catch (error) {
         console.error("Error cargando restaurantes:", error);

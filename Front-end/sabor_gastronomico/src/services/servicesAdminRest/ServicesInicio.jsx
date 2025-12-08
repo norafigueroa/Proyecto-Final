@@ -23,12 +23,12 @@ export const ServicesInicio = {
     return axios.patch(`/restaurantes/${idResta}/horarios/`, data);
 },
 
-obtenerHorario(idResta) {
-    return axios.get(`/restaurantes/${idResta}/horarios/`);
-},
+  obtenerHorario(idResta) {
+      return axios.get(`/restaurantes/${idResta}/horarios/`);
+  },
 
-  crearHorario(idRestaurante, data) {
-    return axios.post(`/restaurantes/${idRestaurante}/horarios/`, data);
+  crearHorario(data) {
+    return axios.post(`/restaurantes/horarios/`, data);
   }
 
 };
