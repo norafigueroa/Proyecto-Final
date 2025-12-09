@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+import pymysql
+pymysql.install_as_MySQLdb()
 
 from pathlib import Path
 from datetime import timedelta
@@ -34,7 +36,7 @@ import cloudinary
 
 INSTALLED_APPS = [
     'cloudinary',
-    'cloudinary_storage',
+    #'cloudinary_storage',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -55,7 +57,7 @@ cloudinary.config(
     secure=True
 )
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+#DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -100,8 +102,8 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     
     'ROTATE_REFRESH_TOKENS': True,                  
-    'BLACKLIST_AFTER_ROTATION': True,                
-    'UPDATE_LAST_LOGIN': True,                       
+    'BLACKLIST_AFTER_ROTATION': True,               
+    'UPDATE_LAST_LOGIN': True,                      
     
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': SECRET_KEY,
@@ -109,7 +111,7 @@ SIMPLE_JWT = {
     'AUDIENCE': None,
     'ISSUER': None,
     
-    'AUTH_HEADER_TYPES': ('Bearer',),               
+    'AUTH_HEADER_TYPES': ('Bearer',),              
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
@@ -144,10 +146,10 @@ WSGI_APPLICATION = 'gastronomia.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'mysql.connector.django',
         'NAME': 'gastronomia',
         'USER': 'root',
-        'PASSWORD': '12345',
+        'PASSWORD': '1234',
         'HOST': '127.0.0.1',
         'PORT': 3306, 
         'OPTIONS': {
@@ -199,4 +201,3 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 APPEND_SLASH = True
- 

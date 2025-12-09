@@ -444,6 +444,7 @@ class RestauranteRegistrationSerializer(serializers.Serializer):
     
  # CONFIGURACIÓN
 class SerializadorConfiguracionPlataforma(serializers.ModelSerializer):
+
     class Meta:
         model = ConfiguracionPlataforma
         fields = [
@@ -467,13 +468,15 @@ class SerializadorConfiguracionPlataforma(serializers.ModelSerializer):
             'fecha_ultima_actualizacion',
         ]
         read_only_fields = ['id', 'fecha_creacion', 'fecha_ultima_actualizacion']
-    
-    def validar_nombre_plataforma(self, valor):
-        if not valor.strip():
+
+    # ✔ Validación correcta con nombre estándar de DRF
+    def validate_nombre_plataforma(self, valor):
+        if not valor or not valor.strip():
             raise serializers.ValidationError("El nombre de la plataforma no puede estar vacío.")
         return valor.strip()
-    
-    def validar_correo_contacto(self, valor):
+
+    # ✔ Validación de correo corregida
+    def validate_correo_contacto(self, valor):
         if valor and '@' not in valor:
             raise serializers.ValidationError("Ingresa un correo válido.")
         return valor
