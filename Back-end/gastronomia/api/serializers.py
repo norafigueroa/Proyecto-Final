@@ -126,10 +126,11 @@ class CategoriaMenuSerializer(serializers.ModelSerializer):
 
 class PlatilloSerializer(serializers.ModelSerializer):
     precio_descuento = serializers.SerializerMethodField()
+    categoria_nombre = serializers.CharField(source='categoria_menu.nombre', read_only=True)
 
     class Meta:
         model = Platillo
-        fields = '__all__'  # Incluye precio_descuento automáticamente
+        fields = '__all__' 
 
     def get_precio_descuento(self, obj):
         """Calcula el precio final con promoción."""
@@ -171,20 +172,18 @@ class DetallePedidoSerializer(serializers.ModelSerializer):
         return value
 
 
-class ResenaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Resena
-        fields = '__all__'
-
-    def validate_calificacion(self, value):
-        if value < 1 or value > 5:
-            raise serializers.ValidationError("La calificación debe estar entre 1 y 5.")
-        return value
-
 class FotosResenaSerializer(serializers.ModelSerializer):
     class Meta:
         model = FotosResena
         fields = '__all__'
+
+class ResenaSerializer(serializers.ModelSerializer):
+    fotos = FotosResenaSerializer(many=True, read_only=True)
+    usuario_nombre = serializers.CharField(source='usuario.username', read_only=True)
+
+    class Meta:
+        model = Resena
+        fields = ['id', 'usuario', 'usuario_nombre', 'restaurante', 'calificacion', 'comentario', 'fecha_resena', 'fotos']
     
     # ✅ CloudinaryField maneja la validación automáticamente
 

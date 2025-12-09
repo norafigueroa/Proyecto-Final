@@ -5,10 +5,15 @@ import "./CartSidebar.css";
 function CartSidebar({ isOpen, onClose }) {
   const { cartItems, removeFromCart, clearCart } = useContext(CartContext);
 
-  const total = cartItems.reduce(
-    (sum, item) => sum + (parseInt(item.precio.replace(/[^\d]/g, "")) || 0) * item.cantidad,
-    0
-  );
+  const total = cartItems.reduce((sum, item) => {
+    let precio = item.precio;
+    if (typeof precio === "string") {
+      precio = precio.replace(/[₡,]/g, "");
+    }
+    precio = Number(precio) || 0;
+    const cantidad = Number(item.cantidad) || 1;
+    return sum + precio * cantidad;
+  }, 0);
 
   return (
     <div className={`cart-sidebar ${isOpen ? "open" : ""}`}>
@@ -42,7 +47,7 @@ function CartSidebar({ isOpen, onClose }) {
 
       {cartItems.length > 0 && (
         <div className="cart-footer">
-          <h3>Total: ₡{total.toLocaleString()}</h3>
+          <h3>Total: ₡{total.toLocaleString("es-CR")}</h3>
           <button className="clear-btn" onClick={clearCart}>Vaciar carrito</button>
           <button className="clear-btn" onClick={clearCart}>Pagar</button>
         </div>
