@@ -5,6 +5,8 @@ export const obtenerFotosSitio = async (sitioId) => {
   try {
     const respuesta = await axiosInstance.get('fotos-lugares');
     
+    console.log(respuesta);
+    
     // Manejar diferentes estructuras de respuesta
     let fotos = [];
     

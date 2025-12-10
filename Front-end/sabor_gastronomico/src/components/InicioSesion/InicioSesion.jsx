@@ -26,16 +26,20 @@ function InicioSesion() {
     }
   }, [autenticado]);
 
-   useEffect(() => {
-     async function obtener() {
-       const data = await getRestaurantes()
-       console.log("🔥 Restaurantes recibidos:", data.results);
-       setResta(data.results);
-     }
- 
-     obtener()
-     
-   }, []);
+  useEffect(() => {
+    async function obtener() {
+      try {
+        const data = await getRestaurantes()
+        console.log("🔥 Restaurantes recibidos:", data);
+        setResta(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Error al cargar restaurantes:', error);
+        setResta([]);
+      }
+    }
+
+    obtener()
+  }, []);
 
   const manejarLogin = async (e) => {
     e.preventDefault();
@@ -62,33 +66,34 @@ function InicioSesion() {
         const user = respuesta.user;
         login(user);
 
-      console.log(resta);
-      
+        console.log(resta);
+        
 
-      // Filtrar restaurante por el ID del usuario
-      const restauranteAsignado = resta.find(
-        (rest) => rest.usuario_propietario === user.id
-      );
-      //console.log(await getRestaurantes());
+        // Filtrar restaurante por el ID del usuario
+        const restauranteAsignado = resta.find(
+          (rest) => rest.usuario_propietario === user.id
+        );
 
-      // Validar si el restaurante del backend coincide con el del usuario
-    const rol = (user.role || user.rol || user.tipo || "").toLowerCase();
-    console.log(rol);
-    
+        // Validar si el restaurante del backend coincide con el del usuario
+        const rol = (user.role || user.rol || user.tipo || "").toLowerCase();
+        console.log(rol);
+        
 
-    // Validar restaurante SOLO si el rol es admin restaurante
-    if (rol.includes("restaurante")) {
+        // Validar restaurante SOLO si el rol es admin restaurante
+        if (rol.includes("restaurante")) {
 
-      if (!restauranteAsignado) {
-        setMensaje("No tienes un restaurante asignado.");
-        return;
-      }
+          if (!restauranteAsignado) {
+            setMensaje("No tienes un restaurante asignado.");
+            setCargando(false);
+            return;
+          }
 
-      if (restauranteAsignado.usuario_propietario !== user.id) {
-        setMensaje("El restaurante no coincide. Acceso denegado.");
-        return;
-      }
-    }
+          if (restauranteAsignado.usuario_propietario !== user.id) {
+            setMensaje("El restaurante no coincide. Acceso denegado.");
+            setCargando(false);
+            return;
+          }
+        }
 
         setMensaje('✅ Inicio de sesión exitoso. Redirigiendo...');
 

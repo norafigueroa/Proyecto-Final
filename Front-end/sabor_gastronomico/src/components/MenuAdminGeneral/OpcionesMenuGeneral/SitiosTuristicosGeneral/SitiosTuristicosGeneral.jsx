@@ -174,7 +174,11 @@ function SitiosTuristicosGeneral() {
 
   const cargarFotosSitio = async (sitioId) => {
     try {
+      console.log(sitioId);
+      
       const fotosData = await obtenerFotosSitio(sitioId);
+      console.log(fotosData);
+      
       let fotosArray = Array.isArray(fotosData) ? fotosData : [];
       
       // Limpiar URLs de fotos
@@ -336,6 +340,8 @@ function SitiosTuristicosGeneral() {
       };
 
       if (editando) {
+        console.log(editando);
+        
         await actualizarParcialSitioTuristico(editando.id, datos);
         await Swal.fire(
           'Éxito',
@@ -429,6 +435,9 @@ function SitiosTuristicosGeneral() {
   if (cargando) {
     return <div className="stg-cargando-unico">Cargando sitios turísticos...</div>;
   }
+
+  console.log(fotos);
+  
 
   return (
     <div className="stg-contenedor-principal-unico">

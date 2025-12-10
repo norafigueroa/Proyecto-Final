@@ -10,6 +10,7 @@ import UsuarioAdminGeneral from './OpcionesMenuGeneral/UsuarioAdminGeneral/Usuar
 import BlogAdminGeneral from './OpcionesMenuGeneral/BlogAdminGeneral/BlogAdminGeneral';
 import SitiosTuristicosGeneral from './OpcionesMenuGeneral/SitiosTuristicosGeneral/SitiosTuristicosGeneral';
 import ConfiguracionGeneral from './OpcionesMenuGeneral/ConfiguracionGeneral/ConfiguracionGeneral';
+import MensajesContactoGeneral from './OpcionesMenuGeneral/MensajesContactoGeneral/MensajesContactoGeneral';
 
 import './MenuAdminGeneral.css';
 
@@ -60,6 +61,12 @@ function MenuAdminGeneral() {
       descripcion: 'Lugares de interés',
     },
     {
+      id: 'mensajes',
+      nombre: 'Mensajes',
+      icono: '📨',
+      descripcion: 'Contactos y consultas',
+    },
+    {
       id: 'configuracion',
       nombre: 'Configuración',
       icono: '⚙️',
@@ -84,23 +91,25 @@ function MenuAdminGeneral() {
   };
 
   const renderizarComponente = () => {
-  switch (seccionActual) {
-    case 'dashboard':
-      return <DashboardGeneral />;
-    case 'restaurantes':
-      return <RestauranteAdminGeneral />;
-    case 'usuarios':
-      return <UsuarioAdminGeneral />;
-    case 'blog':
-      return <BlogAdminGeneral />;
-    case 'sitios':
-      return <SitiosTuristicosGeneral />;
-    case 'configuracion':
-      return <ConfiguracionGeneral />;
-    default:
-      return <DashboardGeneral />;
-  }
-};
+    switch (seccionActual) {
+      case 'dashboard':
+        return <DashboardGeneral />;
+      case 'restaurantes':
+        return <RestauranteAdminGeneral />;
+      case 'usuarios':
+        return <UsuarioAdminGeneral />;
+      case 'blog':
+        return <BlogAdminGeneral />;
+      case 'sitios':
+        return <SitiosTuristicosGeneral />;
+      case 'mensajes':
+        return <MensajesContactoGeneral />;
+      case 'configuracion':
+        return <ConfiguracionGeneral />;
+      default:
+        return <DashboardGeneral />;
+    }
+  };
 
   return (
     <div className="menu-admin-contenedor">

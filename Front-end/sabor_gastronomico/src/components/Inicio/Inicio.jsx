@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getRestaurantes } from "../../services/ServicesRestaurantes";
+import { obtenerConfiguracion } from '../../services/ServicesAdminGeneral/ServicesConfiguracion'
 
 import mariscos from "../../assets/mariscos.webp";
 import soda from "../../assets/soda.webp";
@@ -12,28 +13,44 @@ function Inicio() {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("Todos");
   const [restaurantes, setRestaurantes] = useState([]);
+  const [configuracion, setConfiguracion] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   // Traer restaurantes desde la API
   useEffect(() => {
     async function obtener() {
-      const data = await getRestaurantes()
-      console.log("🔥 Restaurantes recibidos:", data.results);
-      setRestaurantes(data.results);
+      try {
+        const data = await getRestaurantes();
+        console.log("🔥 Restaurantes recibidos:", data);
+        setRestaurantes(Array.isArray(data) ? data : []);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     }
+    obtener();
+  }, []);
 
-    obtener()
-    setLoading(false)
-    
+  // Traer configuración desde la API
+  useEffect(() => {
+    async function obtenerConfig() {
+      try {
+        const data = await obtenerConfiguracion();
+        const config = Array.isArray(data) ? data[0] : data;
+        setConfiguracion(config);
+      } catch (error) {
+        console.error('Error al cargar configuración:', error);
+      }
+    }
+    obtenerConfig();
   }, []);
 
   console.log(restaurantes);
   
   // Filtrar por búsqueda y categoría
   const filteredData = restaurantes.filter((item) => {
-    console.log(item.categoria?.nombre_categoria);
-    
     const matchesSearch = item.nombre_restaurante
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
@@ -47,12 +64,10 @@ function Inicio() {
     navigate(`/Restaurante/${id}`);
   };
 
-
-    
   if (loading) return <p>Cargando restaurantes...</p>;
   if (error) return <p>{error}</p>;
 
-    // Restaurantes destacados (puedes dejarlos fijos o seleccionarlos desde la API)
+  // Restaurantes destacados
   const destacados = [
     {
       nombre: "Tiki Gastro Pub",
@@ -76,12 +91,11 @@ function Inicio() {
     },
   ];
 
-  console.log("🔥 RESTAURANTES CARGADOS:", restaurantes);
   return (
     <div>
       <div className="search-page">
-        <p className="title">Bienvenidos al Paraíso Gastronómico</p>
-          <h1 className="search-title">¿Qué antojo tienes hoy?</h1>
+        <p className="title">{configuracion?.nombre_plataforma || "Bienvenidos al Paraíso Gastronómico"}</p>
+        <h1 className="search-title">¿Qué antojo tienes hoy?</h1>
         <p className="search-subtitle">
           Explora los mejores restaurantes de la Perla del Pacífico 🌊
         </p>
@@ -101,22 +115,22 @@ function Inicio() {
           <span className="busqueda-icono">🔍</span>
         </div>
 
-      {/* Lista de resultados */}
-      <ul className="busqueda-lista">
-        {filteredData.length > 0 ? (
-          filteredData.map((item) => (
-            <li
-              key={item.id}
-              className="busqueda-item"
-              onClick={() => handleSelect(item.id)}
-            >
-              {item.nombre_restaurante}
-            </li>
-          ))
-        ) : (
-          <li className="busqueda-msg">No se encontraron restaurantes</li>
-        )}
-      </ul>
+        {/* Lista de resultados */}
+        <ul className="busqueda-lista">
+          {filteredData.length > 0 ? (
+            filteredData.map((item) => (
+              <li
+                key={item.id}
+                className="busqueda-item"
+                onClick={() => handleSelect(item.id)}
+              >
+                {item.nombre_restaurante}
+              </li>
+            ))
+          ) : (
+            <li className="busqueda-msg">No se encontraron restaurantes</li>
+          )}
+        </ul>
 
         {/* ====== SECCIÓN DE EXPLORAR ====== */}
         <section className="categorias-section">

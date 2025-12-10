@@ -98,9 +98,14 @@ function ConfiguracionGeneral() {
       const data = await response.json();
       
       if (data.secure_url) {
-        setFormulario({ ...formulario, logo: data.secure_url });
+        // Limpiar URL de Cloudinary
+        const logoLimpio = data.secure_url.includes('image/upload/') 
+          ? data.secure_url.replace('image/upload/', '') 
+          : data.secure_url;
+        setFormulario({ ...formulario, logo: logoLimpio });
         Swal.fire('Éxito', 'Logo subido correctamente', 'success');
       }
+
     } catch (error) {
       console.error('Error al subir logo:', error);
       Swal.fire('Error', 'No se pudo subir el logo', 'error');
@@ -114,14 +119,21 @@ function ConfiguracionGeneral() {
   };
 
   const validarURL = (url) => {
-    if (!url) return true; // URLs vacías son válidas
-    try {
-      new URL(url);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
+  if (!url) return true; // URLs vacías son válidas
+  
+  // Agregar https:// si no tiene protocolo
+  let urlAValidar = url;
+  if (!url.match(/^https?:\/\//i)) {
+    urlAValidar = 'https://' + url;
+  }
+  
+  try {
+    new URL(urlAValidar);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
 
   const handleGuardar = async () => {
     // Validaciones básicas
