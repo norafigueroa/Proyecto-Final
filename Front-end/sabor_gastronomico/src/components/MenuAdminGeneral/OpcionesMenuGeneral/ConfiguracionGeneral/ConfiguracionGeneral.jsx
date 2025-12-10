@@ -113,6 +113,16 @@ function ConfiguracionGeneral() {
     setModoEdicion(true);
   };
 
+  const validarURL = (url) => {
+    if (!url) return true; // URLs vacías son válidas
+    try {
+      new URL(url);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
   const handleGuardar = async () => {
     // Validaciones básicas
     if (!formulario.nombre_plataforma) {
@@ -128,6 +138,23 @@ function ConfiguracionGeneral() {
     if (formulario.correo_contacto && !formulario.correo_contacto.includes('@')) {
       Swal.fire('Error', 'El correo de contacto no es válido', 'error');
       return;
+    }
+
+    // Validar URLs de redes sociales
+    const urlsARedes = {
+      url_facebook: 'Facebook',
+      url_instagram: 'Instagram',
+      url_twitter: 'Twitter',
+      url_tiktok: 'TikTok',
+      url_youtube: 'YouTube',
+      url_whatsapp: 'WhatsApp',
+    };
+
+    for (const [campo, nombre] of Object.entries(urlsARedes)) {
+      if (formulario[campo] && !validarURL(formulario[campo])) {
+        Swal.fire('Error', `La URL de ${nombre} no es válida`, 'error');
+        return;
+      }
     }
 
     try {

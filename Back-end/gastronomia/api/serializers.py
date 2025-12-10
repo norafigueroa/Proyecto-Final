@@ -126,6 +126,7 @@ class CategoriaMenuSerializer(serializers.ModelSerializer):
 
 class PlatilloSerializer(serializers.ModelSerializer):
     precio_descuento = serializers.SerializerMethodField()
+    categoria_nombre = serializers.CharField(source='categoria_menu.nombre', read_only=True)
 
     class Meta:
         model = Platillo
