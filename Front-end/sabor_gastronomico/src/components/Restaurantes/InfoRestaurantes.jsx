@@ -2,11 +2,12 @@ import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { getRestauranteById } from "../../services/ServicesRestaurantes";
 import { ServicesInicio } from "../../services/servicesAdminRest/ServicesInicio";
+import { ServicesTestimonios } from "../../services/servicesAdminRest/ServicesTestimonios";
 import { CartContext } from "../../context/CartContext";
 import CartIcon from "../CartIcon/CartIcon";
 import "./InfoRestaurantes.css";
 
-// 🖼️ Iconos y recursos de redes
+//Iconos y recursos de redes
 import Instagram from "../../assets/Instagram.png";
 import Facebook from "../../assets/Facebook.png";
 import TikTok from "../../assets/TikTok.png";
@@ -27,53 +28,84 @@ function InfoRestaurantes() {
   const [platillosBD, setPlatillosBD] = useState([]);
   const [categorias, setCategorias] = useState([]);
 
-  const [resenas, setResenas] = useState([]);
-  const [nuevoComentario, setNuevoComentario] = useState("");
-  const [nuevaCalificacion, setNuevaCalificacion] = useState(5);
-  const [nuevasFotos, setNuevasFotos] = useState([]);
+  const [testimonios, setTestimonios] = useState([]);
+  const [nuevoTestimonio, setNuevoTestimonio] = useState("");
+  const [nombreCliente, setNombreCliente] = useState("");
 
+  const [nuevaCalificacion, setNuevaCalificacion] = useState(0); 
+  const [startIndex, setStartIndex] = useState(0); // Para carrusel de testimonios
+
+
+
+  // ⭐ Componente para mostrar calificación con medias estrellas
+  function EstrellasPromedio({ valor }) {
+    const estrellas = [];
+
+    for (let i = 1; i <= 5; i++) {
+      if (valor >= i) {
+        estrellas.push(<span key={i} className="star filled">★</span>);
+      } else if (valor >= i - 0.5) {
+        estrellas.push(<span key={i} className="star half">★</span>);
+      } else {
+        estrellas.push(<span key={i} className="star">★</span>);
+      }
+    }
+
+    return <div className="estrellas-promedio">{estrellas}</div>;
+  }
 
   // Cuando cargue el restaurante, actualizar resenas
   useEffect(() => {
-    if (restaurante?.resenas) {
-      setResenas(restaurante.resenas);
-    }
-  }, [restaurante]);
+    async function fetchTestimonios() {
 
-  const enviarResena = async () => {
-  if (!nuevoComentario.trim()) return alert("Escribe un comentario antes de enviar.");
+      try {
+        const res = await ServicesTestimonios.obtenerTestimonios(id);
+      
+        
+        const data = res.data;
 
-  try {
-    // 1️⃣ Crear la reseña
-    const res = await ServicesResena.crearResena({
-      restaurante: id,
-      comentario: nuevoComentario,
-      calificacion: nuevaCalificacion,
-    });
-    const nuevaResena = res.data;
+        if (data && typeof data.map === "function") {
+          setTestimonios(data);
+        } else if (data?.results && typeof data.results.map === "function") {
+          setTestimonios(data.results);
+        } else {
+          setTestimonios([]);
+        }
 
-    // 2️⃣ Subir fotos si hay
-    for (let i = 0; i < nuevasFotos.length; i++) {
-      const formData = new FormData();
-      formData.append("resena", nuevaResena.id);
-      formData.append("url_foto", nuevasFotos[i]);
-      await ServicesResena.crearFotoResena(formData);
+      } catch (error) {
+        console.log("Error cargando testimonios:", error);
+        setTestimonios([]);
+      }
     }
 
-    // 3️⃣ Recargar reseñas del restaurante
-    const resActualizado = await ServicesResena.obtenerResenas();
-    const filtradas = resActualizado.data.filter(r => r.restaurante === id);
-    setResenas(filtradas);
+    fetchTestimonios();
+  }, [id]);
 
-    // Limpiar formulario
-    setNuevoComentario("");
-    setNuevaCalificacion(5);
-    setNuevasFotos([]);
-  } catch (error) {
-    console.log("Error al enviar reseña:", error);
-    alert("No se pudo enviar la reseña");
-  }
-};
+
+  const enviarTestimonio = async () => {
+      if (!nombreCliente.trim() || !nuevoTestimonio.trim() || nuevaCalificacion === 0) {
+        return alert("Ingresa tu nombre, comentario y calificación.");
+      }
+
+      try {
+        await ServicesTestimonios.crearTestimonio({
+          restaurante: id,
+          nombre: nombreCliente,
+          comentario: nuevoTestimonio,
+          calificacion: nuevaCalificacion 
+        });
+
+        const res = await ServicesTestimonios.obtenerTestimonios(id);
+        setTestimonios(res.data);
+
+        setNombreCliente("");
+        setNuevoTestimonio("");
+        setNuevaCalificacion(0);
+      } catch (error) {
+        console.log("Error enviando testimonio:", error);
+      }
+    };
+
 
   useEffect(() => {
     async function fetchData() {
@@ -135,7 +167,7 @@ function InfoRestaurantes() {
     domingo:  { apertura: "", cierre: "", cerrado: false }
   };
   
-  console.log(mostrarHora.domingo);
+  /* console.log(mostrarHora.domingo); */
 
   const categoriasParaMostrar = [
     { id: 0, nombre_categoria: "General" },
@@ -149,10 +181,8 @@ function InfoRestaurantes() {
     categoriaSeleccionada === 0
       ? platillosBD
       : platillosBD.filter((p) => p.categoria_menu === categoriaSeleccionada);
-  console.log("Platillos:", platillosBD);
-
-  // Testimonios
-  const testimonios = restaurante.resenas || []; 
+/*   console.log("Platillos:", platillosBD); */
+ 
 
   const iconosRedes = {
     facebook: Facebook,
@@ -171,6 +201,9 @@ function InfoRestaurantes() {
     link: red.link,
   }));
 
+
+  console.log(testimonios);
+  
   return (
     <div>
       <header className="header">
@@ -206,8 +239,19 @@ function InfoRestaurantes() {
             <p> Ver detalles</p>
           </div>
           <div className="info-card">
-            <strong>Reseñas:</strong>
-            <p>⭐ {restaurante.calificacion_promedio} ({restaurante.total_resenas} opiniones)</p>
+            <strong>Calificación:</strong>
+
+            <div className="rating-promedio-box">
+              <EstrellasPromedio valor={restaurante.calificacion_promedio} />
+
+              <p className="rating-num">
+                {restaurante.calificacion_promedio.toFixed(1)} / 5
+              </p>
+
+              <p className="rating-total">
+                ({restaurante.total_resenas} reseñas)
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -327,72 +371,97 @@ function InfoRestaurantes() {
         })}
       </div>
 
+      {/* ============== TESTIMONIOS ============== */}
       <section className="testimonios-section">
         <h2 className="testimonios-titulo">Lo Que Dicen Nuestros Clientes</h2>
-        <p className="testimonios-subtitulo">Tus opiniones nos ayudan a mejorar</p>
+        <p className="testimonios-subtitulo">Experiencias reales</p>
 
-        {/* Formulario para nueva reseña */}
-        <div className="form-resena">
+        {/* CARRUSEL DE TESTIMONIOS */}
+        <div className="carrusel-container">
+          <button
+            className="carrusel-btn prev"
+            onClick={() => setStartIndex((prev) => Math.max(prev - 1, 0))}
+            disabled={startIndex === 0}
+          >
+            ◀
+          </button>
+
+          <div className="testimonios-grid">
+            {testimonios
+              .slice(startIndex, startIndex + 4)
+              .map((t) => (
+                <div key={t.id} className="testimonio-card">
+                  <div className="testimonio-header">
+                    <div className="testimonio-avatar">
+                      {t.nombre ? t.nombre[0].toUpperCase() : "?"}
+                    </div>
+                    <div className="testimonio-nombre">{t.nombre}</div>
+                  </div>
+
+                  <div className="testimonio-estrellas">
+                    {[1, 2, 3, 4, 5].map((num) => (
+                      <span
+                        key={num}
+                        className={num <= t.calificacion ? "star filled" : "star"}
+                      >
+                        ★
+                      </span>
+                    ))}
+                  </div>
+
+                  <p className="testimonio-texto">{t.comentario}</p>
+                  <p className="testimonio-fecha">
+                    {new Date(t.fecha).toLocaleDateString()}
+                  </p>
+                </div>
+              ))}
+          </div>
+
+          <button
+            className="carrusel-btn next"
+            onClick={() =>
+              setStartIndex((prev) =>
+                Math.min(prev + 1, testimonios.length - 4)
+              )
+            }
+            disabled={startIndex + 4 >= testimonios.length}
+          >
+            ▶
+          </button>
+        </div>
+
+        {/* FORMULARIO */}
+        <div className="form-testimonio">
+          <p className="testimonios-subtitulo">Cuentanos tu experiencia</p>
+          <input
+            type="text"
+            placeholder="Tu nombre"
+            value={nombreCliente}
+            onChange={(e) => setNombreCliente(e.target.value)}
+          />
+
           <textarea
             placeholder="Escribe tu comentario..."
-            value={nuevoComentario}
-            onChange={(e) => setNuevoComentario(e.target.value)}
+            value={nuevoTestimonio}
+            onChange={(e) => setNuevoTestimonio(e.target.value)}
           />
 
-          <label>Calificación:</label>
-          <select
-            value={nuevaCalificacion}
-            onChange={(e) => setNuevaCalificacion(parseInt(e.target.value))}
-          >
-            {[1, 2, 3, 4, 5].map((n) => (
-              <option key={n} value={n}>{n}</option>
+          {/* ⭐🔥 ESTRELLAS PARA CALIFICAR */}
+          <div className="rating-stars">
+            {[1, 2, 3, 4, 5].map((num) => (
+              <span
+                key={num}
+                className={num <= nuevaCalificacion ? "star filled" : "star"}
+                onClick={() => setNuevaCalificacion(num)}
+              >
+                ★
+              </span>
             ))}
-          </select>
+          </div>
 
-          <input
-            type="file"
-            multiple
-            onChange={(e) => setNuevasFotos(Array.from(e.target.files))}
-          />
-
-          <button onClick={enviarResena}>Enviar Reseña</button>
-        </div>
-
-        {/* Listado de reseñas */}
-        <div className="testimonios-grid">
-          {resenas.map((t) => (
-            <div key={t.id} className="testimonio-card">
-              <div className="testimonio-header">
-                <div className="testimonio-avatar">
-                  {t.usuario_nombre ? t.usuario_nombre[0].toUpperCase() : "U"}
-                </div>
-                <div className="testimonio-nombre">{t.usuario_nombre || "Anónimo"}</div>
-              </div>
-
-              <p className="testimonio-texto">{t.comentario}</p>
-
-              {/* Fotos de la reseña */}
-              {t.fotos?.length > 0 && (
-                <div className="testimonio-fotos" style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginTop: "0.5rem" }}>
-                  {t.fotos.map((f, i) => (
-                    <img 
-                      key={i} 
-                      src={f.url_foto} 
-                      alt={`Foto reseña ${i}`} 
-                      style={{ width: "80px", height: "80px", objectFit: "cover", borderRadius: "8px" }}
-                    />
-                  ))}
-                </div>
-              )}
-
-              <p className="testimonio-fecha">{new Date(t.fecha_resena).toLocaleDateString()}</p>
-              <span>⭐ {t.calificacion}/5</span>
-            </div>
-          ))}
+          <button onClick={enviarTestimonio}>Enviar Testimonio</button>
         </div>
       </section>
-
-
 
 
       {/* Mapa */}

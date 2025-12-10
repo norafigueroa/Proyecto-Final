@@ -28,8 +28,8 @@ urlpatterns = [
     # path('restaurantes/<int:restaurante_id>/horarios/', HorarioRestauranteListCreateView.as_view(), name='horarios-restaurante'),
     # path('horarios/<int:pk>/', HorarioRestauranteDetailView.as_view(), name='horario-detalle'),
 
-    #path('restaurantes/horarios/', HorarioListCreateView.as_view(), name='horarios-restaurante'),
-    #path('restaurantes/<int:restaurante_id>/horarios/', HorarioDetailView.as_view(), name='horario'),
+    path('restaurantes/horarios/', HorarioListCreateView.as_view(), name='horarios-restaurante'),
+    path('restaurantes/<int:restaurante_id>/horarios/', HorarioDetailView.as_view(), name='horario'),
     
     # Menú y platillos
     path('categorias-menu/', CategoriaMenuListCreateView.as_view(), name="crear y listar categorias de menú"),
@@ -50,6 +50,11 @@ urlpatterns = [
     path('resenas/<int:pk>', ResenaDetailView.as_view(), name="actualizar y eliminar reseña"),
     path('fotos-resenas', FotosResenaListCreateView.as_view(), name="crear y listar fotos de reseñas"),
     path('fotos-resenas/<int:pk>', FotosResenaDetailView.as_view(), name="actualizar y eliminar foto de reseña"),
+
+    #Testimonio
+    path('testimonios/', TestimonioListCreateView.as_view(), name='testimonios'),
+    path('testimonios/<int:pk>/', TestimonioDetailView.as_view(), name='detalle-testimonio'),
+
 
     # Blog
     path('categorias-blog', CategoriaBlogListCreateView.as_view(), name="crear y listar categorias de blog"),

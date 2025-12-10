@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ServicesResena from "../../../../services/servicesAdminRest/ServicesResena"
+import { ServicesTestimonios } from "../../../../services/servicesAdminRest/ServicesTestimonios";
 import "./Resenas.css";
 
 function Resenas() {
@@ -7,22 +7,31 @@ function Resenas() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 🔵 Cargar reseñas al entrar en la página
+  //Cargar reseñas al entrar en la página
   useEffect(() => {
     cargarResenas();
   }, []);
 
   const cargarResenas = async () => {
     try {
-      const response = await ResenaService.obtenerResenas();
-      console.log("Reseñas obtenidas:", response.data);
-      setResenas(response.data);
+      const res = await ServicesTestimonios.obtenerTestimonios(1); 
+      const data = res.data;
+
+      if (data && typeof data.map === "function") {
+        setResenas(data);
+      } else if (data?.results && typeof data.results.map === "function") {
+        setResenas(data.results);
+      } else {
+        setResenas([]);
+      }
+
       setLoading(false);
     } catch (err) {
       setError("No se pudieron cargar las reseñas.");
       setLoading(false);
     }
   };
+
 
   if (loading) return <p className="cargando">Cargando reseñas...</p>;
   if (error) return <p className="error">{error}</p>;

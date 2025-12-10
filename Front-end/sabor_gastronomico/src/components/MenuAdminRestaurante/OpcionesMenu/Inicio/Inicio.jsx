@@ -195,9 +195,6 @@ function Inicio() {
             alt="Logo"
             className="Inicio-logo"
           />
-          <button className="btn-cambiar-foto" onClick={() => setModalFoto(true)}>
-            Cambiar Foto
-          </button>
         </div>
 
         <h2 className="Inicio-titulo">Bienvenido, Administrador</h2>

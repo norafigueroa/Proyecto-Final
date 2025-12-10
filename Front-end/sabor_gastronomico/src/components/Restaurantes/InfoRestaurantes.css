@@ -487,3 +487,198 @@
   font-size: 0.8rem;
   font-weight: bold;
 }
+
+.rating-stars {
+  display: flex;
+  gap: 6px;
+  margin: 8px 0;
+  cursor: pointer;
+}
+
+.star {
+  font-size: 28px;
+  color: #ccc;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.star.filled {
+  color: #ffb400;
+}
+.star:hover {
+  color: #ff9800;
+}
+
+.testimonio-estrellas {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.testimonios-section {
+  text-align: center;
+  margin-top: 4rem;
+  padding: 2rem;
+}
+
+.testimonios-titulo {
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: #2e3a59;
+}
+
+.testimonios-subtitulo {
+  color: orangered;
+  margin-bottom: 2rem;
+  font-weight: 500;
+}
+
+.form-testimonio {
+  max-width: 500px;
+  margin: 0 auto 2rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-testimonio input,
+.form-testimonio textarea {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.form-testimonio button {
+  background-color: orangered;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.testimonios-grid {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.testimonio-card {
+  background: #fffbe6;
+  padding: 1.5rem;
+  border-radius: 15px;
+  width: 300px;
+  text-align: left;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+}
+
+.testimonio-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.testimonio-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: orangered;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.testimonio-nombre {
+  font-weight: bold;
+}
+
+.testimonio-texto {
+  margin-bottom: 1rem;
+}
+
+.testimonio-fecha {
+  font-size: 0.9rem;
+  color: gray;
+}
+
+/* === Promedio de Estrellas === */
+.estrellas-promedio {
+  display: flex;
+  gap: 3px;
+  font-size: 22px;
+}
+
+.star {
+  color: #ccc;
+  cursor: default;
+}
+
+/* Estrella llena */
+.star.filled {
+  color: gold;
+}
+
+/* Media estrella */
+.star.half {
+  background: linear-gradient(90deg, gold 50%, #ccc 50%);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.rating-promedio-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.rating-num {
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 4px;
+}
+
+.rating-total {
+  font-size: 13px;
+  color: gray;
+}
+
+.carrusel-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.carrusel-btn {
+  background-color: orangered;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.carrusel-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.testimonios-grid {
+  display: flex;
+  gap: 1rem;
+  overflow: hidden;
+  width: 100%;
+}
+
+.testimonio-card {
+  flex: 0 0 calc(25% - 1rem); /* 4 tarjetas visibles */
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}

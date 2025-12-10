@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.hashers import make_password
 from .models import *
+from django.db.models import Avg
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from decimal import Decimal, ROUND_HALF_UP
 
@@ -79,19 +80,23 @@ class CategoriaSerializer(serializers.ModelSerializer):
 
 class RestauranteSerializer(serializers.ModelSerializer):
     categoria = CategoriaSerializer(read_only=True)
+    calificacion_promedio = serializers.SerializerMethodField()
+
     class Meta:
         model = Restaurante
         fields = '__all__'
+
+    def get_calificacion_promedio(self, obj):
+        promedio = Resena.objects.filter(restaurante=obj.id).aggregate(
+            Avg('calificacion')
+        )['calificacion__avg']
+
+        return round(promedio or 0, 1)
 
     def validate_nombre_restaurante(self, value):
         if not value.strip():
             raise serializers.ValidationError("El nombre del restaurante no puede estar vacío.")
         return value.title()
-
-    def validate_calificacion_promedio(self, value):
-        if value < 0 or value > 5:
-            raise serializers.ValidationError("La calificación debe estar entre 0 y 5.")
-        return value
 
 class HorarioRestauranteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -186,6 +191,23 @@ class ResenaSerializer(serializers.ModelSerializer):
         fields = ['id', 'usuario', 'usuario_nombre', 'restaurante', 'calificacion', 'comentario', 'fecha_resena', 'fotos']
     
     # ✅ CloudinaryField maneja la validación automáticamente
+
+class TestimonioSerializer(serializers.ModelSerializer):
+    restaurante_nombre = serializers.CharField(source='restaurante.nombre_restaurante', read_only=True)
+
+    class Meta:
+        model = Testimonio
+        fields = '__all__'
+
+    def validate_comentario(self, value):
+        if len(value.strip()) < 5:
+            raise serializers.ValidationError("El comentario debe tener al menos 5 caracteres.")
+        return value.strip()
+
+    def validate_nombre(self, value):
+        if not value.strip():
+            raise serializers.ValidationError("Debe incluir un nombre.")
+        return value.title()    
 
 
 class CategoriaBlogSerializer(serializers.ModelSerializer):

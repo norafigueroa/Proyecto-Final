@@ -203,8 +203,7 @@ class Resena(models.Model):
     fecha_resena = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Reseña de {self.usuario.username} para {self.restaurante.nombre_restaurante}"
-
+        return f"Reseña de {self.usuario.username} para {self.restaurante.nombre_restaurante}"        
 
 class FotosResena(models.Model):
     resena = models.ForeignKey(Resena, on_delete=models.CASCADE)
@@ -213,6 +212,16 @@ class FotosResena(models.Model):
 
     def __str__(self):
         return f"Foto reseña {self.resena.id}"
+
+class Testimonio(models.Model):
+    restaurante = models.ForeignKey(Restaurante, on_delete=models.CASCADE, related_name="testimonios")
+    nombre = models.CharField(max_length=100)
+    comentario = models.TextField()
+    fecha = models.DateTimeField(auto_now_add=True)
+    calificacion = models.IntegerField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.nombre} - {self.restaurante.nombre_restaurante}"        
 
 
 # BLOG Y ETIQUETAS
