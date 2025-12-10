@@ -30,6 +30,7 @@ def login_view(request):
     
     # Autenticar usuario
     usuario = authenticate(username=nombre_usuario, password=contrasena)
+    print(usuario)
     
     if usuario is not None:
         # Generar tokens

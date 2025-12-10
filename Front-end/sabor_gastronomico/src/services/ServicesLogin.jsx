@@ -4,6 +4,7 @@ const AUTH_BASE = '/'; // ya apunta a http://127.0.0.1:8000/api/
 
 // ==================== LOGIN ====================
 async function postLogin(credenciales) {
+  console.log(credenciales);
   try {
     const response = await axiosInstance.post(`${AUTH_BASE}login/`, credenciales);
     return response.data;  // ✅ Retorna solo los datos

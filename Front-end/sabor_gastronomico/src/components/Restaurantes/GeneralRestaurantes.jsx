@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./GeneralRestaurantes.css";
 import { useNavigate } from "react-router-dom";
+import CartIcon from "../CartIcon/CartIcon";
 
 function GeneralRestaurantes() {
   const [restaurantes, setRestaurantes] = useState([]);
@@ -67,6 +68,11 @@ function GeneralRestaurantes() {
 
   return (
     <div className="restaurantes-contenedor">
+
+      {/* 🔹 Carrito */}
+      <div className="menu-cart">
+        <CartIcon />
+      </div>
       {restaurantes.length === 0 ? (
         <p>No hay restaurantes registrados.</p>
       ) : (

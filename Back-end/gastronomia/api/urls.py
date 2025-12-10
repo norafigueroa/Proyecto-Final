@@ -46,7 +46,7 @@ urlpatterns = [
     path('detalles-pedido/<int:pk>', DetallePedidoDetailView.as_view(), name="actualizar y eliminar detalle de pedido"),
 
     # Reseñas
-    path('resenas', ResenaListCreateView.as_view(), name="crear y listar reseñas"),
+    path('resenas/', ResenaListCreateView.as_view(), name='resenas'),
     path('resenas/<int:pk>', ResenaDetailView.as_view(), name="actualizar y eliminar reseña"),
     path('fotos-resenas', FotosResenaListCreateView.as_view(), name="crear y listar fotos de reseñas"),
     path('fotos-resenas/<int:pk>', FotosResenaDetailView.as_view(), name="actualizar y eliminar foto de reseña"),

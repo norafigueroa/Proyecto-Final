@@ -59,8 +59,39 @@
   margin-bottom: 1.5rem;
   font-size: 25px;
 }
-.categoria{
-    font-size: 25px;
+/* 🔥 Contenedor de categorías */
+.categoria-botones {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 2rem;
+  margin-top: 1.5rem;
+}
+
+/* 🔥 Botón base */
+.categoria-btn {
+  background-color: #fff;
+  border: 1px solid orangered;
+  color: orangered;
+  padding: 0.6rem 1.2rem;
+  border-radius: 25px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Hover */
+.categoria-btn:hover {
+  background-color: orangered;
+  color: white;
+}
+
+/* Cuando está seleccionada */
+.categoria-btn.activo {
+  background-color: orangered;
+  color: white;
+  font-weight: bold;
 }
 
 .categorias-titulo-Res{
@@ -181,7 +212,55 @@
   transform: translateY(-5px);
 }
 
-/* Avatar circular con iniciales */
+/* Sección testimonios */
+.testimonios-section {
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.testimonios-titulo {
+  font-size: 45px;
+  font-weight: 700;
+  color: #1c2b47;
+  margin-bottom: 0.5rem;
+}
+
+.testimonios-subtitulo {
+  font-size: 25px;
+  color: black;
+  margin-bottom: 3rem;
+}
+
+/* Grid de testimonios */
+.testimonios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  justify-items: center;
+}
+
+/* Cada tarjeta de testimonio */
+.testimonio-card {
+  background-color: #fff9da;
+  border-radius: 15px;
+  padding: 1.5rem;
+  max-width: 350px;
+  text-align: left;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.testimonio-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Header: avatar + nombre */
+.testimonio-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
 .testimonio-avatar {
   width: 50px;
   height: 50px;
@@ -194,13 +273,6 @@
   align-items: center;
   justify-content: center;
   margin-right: 10px;
-}
-
-/* Nombre del cliente */
-.testimonio-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.8rem;
 }
 
 .testimonio-nombre {
@@ -217,11 +289,70 @@
   margin-bottom: 0.5rem;
 }
 
-/* Fecha */
+/* Fotos de la reseña */
+.testimonio-fotos {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.foto-resena {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Fecha y calificación */
 .testimonio-fecha {
   color: #777;
   font-size: 16px;
   margin-top: 0.5rem;
+}
+
+.calificacion-resena {
+  display: inline-block;
+  margin-top: 0.2rem;
+  font-weight: bold;
+}
+
+/* Formulario de reseña */
+.form-resena {
+  margin-bottom: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
+}
+
+.textarea-resena {
+  width: 100%;
+  min-height: 100px;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.select-resena,
+.input-fotos-resena {
+  padding: 0.4rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.btn-enviar-resena {
+  padding: 0.5rem 1rem;
+  background-color: #ff7f00;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-enviar-resena:hover {
+  background-color: #e76c00;
 }
 
 /* Responsive */
@@ -234,6 +365,7 @@
     max-width: 100%;
   }
 }
+
 
 /* ////////////////////////////////// MAPA ////////////////////////////////// */
 
@@ -325,4 +457,33 @@
 .btn-agregar:hover {
   background-color: #e55300;
   transform: scale(1.05);
+}
+
+.precio-descuento {
+  color: red;
+  font-weight: bold;
+  display: block;
+  text-align: right; 
+}
+
+.nombre-y-descuento {
+  display: flex;
+  justify-content: space-between; /* separa nombre y badge */
+  align-items: center;
+  width: 100%;
+}
+
+.nombre-plato {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.badge-descuento {
+  background-color:red;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: bold;
 }
