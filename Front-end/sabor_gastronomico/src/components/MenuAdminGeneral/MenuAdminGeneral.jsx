@@ -9,7 +9,7 @@ import RestauranteAdminGeneral from './OpcionesMenuGeneral/RestauranteAdminGener
 import UsuarioAdminGeneral from './OpcionesMenuGeneral/UsuarioAdminGeneral/UsuarioAdminGeneral';
 import BlogAdminGeneral from './OpcionesMenuGeneral/BlogAdminGeneral/BlogAdminGeneral';
 import SitiosTuristicosGeneral from './OpcionesMenuGeneral/SitiosTuristicosGeneral/SitiosTuristicosGeneral';
-//import ConfiguracionGeneral from './OpcionesMenuGeneral/ConfiguracionGeneral/ConfiguracionGeneral';
+import ConfiguracionGeneral from './OpcionesMenuGeneral/ConfiguracionGeneral/ConfiguracionGeneral';
 
 import './MenuAdminGeneral.css';
 
@@ -95,8 +95,8 @@ function MenuAdminGeneral() {
       return <BlogAdminGeneral />;
     case 'sitios':
       return <SitiosTuristicosGeneral />;
-    /*case 'configuracion':
-      return <ConfiguracionGeneral />;*/
+    case 'configuracion':
+      return <ConfiguracionGeneral />;
     default:
       return <DashboardGeneral />;
   }
