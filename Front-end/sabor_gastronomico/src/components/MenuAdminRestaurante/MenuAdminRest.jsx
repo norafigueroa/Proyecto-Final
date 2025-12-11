@@ -115,9 +115,25 @@ function MenuAdminRest() {
                     {/* PERFIL */}
                     <div className="menu-sidebar-perfil">
                         <div className="menu-perfil-avatar">
-                            {restaurante?.logo
-                                ? <img src={restaurante.logo} alt="Logo" className="Menu-logo" />
-                                : restaurante?.nombre_restaurante?.[0] || "R"}
+
+                            {/* Si hay logo → mostrarlo */}
+                            {restaurante?.logo && restaurante.logo.includes("https://") ? (
+                                <img
+                                    src={
+                                        restaurante.logo.includes("https://")
+                                            ? "https://" + restaurante.logo.split("https://")[1]
+                                            : restaurante.logo
+                                    }
+                                    alt="Logo"
+                                    className="Menu-logo"
+                                />
+                            ) : (
+                                /* Si NO hay logo → mostrar la inicial del restaurante */
+                                <div className="menu-avatar-inicial">
+                                    {restaurante?.nombre_restaurante?.[0]?.toUpperCase() || "R"}
+                                </div>
+                            )}
+
                         </div>
 
                         <div className="menu-perfil-info">

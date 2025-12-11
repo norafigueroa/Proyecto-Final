@@ -315,12 +315,13 @@ function InfoRestaurantes() {
               {/* FOTO CLOUDINARY */}
               <img
                 src={
-                  plato.foto
-                    ? `https://res.cloudinary.com/dhnmsq2fx/${plato.foto}`
+                  plato.foto && plato.foto.includes("https://")
+                    ? "https://" + plato.foto.split("https://")[1]  // extrae la URL válida
                     : "https://via.placeholder.com/300x200"
                 }
                 alt={plato.nombre_platillo}
               />
+
 
               {/* NOMBRE + PRECIO */}
               <h3>

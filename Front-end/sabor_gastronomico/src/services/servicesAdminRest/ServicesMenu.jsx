@@ -3,22 +3,13 @@ import axios from "../AxiosConfig";
 const MenuService = {
   obtenerCategorias: () => axios.get("/categorias-menu/"),
   
-  obtenerPlatillos: () => 
-    axios.get("/platillos/"),
+  obtenerPlatillos: () => axios.get("/platillos/"),
   
   crearPlatillo: (data) =>
-    axios.post("/platillos/", data, {
-      headers: { 
-        "Content-Type": "multipart/form-data",
-      },
-    }),
+    axios.post("/platillos/", data),
   
   actualizarPlatillo: (id, data) =>
-    axios.patch(`/platillos/${id}/`, data, {
-      headers: { 
-        "Content-Type": "multipart/form-data",
-      },
-    }),
+    axios.patch(`/platillos/${id}/`, data),
   
   eliminarPlatillo: (id) => axios.delete(`/platillos/${id}/`),
 };

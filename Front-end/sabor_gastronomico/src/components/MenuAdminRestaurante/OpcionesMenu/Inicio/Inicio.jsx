@@ -50,10 +50,6 @@ function Inicio() {
     dias_operacion: "",
   });
 
-  // === FOTO PREVIEW ===
-  const [foto, setFoto] = useState(null);
-  const [previewFoto, setPreviewFoto] = useState(null);
-
   // === FECHA ===
   const fechaHora = new Date().toLocaleString("es-CR", {
     dateStyle: "full",
@@ -163,39 +159,11 @@ function Inicio() {
   }
 };
 
-
-  const subirFoto = async () => {
-    if (!foto) return;
-
-    const formData = new FormData();
-    formData.append("url_foto", foto);
-    formData.append("descripcion", "prueba");
-    formData.append("restaurante", id);
-
-    try {
-      const res = await ServicesInicio.subirFoto(formData);
-      setRestaurante((prev) => ({ ...prev, foto: res.data.url_foto }));
-
-      setModalFoto(false);
-    } catch (error) {
-      console.error("Error subiendo foto:", error);
-    }
-  };
-
   if (loading) return <p>Cargando...</p>;
 
   return (
     <div>
       <div className="Inicio-container">
-
-        {/* FOTO */}
-        <div className="Inicio-logo-wrapper">
-          <img
-            src={previewFoto || restaurante.foto || "/no-image.png"}
-            alt="Logo"
-            className="Inicio-logo"
-          />
-        </div>
 
         <h2 className="Inicio-titulo">Bienvenido, Administrador</h2>
         <p className="Inicio-fecha">{fechaHora}</p>

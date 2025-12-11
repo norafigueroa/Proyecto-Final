@@ -12,6 +12,7 @@ function GestionMenu() {
 
   const [modalAbierto, setModalAbierto] = useState(false);
   const [modoEdicion, setModoEdicion] = useState(false);
+  
 
   const [platoActual, setPlatoActual] = useState({
     id: null,
@@ -127,10 +128,35 @@ function GestionMenu() {
     setModalAbierto(true);
   };
 
-  const manejarImagen = (e) => {
+  const manejarImagen = async (e) => {
     const archivo = e.target.files[0];
-    if (archivo) {
-      setPlatoActual({ ...platoActual, foto: archivo });
+    if (!archivo) return;
+
+    const formData = new FormData();
+    formData.append("file", archivo);
+    formData.append("upload_preset", "el_sabor_de_la_perla");
+
+    try {
+      const res = await fetch(
+        "https://api.cloudinary.com/v1_1/dujs1kx4w/image/upload",
+        { method: "POST", body: formData }
+      );
+
+      const data = await res.json();
+
+      if (data.secure_url) {
+        // Guardar URL en el platillo actual
+        setPlatoActual({
+          ...platoActual,
+          foto: data.secure_url
+        });
+
+        console.log("📸 Imagen subida:", data.secure_url);
+      } else {
+        console.error("❌ Cloudinary no envió secure_url:", data);
+      }
+    } catch (error) {
+      console.error("Error subiendo imagen:", error);
     }
   };
 
@@ -207,7 +233,17 @@ function GestionMenu() {
               )}
 
               {p.foto && (
-                <img src={p.foto} className="gm-card-img" alt="imagen del plato" />
+                <img 
+                  src={
+                    p.foto.includes("https://")
+                      ? p.foto.split("https://")[1] 
+                          ? "https://" + p.foto.split("https://")[1]
+                          : p.foto
+                      : p.foto
+                  }
+                  className="gm-card-img"
+                  alt="imagen del plato"
+                />
               )}
 
               <h3 className="gm-card-title">{p.nombre_platillo}</h3>

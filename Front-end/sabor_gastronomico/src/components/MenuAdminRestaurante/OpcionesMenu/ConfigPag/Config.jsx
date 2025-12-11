@@ -72,38 +72,43 @@ function Config() {
     }));
   };
 
-
-  // --- Manejo de cambios de Logo ---
-  const handleLogoChange = (e) => {
+  //SUBIR LOGO A CLOUDINARY
+  const handleLogoChange = async (e) => {
     const file = e.target.files[0];
-
     if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "el_sabor_de_la_perla");
+
+    const res = await fetch("https://api.cloudinary.com/v1_1/dujs1kx4w/image/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+
+    if (data.secure_url) {
+      setRestaurante((prev) => ({
+        ...prev,
+        logo: data.secure_url,   // Guardamos la URL FINAL
+      }));
+
+      setPreviewLogo(data.secure_url); // Vista previa correcta
+    }
+  };
+
+  const handleEliminarLogo = () => {
+    setPreviewLogo(null);
 
     setRestaurante((prev) => ({
       ...prev,
-      logo: file, // Guarda el objeto File
+      logo: null
     }));
 
-    // Muestra la vista previa
-    setPreviewLogo(URL.createObjectURL(file));
+    const input = document.getElementById("logoInput");
+    if (input) input.value = "";
   };
-
-
-  // --- Manejo de cambios de Foto de Portada (Nuevo) ---
-  const handlePortadaChange = (e) => {
-    const file = e.target.files[0];
-
-    if (!file) return;
-
-    setRestaurante((prev) => ({
-      ...prev,
-      foto_portada: file, // Guarda el objeto File
-    }));
-
-    // Muestra la vista previa
-    setPreviewPortada(URL.createObjectURL(file));
-  };
-
 
   // --- Guardar cambios ---
   const guardarCambios = async () => {
@@ -113,27 +118,13 @@ function Config() {
 
     try {
       console.log("Guardando datos:", restaurante);
-
-      // Crear FormData para enviar archivos y texto juntos
-          //const formData = new FormData();
-
-      /* for (const [key, value] of Object.entries(restaurante)) {
-        // Excluir el campo 'email' si no es editable, o verificar si el valor es null/""
-        if (key === 'email') continue;
-      */
-        // Si el valor es una URL o string, no es un File. 
-        // Solo enviamos si es un File, o si es un campo de texto (string).
-        // Si el campo de imagen fue actualizado, 'logo' será un objeto File.
-        /* if (value instanceof File) {
-            formData.append(key, value);
-        } else if (value !== null && value !== undefined) {
-             // Envía los campos de texto
-             formData.append(key, value);
-        }
-      }
-      console.log(formData); */
       
-      const res = await patchRestaurante(id, restaurante);
+      const res = await patchRestaurante(id, {
+        ...restaurante,
+        logo: restaurante.logo || datosOriginales.logo,
+        foto_portada: restaurante.foto_portada || datosOriginales.foto_portada,
+      });
+
 
       console.log("Config actualizada:", res);
 
@@ -254,22 +245,51 @@ function Config() {
           {/* Logo */}
           <div className="config-group">
             <label className="config-label">Logo</label>
-            <input type="file" accept="image/*" onChange={handleLogoChange} />
+
+            {/* INPUT oculto */}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleLogoChange}
+              id="logoInput"
+              style={{ display: "none" }}
+            />
+
+            {/* PREVIEW */}
+            {previewLogo && (
+              <img
+                src={
+                  previewLogo.includes("https://")
+                    ? "https://" + previewLogo.split("https://")[1]
+                    : previewLogo
+                }
+                className="config-logo-preview"
+                alt="Vista previa del logo"
+              />
+            )}
+          </div>
+
+          {/* BOTONES */}
+          <div className="config-buttons">
+            <button
+              type="button"
+              className="btn-editar"
+              onClick={() => document.getElementById("logoInput").click()}
+            >
+              ✏️ 
+            </button>
 
             {previewLogo && (
-              <img src={previewLogo} className="config-logo-preview" alt="Vista previa del logo" />
+              <button
+                type="button"
+                className="btn-eliminar"
+                onClick={handleEliminarLogo}
+              >
+                🗑️ 
+              </button>
             )}
           </div>
 
-          {/* Foto de Portada (Corregido: Incluido) */}
-          <div className="config-group">
-            <label className="config-label">Foto de Portada</label>
-            <input type="file" accept="image/*" onChange={handlePortadaChange} />
-
-            {previewPortada && (
-              <img src={previewPortada} className="config-portada-preview" alt="Vista previa de portada" />
-            )}
-          </div>
 
           <button
             className="config-btn"

@@ -127,3 +127,37 @@
   margin-bottom: 8px;
   color: #444;
 }
+
+.config-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.btn-editar,
+.btn-eliminar {
+  padding: 8px 14px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-editar {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.btn-editar:hover {
+  background-color: #357ac8;
+}
+
+.btn-eliminar {
+  background-color: #d9534f;
+  color: white;
+}
+
+.btn-eliminar:hover {
+  background-color: #b8413e;
+}
