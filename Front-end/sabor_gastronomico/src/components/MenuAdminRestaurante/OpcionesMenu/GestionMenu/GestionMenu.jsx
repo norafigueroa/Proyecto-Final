@@ -20,7 +20,7 @@ function GestionMenu() {
     precio: "",
     categoria_menu: "",
     foto: null,
-    descuento: 0, 
+    porcentaje: 0, 
   });
 
   const [precioFinal, setPrecioFinal] = useState(0); 
@@ -33,18 +33,63 @@ function GestionMenu() {
   const cargarCategorias = async () => {
     try {
       const res = await MenuService.obtenerCategorias();
-      setCategorias(res.data.results);
+      
+      // Manejar diferentes estructuras de respuesta
+      let categoriasData = [];
+      
+      if (res.data.results) {
+        // Si la respuesta es paginada
+        categoriasData = res.data.results;
+      } else if (Array.isArray(res.data)) {
+        // Si la respuesta es un array directo
+        categoriasData = res.data;
+      }
+      
+      console.log("Categorías cargadas:", categoriasData);
+      setCategorias(categoriasData);
     } catch (err) {
       console.error("Error cargando categorías:", err);
+      setCategorias([]);
     }
   };
 
-  const cargarPlatos = async () => {
+/*   const cargarPlatos = async () => {
     try {
       const res = await MenuService.obtenerPlatillos();
       setPlatos(res.data.results);
     } catch (err) {
       console.error("Error cargando platillos:", err);
+    }
+  }; */
+
+    const cargarPlatos = async () => {
+    try {
+      // Obtener TODOS los platillos
+      const res = await MenuService.obtenerPlatillos();
+      
+      // Manejar diferentes estructuras de respuesta
+      let platillosData = [];
+      
+      if (res.data.results) {
+        // Si la respuesta es paginada
+        platillosData = res.data.results;
+      } else if (Array.isArray(res.data)) {
+        // Si la respuesta es un array directo
+        platillosData = res.data;
+      }
+      
+      // Filtrar por restaurante en el frontend
+      const platosFiltrados = platillosData.filter(
+        p => p.restaurante === restauranteId || p.restaurante_id === restauranteId
+      );
+      
+      console.log("Platillos cargados:", platosFiltrados);
+      console.log("RestauranteId buscado:", restauranteId);
+      console.log("Todos los platillos:", platillosData);
+      setPlatos(platosFiltrados); 
+    } catch (err) {
+      console.error("Error cargando platillos:", err);
+      setPlatos([]); 
     }
   };
 
@@ -57,7 +102,7 @@ function GestionMenu() {
       precio: "",
       categoria_menu: "",
       foto: null,
-      descuento: 0, 
+      porcentaje: 0, 
     });
     setPrecioFinal(0); 
     setModalAbierto(true);
@@ -72,11 +117,11 @@ function GestionMenu() {
       precio: plato.precio,
       categoria_menu: plato.categoria_menu,
       foto: null,
-      descuento: plato.descuento ?? 0, 
+      porcentaje: plato.porcentaje ?? 0, 
     });
 
     setPrecioFinal(
-      plato.precio - (plato.precio * (plato.descuento ?? 0)) / 100
+      plato.precio - (plato.precio * (plato.porcentaje ?? 0)) / 100
     ); 
 
     setModalAbierto(true);
@@ -95,7 +140,7 @@ function GestionMenu() {
     const restId = Number(restauranteId);
     const categoriaId = Number(platoActual.categoria_menu);
     const precioNum = Number(platoActual.precio);
-    const descuentoNum = Number(platoActual.descuento); 
+    const descuentoNum = Number(platoActual.porcentaje); 
 
     if (isNaN(precioNum) || precioNum <= 0) {
       console.error("Precio inválido");
@@ -108,7 +153,7 @@ function GestionMenu() {
     formData.append("nombre_platillo", platoActual.nombre_platillo);
     formData.append("descripcion", platoActual.descripcion);
     formData.append("precio", precioNum);
-    formData.append("promocion", platoActual.descuento > 0);
+    formData.append("promocion", platoActual.porcentaje > 0);
     formData.append("porcentaje", descuentoNum);
 
     if (platoActual.foto) {
@@ -157,8 +202,8 @@ function GestionMenu() {
             <div className="gm-card" key={p.id}>
 
               {/* BADGE DE DESCUENTO */}
-              {p.descuento > 0 && (
-                <span className="gm-badge-descuento">-{p.descuento}%</span> // <-- AGREGADO
+              {p.porcentaje > 0 && (
+                <span className="gm-badge-descuento">-{p.porcentaje}%</span> // <-- AGREGADO
               )}
 
               {p.foto && (
@@ -171,8 +216,8 @@ function GestionMenu() {
               {/* PRECIO MOSTRADO CON DESCUENTO */}
               <p className="gm-card-price">
                 ₡{p.precio}{" "}
-                {p.descuento > 0 && (
-                  <span className="gm-descuento-etiqueta">-{p.descuento}%</span>
+                {p.porcentaje > 0 && (
+                  <span className="gm-descuento-etiqueta">-{p.porcentaje}%</span>
                 )}
               </p>
 
@@ -227,7 +272,7 @@ function GestionMenu() {
                   onChange={(e) => {
                     const precio = Number(e.target.value);
                     setPlatoActual({ ...platoActual, precio });
-                    setPrecioFinal(precio - (precio * platoActual.descuento) / 100); 
+                    setPrecioFinal(precio - (precio * platoActual.porcentaje) / 100); 
                   }}
                 />
               </div>
@@ -238,10 +283,10 @@ function GestionMenu() {
                 <input
                   type="number"
                   placeholder="Ingrese descuento"
-                  value={platoActual.descuento ?? ""}
+                  value={platoActual.porcentaje ?? ""}
                   onChange={(e) => {
                     const d = e.target.value === "" ? null : Number(e.target.value);
-                    setPlatoActual({ ...platoActual, descuento: d });
+                    setPlatoActual({ ...platoActual, porcentaje: d });
 
                     setPrecioFinal(
                       platoActual.precio - (platoActual.precio * (d || 0)) / 100
@@ -264,7 +309,7 @@ function GestionMenu() {
                   }
                 >
                   <option value="">Seleccione una categoría</option>
-                  {categorias.map((c) => (
+                  {categorias && categorias.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.nombre_categoria}
                     </option>
