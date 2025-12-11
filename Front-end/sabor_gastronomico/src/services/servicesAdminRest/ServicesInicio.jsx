@@ -32,7 +32,6 @@ export const ServicesInicio = {
   },
 
   
-
   obtenerPlatillos(id) {
     return axios.get(`/platillos/?restaurante=${id}`);
   },

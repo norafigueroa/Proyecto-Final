@@ -93,6 +93,15 @@ class PlatilloListCreateView(ListCreateAPIView):
     queryset = Platillo.objects.all()
     serializer_class = PlatilloSerializer
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        restaurante_id = self.request.query_params.get("restaurante")
+
+        if restaurante_id:
+            queryset = queryset.filter(restaurante_id=restaurante_id)
+
+        return queryset
+
 class PlatilloDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Platillo.objects.all()
     serializer_class = PlatilloSerializer
@@ -144,6 +153,15 @@ class FotosResenaDetailView(RetrieveUpdateDestroyAPIView):
 class TestimonioListCreateView(ListCreateAPIView):
     queryset =Testimonio.objects.all()
     serializer_class = TestimonioSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        restaurante_id = self.request.query_params.get("restaurante")
+
+        if restaurante_id:
+            queryset = queryset.filter(restaurante_id=restaurante_id)
+
+        return queryset
 
 class TestimonioDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Testimonio.objects.all()

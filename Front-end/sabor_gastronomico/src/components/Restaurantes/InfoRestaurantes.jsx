@@ -138,6 +138,9 @@ function InfoRestaurantes() {
     fetchPlatillos();
   }, [id]);
 
+  console.log(platillosBD);
+  
+
 
     useEffect(() => {
     async function fetchCategorias() {

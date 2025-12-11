@@ -67,6 +67,8 @@ function GestionMenu() {
     try {
       // Obtener TODOS los platillos
       const res = await MenuService.obtenerPlatillos();
+      console.log(res.data.results);
+      
       
       // Manejar diferentes estructuras de respuesta
       let platillosData = [];
@@ -210,6 +212,9 @@ function GestionMenu() {
       console.error("Error eliminando:", err);
     }
   };
+
+  console.log(platos);
+  
 
   return (
     <div className="gm-container">
