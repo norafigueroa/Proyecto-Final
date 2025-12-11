@@ -88,6 +88,12 @@ function UsuarioAdminGeneral() {
     return grupo ? grupo.name : 'Sin grupo';
   };
 
+  const gruposDisponibles = () => {
+    return grupos.filter(grupo => 
+      grupo.name === 'Admin General' || grupo.name === 'Cliente'
+    );
+  };
+
   const handleAbrirModal = (usuario = null) => {
     if (usuario) {
       setEditando(usuario);
@@ -145,13 +151,11 @@ function UsuarioAdminGeneral() {
   };
 
   const handleGuardar = async () => {
-    // Validar campos obligatorios
     if (!formulario.username || !formulario.email || !formulario.first_name) {
       Swal.fire('Error', 'Username, email y nombre son obligatorios', 'error');
       return;
     }
 
-    // Si es nuevo, validar contraseña
     if (!editando) {
       if (!formulario.password) {
         Swal.fire('Error', 'Contraseña es obligatoria para nuevos usuarios', 'error');
@@ -490,7 +494,7 @@ function UsuarioAdminGeneral() {
               <div className="uag-form-grupo-unico">
                 <label>Grupo(s) *</label>
                 <div className="uag-checkboxes-grupo-unico">
-                  {grupos.map((grupo) => (
+                  {gruposDisponibles().map((grupo) => (
                     <label key={grupo.id} className="uag-checkbox-label-unico">
                       <input
                         type="checkbox"

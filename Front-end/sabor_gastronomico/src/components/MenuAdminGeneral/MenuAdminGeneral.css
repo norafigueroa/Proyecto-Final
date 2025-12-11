@@ -445,3 +445,259 @@ html, body, #root {
     font-size: 1.1rem;
   }
 }
+
+.modal-overlay-foto {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-contenido-foto {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  max-width: 450px;
+  width: 90%;
+  overflow: hidden;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header-foto {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #1a4d6d 0%, #2d7a99 100%);
+  color: white;
+}
+
+.modal-header-foto h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.modal-cerrar-foto {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: white;
+  transition: transform 0.2s;
+}
+
+.modal-cerrar-foto:hover {
+  transform: scale(1.2);
+}
+
+.modal-body-foto {
+  padding: 30px;
+}
+
+.modal-usuario-foto {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 14px;
+}
+
+.zona-preview-foto {
+  width: 100%;
+  height: 250px;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 25px;
+  background: #f8f9fa;
+  overflow: hidden;
+}
+
+.preview-imagen-foto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder-preview-foto {
+  text-align: center;
+  color: #999;
+}
+
+.placeholder-preview-foto p:first-child {
+  font-size: 48px;
+  margin: 0 0 10px 0;
+}
+
+.placeholder-preview-foto p:last-child {
+  margin: 0;
+  font-size: 14px;
+}
+
+.input-archivo-wrapper-foto {
+  margin-bottom: 20px;
+}
+
+.input-archivo-foto {
+  display: none;
+}
+
+.label-archivo-foto {
+  display: block;
+  padding: 12px 16px;
+  background: #f0f0f0;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  font-weight: 600;
+  color: #333;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.label-archivo-foto:hover {
+  background: #e8e8e8;
+  border-color: #1a4d6d;
+}
+
+.input-archivo-foto:disabled + .label-archivo-foto {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.info-archivo-foto {
+  background: #e3f2fd;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  border-left: 4px solid #1976d2;
+}
+
+.info-archivo-foto p {
+  margin: 4px 0;
+  font-size: 13px;
+  color: #333;
+}
+
+.modal-footer-foto {
+  display: flex;
+  gap: 10px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+}
+
+.btn-limpiar-foto,
+.btn-cancelar-foto,
+.btn-subir-foto {
+  flex: 1;
+  padding: 11px 15px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.btn-limpiar-foto {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.btn-limpiar-foto:hover:not(:disabled) {
+  background: #ffcdd2;
+}
+
+.btn-cancelar-foto {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.btn-cancelar-foto:hover:not(:disabled) {
+  background: #d0d0d0;
+}
+
+.btn-subir-foto {
+  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+  color: white;
+}
+
+.btn-subir-foto:hover:not(:disabled) {
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+}
+
+.btn-limpiar-foto:disabled,
+.btn-cancelar-foto:disabled,
+.btn-subir-foto:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .modal-contenido-foto {
+    max-width: 95%;
+  }
+
+  .modal-body-foto {
+    padding: 20px;
+  }
+
+  .zona-preview-foto {
+    height: 200px;
+  }
+
+  .modal-footer-foto {
+    flex-direction: column;
+  }
+
+  .btn-limpiar-foto,
+  .btn-cancelar-foto,
+  .btn-subir-foto {
+    width: 100%;
+  }
+}
+
+/* ==================== FOTO DE PERFIL EN EL CÍRCULO ==================== */
+.menu-perfil-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8b6914 0%, #d4af37 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 600;
+  overflow: hidden;  
+}
+
+.menu-perfil-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  border-radius: 50%;
+}
+
