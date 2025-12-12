@@ -4,16 +4,22 @@ import { getRestauranteById } from "../../services/ServicesRestaurantes";
 import { ServicesInicio } from "../../services/servicesAdminRest/ServicesInicio";
 import { ServicesTestimonios } from "../../services/servicesAdminRest/ServicesTestimonios";
 import { CartContext } from "../../context/CartContext";
+
+import { obtenerConfiguracion } from "../../services/ServicesAdminGeneral/ServicesConfiguracion";
+
 import CartIcon from "../CartIcon/CartIcon";
 import Menu from '../Menu/Menu';
 import "./InfoRestaurantes.css";
 
 //Iconos y recursos de redes
-import Instagram from "../../assets/Instagram.png";
-import Facebook from "../../assets/Facebook.png";
-import TikTok from "../../assets/TikTok.png";
-import Whatsapp from "../../assets/Whatsapp.png";
-import LogoImg from "../../assets/LogoPerlaPacifico.png";
+import { 
+  FaFacebook, 
+  FaInstagram, 
+  FaTwitter, 
+  FaTiktok, 
+  FaYoutube, 
+  FaWhatsapp 
+} from "react-icons/fa";
 
 function InfoRestaurantes() {
   const { id } = useParams();
@@ -36,6 +42,8 @@ function InfoRestaurantes() {
   const [nuevaCalificacion, setNuevaCalificacion] = useState(0); 
   const [startIndex, setStartIndex] = useState(0); // Para carrusel de testimonios
 
+  const [configuracion, setConfiguracion] = useState(null);
+  const [cargandoConfig, setCargandoConfig] = useState(true);
 
 
   // ⭐ Componente para mostrar calificación con medias estrellas
@@ -156,7 +164,25 @@ function InfoRestaurantes() {
     fetchCategorias();
   }, []);
 
+  useEffect(() => {
+    async function cargarConfig() {
+      try {
+        const data = await obtenerConfiguracion();
+        const config = Array.isArray(data) ? data[0] : data;
+        setConfiguracion(config);
+      } catch (error) {
+        console.log("Error al cargar configuración:", error);
+      } finally {
+        setCargandoConfig(false);
+      }
+    }
+
+    cargarConfig();
+  }, []);
+
   if (loading) return <p>Cargando restaurante...</p>;
+  if (cargandoConfig || !configuracion) return <p>Cargando configuración...</p>;
+
   if (error) return <p>{error}</p>;
   if (!restaurante) return <p>No se encontró el restaurante.</p>;
 
@@ -188,23 +214,14 @@ function InfoRestaurantes() {
 /*   console.log("Platillos:", platillosBD); */
  
 
-  const iconosRedes = {
-    facebook: Facebook,
-    instagram: Instagram,
-    tiktok: TikTok,
-    whatsapp: Whatsapp,
-    twitter: null,
-    youtube: null,
-    otra: null,
-  };
-
-  // Redes sociales (ejemplo estático)
-  const redes = (restaurante.redes || []).map((red) => ({
-    nombre: red.nombre_red,
-    icono: iconosRedes[red.nombre_red],
-    link: red.link,
-  }));
-
+const iconosRedes = {
+  facebook: FaFacebook,
+  instagram: FaInstagram,
+  tiktok: FaTiktok,
+  whatsapp: FaWhatsapp,
+  twitter: FaTwitter,
+  youtube: FaYoutube,
+};
 
   console.log(testimonios);
   
@@ -217,10 +234,22 @@ function InfoRestaurantes() {
       <header className="header">
         <div className="header-top">
           <div className="header-content">
-            <img className="header-logo" src={LogoImg} alt="Logo Puntarenas" />
+
+            {/* LOGO CARGADO DESDE LA CONFIGURACIÓN */}
+            <img
+              className="header-logo"
+              src={
+                configuracion.logo?.includes("image/upload/")
+                  ? configuracion.logo.replace("image/upload/", "")
+                  : configuracion.logo
+              }
+              alt="Logo"
+            />
+
             <h1 className="header-title">
-              El Sabor de la <span>Perla del Pacífico</span>
+              {configuracion.nombre_plataforma || "El Sabor de la Perla del Pacífico"}
             </h1>
+
           </div>
         </div>
       </header>
@@ -474,14 +503,20 @@ function InfoRestaurantes() {
 
 
       {/* Mapa */}
-{/*       <div className="map-container">
-        <iframe
-          src={`https://www.google.com/maps/embed/v1/place?key=TU_API_KEY&q=${encodeURIComponent(restaurante.direccion)}`}
-          title={restaurante.nombre_restaurante}
-          allowFullScreen
-          loading="lazy"
-        ></iframe>
-      </div> */}
+      {restaurante.latitud && restaurante.longitud ? (
+        <div className="map-container">
+          <iframe
+            width="100%"
+            height="350"
+            style={{ border: 0 }}
+            loading="lazy"
+            allowFullScreen
+            src={`https://www.google.com/maps/embed/v1/place?key=TU_API_KEY&q=${restaurante.latitud},${restaurante.longitud}`}
+          ></iframe>
+        </div>
+      ) : (
+        <p className="no-mapa">Ubicación no disponible</p>
+      )}
 
       {/* Footer */}
       <footer className="footer">
@@ -500,11 +535,50 @@ function InfoRestaurantes() {
           <div className="footer-col">
             <h3 className="footer-title">Redes Sociales</h3>
             <div className="social-icons">
-              {redes.map((red, i) => (
-                <a key={i} href={red.link} target="_blank" rel="noopener noreferrer">
-                  <img src={red.icono} alt={red.nombre} />
-                </a>
-              ))}
+
+              <div className="social-icons">
+
+                {restaurante.url_facebook && (
+                  <a href={restaurante.url_facebook} target="_blank" rel="noopener noreferrer" className="icon facebook">
+                    <FaFacebook />
+                  </a>
+                )}
+
+                {restaurante.url_instagram && (
+                  <a href={restaurante.url_instagram} target="_blank" rel="noopener noreferrer" className="icon instagram">
+                    <FaInstagram />
+                  </a>
+                )}
+
+                {restaurante.url_twitter && (
+                  <a href={restaurante.url_twitter} target="_blank" rel="noopener noreferrer" className="icon twitter">
+                    <FaTwitter />
+                  </a>
+                )}
+
+                {restaurante.url_tiktok && (
+                  <a href={restaurante.url_tiktok} target="_blank" rel="noopener noreferrer" className="icon tiktok">
+                    <FaTiktok />
+                  </a>
+                )}
+
+                {restaurante.url_youtube && (
+                  <a href={restaurante.url_youtube} target="_blank" rel="noopener noreferrer" className="icon youtube">
+                    <FaYoutube />
+                  </a>
+                )}
+
+                {restaurante.url_whatsapp && (
+                  <a 
+                    href={`https://wa.me/${restaurante.url_whatsapp.replace(/\D/g, "")}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="icon whatsapp"
+                  >
+                    <FaWhatsapp />
+                  </a>
+                )}
+              </div>
             </div>
           </div>
         </div>
