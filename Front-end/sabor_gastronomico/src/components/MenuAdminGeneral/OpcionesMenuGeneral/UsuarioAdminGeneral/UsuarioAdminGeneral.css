@@ -448,3 +448,16 @@
     width: 100%;
   }
 }
+
+.uag-badge-restaurante-unico {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.uag-badge-restaurante-unico.no-aplica {
+  background: #f5f5f5;
+  color: #999;
+} 

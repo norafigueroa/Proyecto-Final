@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import *
 from .views_auth import login_view, logout_view, register_cliente, token_refresh_view
-
+from api.views import MensajesContactoListCreateView, MensajesContactoDetailView
 
 urlpatterns = [
     # Usuarios y perfiles

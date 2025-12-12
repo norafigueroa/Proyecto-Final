@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAu
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.models import Group
+from rest_framework.decorators import action
 
 # --- USUARIOS ---
 class PerfilUsuarioListCreateView(ListCreateAPIView):
@@ -243,15 +244,29 @@ class FotosLugaresDetailView(RetrieveUpdateDestroyAPIView):
 
 # --- MENSAJES CONTACTO ---
 class MensajesContactoListCreateView(ListCreateAPIView):
-    queryset = MensajesContacto.objects.all()
+    queryset = MensajesContacto.objects.filter(archivado=False)
     serializer_class = MensajesContactoSerializer
     permission_classes = [AllowAny] 
 
 class MensajesContactoDetailView(RetrieveUpdateDestroyAPIView):
     queryset = MensajesContacto.objects.all()
     serializer_class = MensajesContactoSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly] 
-
+    permission_classes = [IsAuthenticated]
+    
+    def retrieve(self, request, *args, **kwargs):
+        # Marcar como leído cuando se visualiza
+        instance = self.get_object()
+        instance.leido = True
+        instance.save()
+        return super().retrieve(request, *args, **kwargs)
+    
+    def destroy(self, request, *args, **kwargs):
+        # En lugar de eliminar, archivamos
+        instance = self.get_object()
+        instance.archivado = True
+        instance.save()
+        return Response({'mensaje': 'Mensaje archivado'}, status=status.HTTP_200_OK)
+    
 # --- REDES SOCIALES ---
 class RedSocialListCreateView(ListCreateAPIView):
     queryset = RedSocial.objects.all()

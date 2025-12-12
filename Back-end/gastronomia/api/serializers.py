@@ -329,7 +329,7 @@ class FotosLugaresSerializer(serializers.ModelSerializer):
 class MensajesContactoSerializer(serializers.ModelSerializer):
     class Meta:
         model = MensajesContacto
-        fields = '__all__'
+        fields = '__all__'  # Ya incluye 'archivado' automáticamente
 
     def validate_correo(self, value):
         if not value or '@' not in value:

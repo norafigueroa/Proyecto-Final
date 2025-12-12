@@ -464,7 +464,6 @@ function SitiosTuristicosGeneral() {
             <tr>
               <th>Nombre</th>
               <th>Descripción</th>
-              <th>Coordenadas</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -474,11 +473,6 @@ function SitiosTuristicosGeneral() {
                 <tr key={sitio.id}>
                   <td>{sitio.nombre_lugar}</td>
                   <td>{sitio.descripcion || '-'}</td>
-                  <td>
-                    {sitio.latitud && sitio.longitud
-                      ? `${sitio.latitud}, ${sitio.longitud}`
-                      : '-'}
-                  </td>
                   <td className="stg-acciones-unico">
                     <button
                       className="stg-btn-accion-unico editar"

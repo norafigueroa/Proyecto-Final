@@ -12,7 +12,8 @@ function MensajesContactoGeneral() {
   const [cargando, setCargando] = useState(true);
   const [buscador, setBuscador] = useState('');
   const [mensajeSeleccionado, setMensajeSeleccionado] = useState(null);
-  const [filtro, setFiltro] = useState('todos');
+  const [filtro, setFiltro] = useState('no-archivados');
+  const [filtroLectura, setFiltroLectura] = useState('todos');
 
   useEffect(() => {
     cargarMensajes();
@@ -31,25 +32,27 @@ function MensajesContactoGeneral() {
     }
   };
 
-  const handleEliminarMensaje = async (id) => {
+  const handleArchivarMensaje = async (id) => {
     const resultado = await Swal.fire({
-      title: '¿Eliminar mensaje?',
-      text: 'Esta acción no se puede deshacer',
+      title: '¿Archivar mensaje?',
+      text: 'Puedes recuperarlo desde la sección de archivados',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Sí, eliminar',
+      confirmButtonText: 'Sí, archivar',
       cancelButtonText: 'Cancelar',
     });
 
     if (resultado.isConfirmed) {
       try {
         await eliminarMensaje(id);
-        setMensajes(mensajes.filter((m) => m.id !== id));
+        setMensajes(mensajes.map((m) =>
+          m.id === id ? { ...m, archivado: true } : m
+        ));
         setMensajeSeleccionado(null);
-        Swal.fire('Eliminado', 'El mensaje ha sido eliminado', 'success');
+        Swal.fire('Archivado', 'El mensaje ha sido archivado', 'success');
       } catch (error) {
-        console.error('Error al eliminar:', error);
-        Swal.fire('Error', 'No se pudo eliminar el mensaje', 'error');
+        console.error('Error al archivar:', error);
+        Swal.fire('Error', 'No se pudo archivar el mensaje', 'error');
       }
     }
   };
@@ -58,6 +61,10 @@ function MensajesContactoGeneral() {
     try {
       const detalle = await obtenerMensajeDetalle(id);
       setMensajeSeleccionado(detalle);
+      // Actualizar el estado local del mensaje a leído
+      setMensajes(mensajes.map((m) =>
+        m.id === id ? { ...m, leido: true } : m
+      ));
     } catch (error) {
       console.error('Error:', error);
       Swal.fire('Error', 'No se pudo cargar el detalle', 'error');
@@ -81,8 +88,21 @@ function MensajesContactoGeneral() {
       mensaje.correo.toLowerCase().includes(buscador.toLowerCase()) ||
       mensaje.asunto.toLowerCase().includes(buscador.toLowerCase());
 
-    if (filtro === 'todos') return coincideBusqueda;
-    return coincideBusqueda;
+    let cumpleFiltroArchivo = true;
+    if (filtro === 'no-archivados') {
+      cumpleFiltroArchivo = !mensaje.archivado;
+    } else if (filtro === 'archivados') {
+      cumpleFiltroArchivo = mensaje.archivado;
+    }
+
+    let cumpleFiltroLectura = true;
+    if (filtroLectura === 'leidos') {
+      cumpleFiltroLectura = mensaje.leido;
+    } else if (filtroLectura === 'pendientes') {
+      cumpleFiltroLectura = !mensaje.leido;
+    }
+
+    return coincideBusqueda && cumpleFiltroArchivo && cumpleFiltroLectura;
   });
 
   if (cargando) {
@@ -106,7 +126,57 @@ function MensajesContactoGeneral() {
           onChange={(e) => setBuscador(e.target.value)}
           className="mcg-buscador"
         />
+
+        <div className="mcg-filtros">
+          <div className="mcg-grupo-filtros">
+            <label>Estado:</label>
+            <button
+              className={`mcg-btn-filtro ${filtro === 'no-archivados' ? 'activo' : ''}`}
+              onClick={() => setFiltro('no-archivados')}
+            >
+              📬 No Archivados
+            </button>
+            <button
+              className={`mcg-btn-filtro ${filtro === 'archivados' ? 'activo' : ''}`}
+              onClick={() => setFiltro('archivados')}
+            >
+              📦 Archivados
+            </button>
+            <button
+              className={`mcg-btn-filtro ${filtro === 'todos' ? 'activo' : ''}`}
+              onClick={() => setFiltro('todos')}
+            >
+              📋 Todos
+            </button>
+          </div>
+
+          <div className="mcg-grupo-filtros">
+            <label>Lectura:</label>
+            <button
+              className={`mcg-btn-filtro ${filtroLectura === 'pendientes' ? 'activo' : ''}`}
+              onClick={() => setFiltroLectura('pendientes')}
+            >
+              📪 Pendientes
+            </button>
+            <button
+              className={`mcg-btn-filtro ${filtroLectura === 'leidos' ? 'activo' : ''}`}
+              onClick={() => setFiltroLectura('leidos')}
+            >
+              ✓ Leídos
+            </button>
+            <button
+              className={`mcg-btn-filtro ${filtroLectura === 'todos' ? 'activo' : ''}`}
+              onClick={() => setFiltroLectura('todos')}
+            >
+              📋 Todos
+            </button>
+          </div>
+        </div>
+
         <div className="mcg-estadisticas">
+          <span className="mcg-stat">
+            Mostrando: <strong>{mensajesFiltrados.length}</strong>
+          </span>
           <span className="mcg-stat">
             Total: <strong>{mensajes.length}</strong>
           </span>
@@ -127,6 +197,8 @@ function MensajesContactoGeneral() {
                 <div className="mcg-col-asunto">Asunto</div>
                 <div className="mcg-col-correo">Correo</div>
                 <div className="mcg-col-fecha">Fecha</div>
+                <div className="mcg-col-estado">Estado</div>
+                <div className="mcg-col-lectura">Lectura</div>
                 <div className="mcg-col-acciones">Acciones</div>
               </div>
 
@@ -138,6 +210,20 @@ function MensajesContactoGeneral() {
                   <div className="mcg-col-fecha">
                     {formatearFecha(mensaje.fecha_envio)}
                   </div>
+                  <div className="mcg-col-estado">
+                    {mensaje.archivado ? (
+                      <span className="mcg-badge-archivado">Archivado</span>
+                    ) : (
+                      <span className="mcg-badge-nuevo">Activo</span>
+                    )}
+                  </div>
+                  <div className="mcg-col-lectura">
+                    {mensaje.leido ? (
+                      <span className="mcg-badge-leido">✓ Leído</span>
+                    ) : (
+                      <span className="mcg-badge-pendiente">📪 Pendiente</span>
+                    )}
+                  </div>
                   <div className="mcg-col-acciones">
                     <button
                       className="mcg-btn-ver"
@@ -147,11 +233,12 @@ function MensajesContactoGeneral() {
                       👁️
                     </button>
                     <button
-                      className="mcg-btn-eliminar"
-                      onClick={() => handleEliminarMensaje(mensaje.id)}
-                      title="Eliminar"
+                      className="mcg-btn-archivar"
+                      onClick={() => handleArchivarMensaje(mensaje.id)}
+                      title={mensaje.archivado ? 'Ya archivado' : 'Archivar'}
+                      disabled={mensaje.archivado}
                     >
-                      🗑️
+                      {mensaje.archivado ? '✓' : '📦'}
                     </button>
                   </div>
                 </div>
@@ -174,6 +261,12 @@ function MensajesContactoGeneral() {
             </div>
 
             <div className="mcg-detalles-contenido">
+              {mensajeSeleccionado.archivado && (
+                <div className="mcg-alerta-archivado">
+                  ⚠️ Este mensaje está archivado
+                </div>
+              )}
+
               <div className="mcg-detalle-grupo">
                 <label>Nombre:</label>
                 <p>{mensajeSeleccionado.nombre}</p>
@@ -222,10 +315,11 @@ function MensajesContactoGeneral() {
                   ✉️ Responder
                 </button>
                 <button
-                  className="mcg-btn-eliminar-detalles"
-                  onClick={() => handleEliminarMensaje(mensajeSeleccionado.id)}
+                  className="mcg-btn-archivar-detalles"
+                  onClick={() => handleArchivarMensaje(mensajeSeleccionado.id)}
+                  disabled={mensajeSeleccionado.archivado}
                 >
-                  🗑️ Eliminar
+                  {mensajeSeleccionado.archivado ? '✓ Archivado' : '📦 Archivar'}
                 </button>
               </div>
             </div>

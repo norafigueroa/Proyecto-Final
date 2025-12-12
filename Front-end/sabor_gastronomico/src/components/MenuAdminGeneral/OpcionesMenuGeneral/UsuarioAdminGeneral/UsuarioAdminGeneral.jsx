@@ -7,12 +7,14 @@ import {
   eliminarUsuario,
 } from '../../../../services/ServicesAdminGeneral/ServicesUsuarios';
 import { obtenerGrupos } from '../../../../services/ServicesAdminGeneral/ServicesRoles';
+import { obtenerRestaurantes } from '../../../../services/ServicesAdminGeneral/ServicesRestaurantesGeneral';
 import './UsuarioAdminGeneral.css';
 
 function UsuarioAdminGeneral() {
   const [usuarios, setUsuarios] = useState([]);
   const [usuariosFiltrados, setUsuariosFiltrados] = useState([]);
   const [grupos, setGrupos] = useState([]);
+  const [restaurantes, setRestaurantes] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [modalAbierto, setModalAbierto] = useState(false);
   const [editando, setEditando] = useState(null);
@@ -43,16 +45,19 @@ function UsuarioAdminGeneral() {
   const cargarDatos = async () => {
     try {
       setCargando(true);
-      const [usuariosData, gruposData] = await Promise.all([
+      const [usuariosData, gruposData, restaurantesData] = await Promise.all([
         obtenerUsuarios(),
         obtenerGrupos(),
+        obtenerRestaurantes(),
       ]);
 
       const usuariosArray = Array.isArray(usuariosData) ? usuariosData : usuariosData.results || [];
       const gruposArray = Array.isArray(gruposData) ? gruposData : gruposData.results || [];
+      const restaurantesArray = Array.isArray(restaurantesData) ? restaurantesData : restaurantesData.results || [];
 
       setUsuarios(usuariosArray);
       setGrupos(gruposArray);
+      setRestaurantes(restaurantesArray);
     } catch (error) {
       console.error('Error al cargar datos:', error);
       Swal.fire('Error', 'No se pudieron cargar los usuarios', 'error');
@@ -88,10 +93,29 @@ function UsuarioAdminGeneral() {
     return grupo ? grupo.name : 'Sin grupo';
   };
 
-  const gruposDisponibles = () => {
+  const gruposDisponiblesNuevo = () => {
+    // Solo para crear nuevo usuario: Admin General y Cliente
     return grupos.filter(grupo => 
       grupo.name === 'Admin General' || grupo.name === 'Cliente'
     );
+  };
+
+  const gruposDisponiblesEdicion = () => {
+    // Para editar: todos los grupos (Admin General, Cliente, Admin Restaurante)
+    return grupos;
+  };
+
+  const obtenerRestauranteUsuario = (usuario) => {
+    // Obtener el nombre del grupo del usuario
+    const grupoId = usuario.groups && usuario.groups.length > 0 ? usuario.groups[0] : null;
+    const grupoNombre = grupoId ? obtenerNombreGrupo(grupoId) : '';
+    
+    // Si es Admin Restaurante, buscar su restaurante
+    if (grupoNombre === 'Admin Restaurante') {
+      const restaurante = restaurantes.find(r => r.usuario_propietario === usuario.id);
+      return restaurante ? restaurante.nombre_restaurante : 'Restaurante no encontrado';
+    }
+    return null;
   };
 
   const handleAbrirModal = (usuario = null) => {
@@ -135,19 +159,11 @@ function UsuarioAdminGeneral() {
 
   const handleCambioGrupos = (e) => {
     const grupoId = parseInt(e.target.value);
-    const gruposActuales = Array.isArray(formulario.groups) ? formulario.groups : [];
-    
-    if (gruposActuales.includes(grupoId)) {
-      setFormulario({
-        ...formulario,
-        groups: gruposActuales.filter(g => g !== grupoId),
-      });
-    } else {
-      setFormulario({
-        ...formulario,
-        groups: [...gruposActuales, grupoId],
-      });
-    }
+    // Un usuario solo puede tener UN grupo
+    setFormulario({
+      ...formulario,
+      groups: [grupoId],
+    });
   };
 
   const handleGuardar = async () => {
@@ -178,7 +194,7 @@ function UsuarioAdminGeneral() {
       }
 
       if (formulario.groups.length === 0) {
-        Swal.fire('Error', 'Debes seleccionar al menos un grupo', 'error');
+        Swal.fire('Error', 'Debes seleccionar un grupo', 'error');
         return;
       }
     }
@@ -299,71 +315,86 @@ function UsuarioAdminGeneral() {
               <th>Email</th>
               <th>Nombre</th>
               <th>Grupo</th>
+              <th>Restaurante</th>
               <th>Estado</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {usuariosPaginados.length > 0 ? (
-              usuariosPaginados.map((usuario) => (
-                <tr key={usuario.id}>
-                  <td>{usuario.username}</td>
-                  <td>{usuario.email}</td>
-                  <td>{usuario.first_name} {usuario.last_name}</td>
-                  <td>
-                    {usuario.groups && usuario.groups.length > 0 ? (
-                      usuario.groups.map((grupoId) => (
-                        <span key={grupoId} className="uag-badge-grupo-unico">
-                          {obtenerNombreGrupo(grupoId)}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="uag-badge-grupo-unico sin-grupo">Sin grupo</span>
-                    )}
-                  </td>
-                  <td>
-                    <span className={`uag-badge-estado-unico ${usuario.is_active ? 'activo' : 'inactivo'}`}>
-                      {usuario.is_active ? 'Activo' : 'Inactivo'}
-                    </span>
-                  </td>
-                  <td className="uag-acciones-unico">
-                    <button
-                      className="uag-btn-accion-unico editar"
-                      onClick={() => handleAbrirModal(usuario)}
-                      title="Editar"
-                    >
-                      ✏️
-                    </button>
-                    {usuario.is_active ? (
+              usuariosPaginados.map((usuario) => {
+                const restaurante = obtenerRestauranteUsuario(usuario);
+                const isAdminRestaurante = usuario.groups && usuario.groups.some(g => 
+                  obtenerNombreGrupo(g) === 'Admin Restaurante'
+                );
+
+                return (
+                  <tr key={usuario.id}>
+                    <td>{usuario.username}</td>
+                    <td>{usuario.email}</td>
+                    <td>{usuario.first_name} {usuario.last_name}</td>
+                    <td>
+                      {usuario.groups && usuario.groups.length > 0 ? (
+                        usuario.groups.map((grupoId) => (
+                          <span key={grupoId} className="uag-badge-grupo-unico">
+                            {obtenerNombreGrupo(grupoId)}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="uag-badge-grupo-unico sin-grupo">Sin grupo</span>
+                      )}
+                    </td>
+                    <td>
+                      {isAdminRestaurante && restaurante ? (
+                        <span className="uag-badge-restaurante-unico">{restaurante}</span>
+                      ) : (
+                        <span className="uag-badge-restaurante-unico no-aplica">No aplica</span>
+                      )}
+                    </td>
+                    <td>
+                      <span className={`uag-badge-estado-unico ${usuario.is_active ? 'activo' : 'inactivo'}`}>
+                        {usuario.is_active ? 'Activo' : 'Inactivo'}
+                      </span>
+                    </td>
+                    <td className="uag-acciones-unico">
                       <button
-                        className="uag-btn-accion-unico desactivar"
-                        onClick={() => handleCambiarEstado(usuario.id, false)}
-                        title="Desactivar"
+                        className="uag-btn-accion-unico editar"
+                        onClick={() => handleAbrirModal(usuario)}
+                        title="Editar"
                       >
-                        ⊘
+                        ✏️
                       </button>
-                    ) : (
+                      {usuario.is_active ? (
+                        <button
+                          className="uag-btn-accion-unico desactivar"
+                          onClick={() => handleCambiarEstado(usuario.id, false)}
+                          title="Desactivar"
+                        >
+                          ⊘
+                        </button>
+                      ) : (
+                        <button
+                          className="uag-btn-accion-unico reactivar"
+                          onClick={() => handleCambiarEstado(usuario.id, true)}
+                          title="Reactivar"
+                        >
+                          ⟲
+                        </button>
+                      )}
                       <button
-                        className="uag-btn-accion-unico reactivar"
-                        onClick={() => handleCambiarEstado(usuario.id, true)}
-                        title="Reactivar"
+                        className="uag-btn-accion-unico eliminar"
+                        onClick={() => handleEliminar(usuario.id)}
+                        title="Eliminar"
                       >
-                        ⟲
+                        🗑️
                       </button>
-                    )}
-                    <button
-                      className="uag-btn-accion-unico eliminar"
-                      onClick={() => handleEliminar(usuario.id)}
-                      title="Eliminar"
-                    >
-                      🗑️
-                    </button>
-                  </td>
-                </tr>
-              ))
+                    </td>
+                  </tr>
+                );
+              })
             ) : (
               <tr>
-                <td colSpan="6" className="uag-sin-datos-unico">
+                <td colSpan="7" className="uag-sin-datos-unico">
                   No hay usuarios que coincidan con los filtros
                 </td>
               </tr>
@@ -492,20 +523,26 @@ function UsuarioAdminGeneral() {
               )}
 
               <div className="uag-form-grupo-unico">
-                <label>Grupo(s) *</label>
-                <div className="uag-checkboxes-grupo-unico">
-                  {gruposDisponibles().map((grupo) => (
-                    <label key={grupo.id} className="uag-checkbox-label-unico">
-                      <input
-                        type="checkbox"
-                        value={grupo.id}
-                        checked={formulario.groups.includes(grupo.id)}
-                        onChange={handleCambioGrupos}
-                      />
-                      {grupo.name}
-                    </label>
-                  ))}
-                </div>
+                <label>Tipo de Usuario *</label>
+                <select 
+                  value={formulario.groups.length > 0 ? formulario.groups[0] : ''}
+                  onChange={handleCambioGrupos}
+                  className="uag-select-grupo-unico"
+                >
+                  <option value="">Selecciona un tipo de usuario</option>
+                  {editando 
+                    ? gruposDisponiblesEdicion().map((grupo) => (
+                        <option key={grupo.id} value={grupo.id}>
+                          {grupo.name}
+                        </option>
+                      ))
+                    : gruposDisponiblesNuevo().map((grupo) => (
+                        <option key={grupo.id} value={grupo.id}>
+                          {grupo.name}
+                        </option>
+                      ))
+                  }
+                </select>
               </div>
             </div>
 

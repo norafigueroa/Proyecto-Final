@@ -13,6 +13,16 @@ function PagCultura() {
   const [modalAbierto, setModalAbierto] = useState(false);
   const [articuloSeleccionado, setArticuloSeleccionado] = useState(null);
 
+  // Limpiar URL de imagen
+  const limpiarUrlImagen = (url) => {
+    if (!url || typeof url !== 'string') return null;
+    const urlLimpia = url.trim();
+    if (!urlLimpia) return null;
+    return urlLimpia.includes("image/upload/") 
+      ? urlLimpia.replace("image/upload/", "") 
+      : urlLimpia;
+  };
+
   useEffect(() => {
     cargarDatos();
   }, []);
@@ -31,12 +41,13 @@ function PagCultura() {
       // Filtrar solo artículos publicados (no borradores ni inactivos)
       const articulosPublicados = articulosArray.filter(a => a.estado === 'publicado');
 
-      articulosPublicados.forEach(element => {
-        element.imagen_portada = element.imagen_portada.replace("image/upload/", "")
-      });
+      // Limpiar URLs de imágenes
+      const articulosLimpios = articulosPublicados.map(art => ({
+        ...art,
+        imagen_portada: limpiarUrlImagen(art.imagen_portada)
+      }));
 
-
-      setArticulos(articulosPublicados);
+      setArticulos(articulosLimpios);
       setCategorias(categoriasArray);
 
       // Organizar artículos por categoría
@@ -44,7 +55,7 @@ function PagCultura() {
         id: categoria.id,
         titulo: categoria.nombre_categoria,
         texto: categoria.descripcion || 'Artículos sobre ' + categoria.nombre_categoria,
-        imagenes: articulosPublicados
+        imagenes: articulosLimpios
           .filter(art => art.categoria_blog === categoria.id)
           .map(art => ({
             id: art.id,

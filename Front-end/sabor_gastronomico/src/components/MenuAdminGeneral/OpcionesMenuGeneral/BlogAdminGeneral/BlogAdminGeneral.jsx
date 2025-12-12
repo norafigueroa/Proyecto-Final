@@ -23,9 +23,10 @@ function BlogAdminGeneral() {
   const [editandoCategoria, setEditandoCategoria] = useState(null);
   const [filtroEstado, setFiltroEstado] = useState('todos');
   const [busqueda, setBusqueda] = useState('');
-  const [imagenSubir, setimagenSubir] = useState('');
+  const [imagenSubir, setimagenSubir] = useState(null);
   const [imagenPreview, setimagenPreview] = useState('');
   const [paginaActual, setPaginaActual] = useState(1);
+  const [cargandoImagen, setCargandoImagen] = useState(false);
   const itemsPorPagina = 10;
 
   const [formularioArticulo, setFormularioArticulo] = useState({
@@ -46,14 +47,13 @@ function BlogAdminGeneral() {
   });
 
   const [etiquetasDisponibles, setEtiquetasDisponibles] = useState([]);
-  const [cargandoImagen, setCargandoImagen] = useState(false);
 
   const handleSubirImagen = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    setimagenSubir(file)
-    setimagenPreview(URL.createObjectURL(file))
+    setimagenSubir(file);
+    setimagenPreview(URL.createObjectURL(file));
   };
 
   useEffect(() => {
@@ -129,6 +129,7 @@ function BlogAdminGeneral() {
         destacado: articulo.destacado || false,
         etiquetas: articulo.etiquetas || [],
       });
+      setimagenPreview(articulo.imagen_portada || '');
     } else {
       setEditandoArticulo(null);
       setFormularioArticulo({
@@ -141,13 +142,17 @@ function BlogAdminGeneral() {
         destacado: false,
         etiquetas: [],
       });
+      setimagenPreview('');
     }
+    setimagenSubir(null);
     setModalArticuloAbierto(true);
   };
 
   const handleCerrarModalArticulo = () => {
     setModalArticuloAbierto(false);
     setEditandoArticulo(null);
+    setimagenSubir(null);
+    setimagenPreview('');
   };
 
   const handleAbrirModalCategoria = (categoria = null) => {
@@ -193,35 +198,31 @@ function BlogAdminGeneral() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('file', imagenSubir);
-    formData.append('upload_preset', 'el_sabor_de_la_perla');
-
     try {
-      const response = await fetch('https://api.cloudinary.com/v1_1/dujs1kx4w/image/upload', {
-        method: 'POST',
-        body: formData,
-      });
-      const data = await response.json();
-      if (data.secure_url) {
-        setFormularioArticulo({
-          ...formularioArticulo,
-          imagen_portada: data.secure_url,
+      setCargandoImagen(true);
+      let imagenFinal = formularioArticulo.imagen_portada;
+
+      // Solo subir imagen si hay archivo seleccionado
+      if (imagenSubir) {
+        const formData = new FormData();
+        formData.append('file', imagenSubir);
+        formData.append('upload_preset', 'el_sabor_de_la_perla');
+
+        const response = await fetch('https://api.cloudinary.com/v1_1/dujs1kx4w/image/upload', {
+          method: 'POST',
+          body: formData,
         });
+        const data = await response.json();
+        if (data.secure_url) {
+          imagenFinal = data.secure_url;
+        }
       }
-    } catch (error) {
-      console.error('Error al subir imagen:', error);
 
-      //setCargandoImagen(false);
-    }
-
-    try {
-      //await handleSubirImagen()
       const datos = {
         titulo: formularioArticulo.titulo,
         contenido: formularioArticulo.contenido,
         resumen: formularioArticulo.resumen,
-        imagen_portada: formularioArticulo.imagen_portada,
+        imagen_portada: imagenFinal,
         categoria_blog: formularioArticulo.categoria_blog,
         estado: formularioArticulo.estado,
         destacado: formularioArticulo.destacado,
@@ -240,6 +241,8 @@ function BlogAdminGeneral() {
     } catch (error) {
       console.error('Error al guardar artículo:', error);
       Swal.fire('Error', 'No se pudo guardar el artículo', 'error');
+    } finally {
+      setCargandoImagen(false);
     }
   };
 
