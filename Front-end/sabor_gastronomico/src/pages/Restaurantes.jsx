@@ -7,7 +7,6 @@ import GeneralRestaurantes from '../components/Restaurantes/GeneralRestaurantes'
 function Restaurantes() {
   return (
     <div>
-      <Menu/>
       <InfoRestaurantes/>
       <GeneralRestaurantes/>
     </div>

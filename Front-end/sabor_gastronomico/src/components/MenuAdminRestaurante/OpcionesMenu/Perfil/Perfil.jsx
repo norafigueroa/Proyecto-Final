@@ -1,6 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import './Perfil.css';
+import Swal from "sweetalert2";
 import PerfilService from "../../../../services/servicesAdminRest/ServicesPerfil";
+
+const alertSuccess = (titulo, texto) => {
+  Swal.fire({
+    icon: "success",
+    title: titulo,
+    text: texto,
+    confirmButtonColor: "#3085d6",
+  });
+};
+
+const alertError = (titulo, texto) => {
+  Swal.fire({
+    icon: "error",
+    title: titulo,
+    text: texto,
+    confirmButtonColor: "#d33",
+  });
+};
+
+const alertWarning = (titulo, texto) => {
+  Swal.fire({
+    icon: "warning",
+    title: titulo,
+    text: texto,
+    confirmButtonColor: "#f6c23e",
+  });
+};
+
 
 function Perfil() {
 
@@ -71,8 +100,12 @@ function Perfil() {
       setPerfil(res.data);
       setDatosOriginales(res.data);
 
+      alertSuccess("Perfil actualizado", "Los datos se guardaron correctamente.");
+
     } catch (err) {
-      console.error("Error al actualizar perfil:", err);
+      alertError(
+      "Error al actualizar",
+      "Ocurrió un error al guardar los cambios del perfil.");
     }
   }
 
@@ -80,6 +113,8 @@ function Perfil() {
   function handleCancelar() {
     setPerfil(datosOriginales);
     setEsEditando(false);
+
+    alertWarning("Cambios cancelados", "No se han guardado las modificaciones.");
   }
 
   // Guardar nueva contraseña
@@ -90,7 +125,7 @@ function Perfil() {
 
       // Validación
       if (!nuevaPassword || nuevaPassword.trim() === "") {
-        alert("Debe ingresar una contraseña.");
+        alertWarning("Contraseña requerida", "Debe ingresar una contraseña.");
         return;
       }
 
@@ -102,13 +137,18 @@ function Perfil() {
       console.log("Respuesta cambiarPassword:", res);
 
       // Actualizar UI
-      alert("Contraseña cambiada con éxito");
+      alertSuccess(
+        "Contraseña actualizada",
+        "La contraseña se cambió correctamente."
+      );
       setMostrarModal(false);
       setNuevaPassword("");
 
     } catch (err) {
-      console.error("Error al cambiar contraseña:", err);
-      alert("Error al cambiar contraseña");
+      alertError(
+        "Error al cambiar contraseña",
+        "No se pudo actualizar la contraseña. Intente de nuevo."
+      );
     }
   }
 
@@ -153,6 +193,16 @@ function Perfil() {
             <div className="formulario-edicion">
 
               <label>
+                Usuario:
+                <input 
+                  type="text" 
+                  name="username" 
+                  value={perfil.username} 
+                  onChange={handleCambio}
+                />
+              </label>              
+
+              <label>
                 Nombre:
                 <input 
                   type="text" 
@@ -182,15 +232,6 @@ function Perfil() {
                 />
               </label>
 
-              <label>
-                Foto de perfil:
-                <input 
-                  type="file" 
-                  name="foto_perfil" 
-                  onChange={handleCambio}
-                />
-              </label>
-
               <div className="accionesPerfil">
                 <button onClick={handleGuardar}>Guardar</button>
                 <button onClick={handleCancelar}>Cancelar</button>
@@ -199,26 +240,17 @@ function Perfil() {
           ) : (
             <div className="info-visualizacion">
               <p><strong>Usuario:</strong> {perfil.username}</p>
-              <p><strong>Email:</strong> {perfil.email}</p>
               <p><strong>Nombre:</strong> {perfil.first_name} {perfil.last_name}</p>
-              <p><strong>Teléfono:</strong> {perfil.telefono}</p>
-
-              {perfil.foto_perfil && (
-                <img 
-                  src={perfil.foto_perfil} 
-                  alt="Foto de perfil" 
-                  className="img-perfil"
-                />
-              )}
-
-              <button onClick={() => setEsEditando(true)}>Editar Información</button>
+              <p><strong>Teléfono:</strong> {perfil.telefono}</p>          
+              <p><strong>Email:</strong> {perfil.email}</p>
+              <button className='btn-editar' onClick={() => setEsEditando(true)}>Editar Información</button>
             </div>
           )}
         </section>
 
         <section className="configuracion-seguridad card">
           <h3>Seguridad</h3>
-          <button onClick={() => setMostrarModal(true)}>Cambiar Contraseña</button>
+          <button className='btn-password' onClick={() => setMostrarModal(true)}>Cambiar Contraseña</button>
         </section>
 
       </main>

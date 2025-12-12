@@ -5,6 +5,7 @@ import { ServicesInicio } from "../../services/servicesAdminRest/ServicesInicio"
 import { ServicesTestimonios } from "../../services/servicesAdminRest/ServicesTestimonios";
 import { CartContext } from "../../context/CartContext";
 import CartIcon from "../CartIcon/CartIcon";
+import Menu from '../Menu/Menu';
 import "./InfoRestaurantes.css";
 
 //Iconos y recursos de redes
@@ -208,6 +209,10 @@ function InfoRestaurantes() {
   console.log(testimonios);
   
   return (
+    <div>
+    <div>
+      <Menu/>
+    </div>
     <div>
       <header className="header">
         <div className="header-top">
@@ -508,6 +513,7 @@ function InfoRestaurantes() {
           © 2025 El Sabor de la Perla del Pacífico. Todos los derechos reservados.
         </div>
       </footer>
+    </div>
     </div>
   );
 }

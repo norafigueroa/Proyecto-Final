@@ -1,8 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 import "./Inicio.css";
 import { ServicesInicio } from "../../../../services/servicesAdminRest/ServicesInicio";
 
+const alertSuccess = (titulo, texto) => {
+  Swal.fire({
+    icon: "success",
+    title: titulo,
+    text: texto,
+    confirmButtonColor: "#3085d6",
+  });
+};
+
+const alertError = (titulo, texto) => {
+  Swal.fire({
+    icon: "error",
+    title: titulo,
+    text: texto,
+    confirmButtonColor: "#d33",
+  });
+};
+
+const alertWarning = (titulo, texto) => {
+  Swal.fire({
+    icon: "warning",
+    title: titulo,
+    text: texto,
+    confirmButtonColor: "#f6c23e",
+  });
+};
 
 function Inicio() {
   const { id } = useParams(); // ID DEL RESTAURANTE
@@ -61,11 +88,6 @@ function Inicio() {
       try {
         const res = await ServicesInicio.obtenerRestaurante(id);
         const horarioRes = await ServicesInicio.obtenerHorario(id);
-
-
-
-        console.log(horarioRes.data.horario);
-        console.log(res);
         
         const normalizarHorario = (raw) => {
           const limpio = {};
@@ -83,7 +105,6 @@ function Inicio() {
 
         setHorario(normalizarHorario(horarioRes.data.horario));
 
-        console.log("HORARIO FINAL:", normalizarHorario(horarioRes.data.horario));
         setRestaurante(res.data);
       } catch (err) {
         console.error("Error cargando restaurante:", err);
@@ -132,32 +153,49 @@ function Inicio() {
   };
 
   const guardarHorarios = async () => {
+    // VALIDACIONES
+    for (const dia of diasSemana) {
+      const { apertura, cierre, cerrado } = horario[dia];
 
-  
-  // Validar horas
-  /* for (const dia of diasSemana) {
-    const { apertura, cierre, cerrado } = horario[dia];
+      // Día activo pero sin horas
+      if (!cerrado && (!apertura || !cierre)) {
+        alertWarning(
+          "Horario incompleto",
+          `Debes ingresar hora de apertura y cierre para ${dia}.`
+        );
+        return;
+      }
 
-    if (!cerrado && !validarHoras(apertura, cierre)) {
-      alert(`La hora de cierre debe ser mayor a la de apertura en ${dia}`);
-      return;
+      // Validar orden de horas
+      if (!cerrado && apertura >= cierre) {
+        alertError(
+          "Horario inválido",
+          `La hora de apertura debe ser menor que la hora de cierre en ${dia}.`
+        );
+        return;
+      }
     }
-  } */
 
-  try {
-    await ServicesInicio.actualizarHorario(id, { horario });
+    // SI TODO ESTÁ BIEN →
+    try {
+      await ServicesInicio.actualizarHorario(id, { horario });
 
-    setRestaurante({
-      ...restaurante,
-      ...editData,
-    });
+      alertSuccess(
+        "Horarios actualizados",
+        "Los horarios se guardaron correctamente."
+      );
 
-    setModalEditar(false);
-    setModalCrear(false);
-  } catch (err) {
-    console.error("Error guardando horarios:", err);
-  }
-};
+      setModalEditar(false);
+      setModalCrear(false);
+    } catch (err) {
+      console.error("Error guardando horarios:", err);
+      alertError(
+        "Error al guardar",
+        "Ocurrió un error al actualizar los horarios."
+      );
+    }
+  };
+
 
   if (loading) return <p>Cargando...</p>;
 

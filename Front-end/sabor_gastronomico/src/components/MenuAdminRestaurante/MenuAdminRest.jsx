@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { getRestauranteById } from "../../services/ServicesRestaurantes";
+import Swal from "sweetalert2";
 import "./MenuAdminRest.css";
 
 // Importar componentes
@@ -38,18 +39,42 @@ function MenuAdminRest() {
     }, [id]);
 
     // Logout
-    const handleLogout = async () => {
-        setCargandoLogout(true);
-        try {
-            await logout();
-            navegar("/Login");
-        } catch (error) {
-            console.error("Error al cerrar sesión:", error);
-        } finally {
-            setCargandoLogout(false);
-        }
-    };
+const handleLogout = async () => {
+  const result = await Swal.fire({
+    title: "¿Cerrar sesión?",
+    text: "¿Estás seguro de que deseas cerrar sesión?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Sí, cerrar",
+    cancelButtonText: "Cancelar"
+  });
 
+  if (!result.isConfirmed) return;
+
+  setCargandoLogout(true);
+
+  try {
+    await logout();
+
+    Swal.fire({
+      icon: "success",
+      title: "Sesión cerrada",
+      timer: 2500,
+      showConfirmButton: false
+    });
+
+    navegar("/Login");
+
+  } catch (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Ocurrió un problema al cerrar sesión"
+    });
+  } finally {
+    setCargandoLogout(false);
+  }
+};
     // Opciones del menú
     const opcionesMenu = [
         { clave: "Inicio", label: "Dashboard", icon: "🏠", descripcion: "Resumen general." },

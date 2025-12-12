@@ -75,6 +75,8 @@ function Config() {
   //SUBIR LOGO A CLOUDINARY
   const handleLogoChange = async (e) => {
     const file = e.target.files[0];
+    console.log(file);
+    
     if (!file) return;
 
     const formData = new FormData();
@@ -100,11 +102,16 @@ function Config() {
 
   const handleEliminarLogo = () => {
     setPreviewLogo(null);
+    console.log(previewLogo);
+    
 
     setRestaurante((prev) => ({
       ...prev,
       logo: null
     }));
+
+    console.log(restaurante.logo);
+    
 
     const input = document.getElementById("logoInput");
     if (input) input.value = "";
@@ -121,7 +128,7 @@ function Config() {
       
       const res = await patchRestaurante(id, {
         ...restaurante,
-        logo: restaurante.logo || datosOriginales.logo,
+        logo: restaurante.logo === null ? null : restaurante.logo || datosOriginales.logo,
         foto_portada: restaurante.foto_portada || datosOriginales.foto_portada,
       });
 

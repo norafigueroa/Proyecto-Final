@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./GeneralRestaurantes.css";
 import { useNavigate } from "react-router-dom";
 import CartIcon from "../CartIcon/CartIcon";
+import Menu from '../Menu/Menu';
 
 function GeneralRestaurantes() {
   const [restaurantes, setRestaurantes] = useState([]);
@@ -40,17 +41,27 @@ function GeneralRestaurantes() {
   
 
   useEffect(() => {
-    const cargarRestaurantes = async () => {
+    cargarRestaurantes();
+  }, []);
+
+  const cargarRestaurantes = async () => {
       try {
         const response = await fetch("http://localhost:8000/api/restaurantes/");
         const data = await response.json();
 
-        console.log("API devuelve:", data.results);
+        console.log("API devuelve:", data);
 
-        // 🔥 Soporte para ambas respuestas (lista o paginada)
-        const lista = Array.isArray(data) ? data : data.results || [];
+        data.forEach(element => {
+          if (element.logo === null) {
+            console.log(element);
+          } else{
+            element.logo = element.logo.replace("image/upload/", "")
+          }
+        });
 
-        setRestaurantes(lista);
+        
+
+        setRestaurantes(data);
 
       } catch (error) {
         console.error("Error cargando restaurantes:", error);
@@ -59,14 +70,14 @@ function GeneralRestaurantes() {
       }
     };
 
-    cargarRestaurantes();
-  }, []);
-
-  console.log(restaurantes);
-  
-
+    console.log(restaurantes);
 
   return (
+    <div>
+    <div>
+        <Menu/>
+    </div>
+
     <div className="restaurantes-contenedor">
 
       {/* 🔹 Carrito */}
@@ -86,7 +97,7 @@ function GeneralRestaurantes() {
               onClick={() => navigate(`/restaurante/${rest.id}`)}
             >
               <img
-                src={rest.foto_portada || "/default.jpg"}
+                src={rest.logo || "/default.jpg"}
                 alt={rest.nombre_restaurante}
               />
 
@@ -98,6 +109,7 @@ function GeneralRestaurantes() {
           );
         })
       )}
+    </div>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./GestionMenu.css";
 import { useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 import MenuService from "../../../../services/servicesAdminRest/ServicesMenu";
 
 function GestionMenu() {
@@ -53,15 +54,6 @@ function GestionMenu() {
       setCategorias([]);
     }
   };
-
-/*   const cargarPlatos = async () => {
-    try {
-      const res = await MenuService.obtenerPlatillos();
-      setPlatos(res.data.results);
-    } catch (err) {
-      console.error("Error cargando platillos:", err);
-    }
-  }; */
 
     const cargarPlatos = async () => {
     try {
@@ -147,69 +139,169 @@ function GestionMenu() {
       const data = await res.json();
 
       if (data.secure_url) {
-        // Guardar URL en el platillo actual
         setPlatoActual({
           ...platoActual,
           foto: data.secure_url
         });
 
-        console.log("📸 Imagen subida:", data.secure_url);
+        /* console.log("📸 Imagen subida:", data.secure_url); */
+
+        // Alerta de éxito
+        Swal.fire({
+          icon: "success",
+          title: "Imagen subida correctamente",
+          text: "La imagen se ha cargado exitosamente.",
+          timer: 1500,
+          showConfirmButton: false
+        });
+
       } else {
-        console.error("❌ Cloudinary no envió secure_url:", data);
+        Swal.fire({
+          icon: "error",
+          title: "Error al subir la imagen",
+          text: "Cloudinary no devolvió la URL de la imagen.",
+        });
       }
+
     } catch (error) {
       console.error("Error subiendo imagen:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Error al subir la imagen",
+        text: "Hubo un problema con la carga. Intenta nuevamente.",
+      });
     }
   };
+
 
   const manejarSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const restId = Number(restauranteId);
-    const categoriaId = Number(platoActual.categoria_menu);
-    const precioNum = Number(platoActual.precio);
-    const descuentoNum = Number(platoActual.porcentaje); 
+  // Extraer valores
+  const nombre = platoActual.nombre_platillo.trim();
+  const descripcion = platoActual.descripcion.trim();
+  const precio = Number(platoActual.precio);
+  const categoria = platoActual.categoria_menu;
+  const descuento = Number(platoActual.porcentaje);
+  const imagen = platoActual.foto;
 
-    if (isNaN(precioNum) || precioNum <= 0) {
-      console.error("Precio inválido");
-      return;
+  // -------- VALIDACIONES --------
+
+  if (!nombre) {
+    Swal.fire("Campo faltante", "Debes ingresar un nombre para el platillo.", "warning");
+    return;
+  }
+
+  if (!descripcion) {
+    Swal.fire("Campo faltante", "Debes ingresar una descripción.", "warning");
+    return;
+  }
+
+  if (!precio || precio <= 0) {
+    Swal.fire("Precio inválido", "Debes ingresar un precio mayor a 0.", "warning");
+    return;
+  }
+
+  if (!categoria || categoria === "") {
+    Swal.fire("Campo faltante", "Debes seleccionar una categoría.", "warning");
+    return;
+  }
+
+  // Imagen obligatoria solo al agregar
+  if (!modoEdicion && !imagen) {
+    Swal.fire("Imagen requerida", "Debes subir una imagen del platillo.", "warning");
+    return;
+  }
+
+  //Descuento válido SOLO si se ingresa (opcional)
+  if (descuento !== 0 && (descuento < 0 || descuento > 100)) {
+    Swal.fire("Descuento inválido", "El porcentaje debe estar entre 0 y 100.", "warning");
+    return;
+  }
+
+  // -------- ENVIAR AL BACKEND --------
+
+  const formData = new FormData();
+  formData.append("restaurante", Number(restauranteId));
+  formData.append("categoria_menu", Number(categoria));
+  formData.append("nombre_platillo", nombre);
+  formData.append("descripcion", descripcion);
+  formData.append("precio", precio);
+  formData.append("promocion", descuento > 0);
+  formData.append("porcentaje", descuento);
+
+  if (imagen) {
+    formData.append("foto", imagen);
+  }
+
+  try {
+    if (modoEdicion) {
+      await MenuService.actualizarPlatillo(platoActual.id, formData);
+
+      Swal.fire({
+        icon: "success",
+        title: "Platillo actualizado",
+        timer: 1500,
+        showConfirmButton: false
+      });
+
+    } else {
+      await MenuService.crearPlatillo(formData);
+
+      Swal.fire({
+        icon: "success",
+        title: "Platillo agregado",
+        timer: 1500,
+        showConfirmButton: false
+      });
     }
 
-    const formData = new FormData();
-    formData.append("restaurante", restId);
-    formData.append("categoria_menu", categoriaId);
-    formData.append("nombre_platillo", platoActual.nombre_platillo);
-    formData.append("descripcion", platoActual.descripcion);
-    formData.append("precio", precioNum);
-    formData.append("promocion", platoActual.porcentaje > 0);
-    formData.append("porcentaje", descuentoNum);
+    cargarPlatos();
+    setModalAbierto(false);
 
-    if (platoActual.foto) {
-      formData.append("foto", platoActual.foto);
-    }
+  } catch (err) {
+    console.error("Error guardando:", err);
 
-    try {
-      if (modoEdicion) {
-        await MenuService.actualizarPlatillo(platoActual.id, formData);
-      } else {
-        await MenuService.crearPlatillo(formData);
-      }
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "No se pudo guardar el platillo."
+    });
+  }
+};
 
-      cargarPlatos();
-      setModalAbierto(false);
-    } catch (err) {
-      console.error("Error guardando:", err.response?.data || err);
-    }
-  };
 
   const eliminarPlato = async (id) => {
-    if (!window.confirm("¿Seguro que deseas eliminar este platillo?")) return;
+    const result = await Swal.fire({
+      title: "¿Eliminar platillo?",
+      text: "Estás seguro de que deseas eliminar este platillo?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar"
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       await MenuService.eliminarPlatillo(id);
+
+      Swal.fire({
+        icon: "success",
+        title: "Platillo eliminado",
+        timer: 1500,
+        showConfirmButton: false
+      });
+
       cargarPlatos();
     } catch (err) {
       console.error("Error eliminando:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo eliminar el platillo."
+      });
     }
   };
 

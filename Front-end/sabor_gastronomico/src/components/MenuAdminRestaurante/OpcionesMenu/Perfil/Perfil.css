@@ -211,3 +211,63 @@
     height: 110px;
   }
 }
+
+
+.btn-password {
+  background-color: #2563eb; 
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Hover */
+.btn-password:hover {
+  background-color: #1e3fa3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+}
+
+/* Click */
+.btn-password:active {
+  transform: scale(0.97);
+}
+
+.btn-password::before {
+  content: "🔐";
+  font-size: 17px;
+}
+
+.btn-editar{
+  background-color: #2563eb;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;  
+}
+
+/* Hover */
+.btn-editar:hover {
+  background-color: #1e3fa3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+}
+
+/* Click */
+.btn-editar:active {
+  transform: scale(0.97);
+}
