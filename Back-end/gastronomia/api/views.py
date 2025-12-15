@@ -366,3 +366,4 @@ class VistaConfiguracionPlataforma(RetrieveUpdateAPIView):
         #        status=status.HTTP_403_FORBIDDEN
         #    )
         return super().partial_update(request, *args, **kwargs)
+        

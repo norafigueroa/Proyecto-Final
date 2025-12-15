@@ -3,8 +3,6 @@ import { useParams } from "react-router-dom";
 import "./Config.css";
 import {getRestauranteById , patchRestaurante} from "../../../../../src/services/ServicesRestaurantes"
 
-
-
 function Config() {
   const [restaurante, setRestaurante] = useState({
     nombre_restaurante: "",
@@ -16,14 +14,6 @@ function Config() {
     email: "",
     logo: null, 
     foto_portada: null, 
-    latitud: "",
-    longitud: "", 
-    url_facebook: "",
-    url_instagram: "",
-    url_twitter: "",
-    url_tiktok: "",
-    url_youtube: "",
-    url_whatsapp: "",
   });
 
   const [datosOriginales, setDatosOriginales] = useState({});
@@ -238,6 +228,17 @@ function Config() {
             />
           </div>
 
+          {/* Sitio Web */}
+          <div className="config-group">
+            <label className="config-label">Sitio Web</label>
+            <input
+              className="config-input"
+              name="sitio_web"
+              value={restaurante.sitio_web || ""}
+              onChange={handleChange}
+            />
+          </div>
+
           {/* Email (No editable) */}
           <div className="config-group">
             <label className="config-label">Email (no editable)</label>
@@ -245,107 +246,6 @@ function Config() {
               className="config-input-disabled"
               value={restaurante.email || "—"}
               disabled
-            />
-          </div>
-
-          {/* Longitud */}
-          <div className="config-group">
-            <label className="config-label">Longitud</label>
-            <input
-              type="number"
-              step="any"
-              className="config-input"
-              name="longitud"
-              value={restaurante.longitud || ""}
-              onChange={handleChange}
-            />
-          </div>
-
-          {/* Latitud */}
-          <div className="config-group">
-            <label className="config-label">Latitud</label>
-            <input
-              type="number"
-              step="any"
-              className="config-input"
-              name="latitud"
-              value={restaurante.latitud || ""}
-              onChange={handleChange}
-            />
-          </div>
-
-          {/* Redes sociales */}
-          <h3 style={{ marginTop: "20px" }}>Redes Sociales</h3>
-
-          <div className="config-group">
-            <label className="config-label">Facebook</label>
-            <input
-              type="text"
-              className="config-input"
-              name="url_facebook"
-              value={restaurante.url_facebook || ""}
-              onChange={handleChange}
-              placeholder="https://facebook.com/tu_pagina"
-            />
-          </div>
-
-          <div className="config-group">
-            <label className="config-label">Instagram</label>
-            <input
-              type="text"
-              className="config-input"
-              name="url_instagram"
-              value={restaurante.url_instagram || ""}
-              onChange={handleChange}
-              placeholder="https://instagram.com/tu_pagina"
-            />
-          </div>
-
-          <div className="config-group">
-            <label className="config-label">Twitter</label>
-            <input
-              type="text"
-              className="config-input"
-              name="url_twitter"
-              value={restaurante.url_twitter || ""}
-              onChange={handleChange}
-              placeholder="https://twitter.com/tu_pagina"
-            />
-          </div>
-
-          <div className="config-group">
-            <label className="config-label">TikTok</label>
-            <input
-              type="text"
-              className="config-input"
-              name="url_tiktok"
-              value={restaurante.url_tiktok || ""}
-              onChange={handleChange}
-              placeholder="https://tiktok.com/@tu_pagina"
-            />
-          </div>
-
-          <div className="config-group">
-            <label className="config-label">YouTube</label>
-            <input
-              type="text"
-              className="config-input"
-              name="url_youtube"
-              value={restaurante.url_youtube || ""}
-              onChange={handleChange}
-              placeholder="https://youtube.com/tu_canal"
-            />
-          </div>
-
-          <div className="config-group">
-            <label className="config-label">WhatsApp</label>
-            <input
-              type="text"
-              className="config-input"
-              name="url_whatsapp"
-              value={restaurante.url_whatsapp || ""}
-              onChange={handleChange}
-              placeholder="Ej: +50688887777"
             />
           </div>
 
