@@ -106,9 +106,9 @@ function PagCultura() {
     <div className="cultura-page">
       <header className="cultura-header">
         <h1 className="header-title">
-          Blog de <span>Puntarenas Centro</span>
+          Historia de <span>Puntarenas Centro</span>
         </h1>
-        <p>Historias y Tradiciones Costeras</p>
+        <p>El corazón del Pacífico costarricense</p>
       </header>
 
       {seccionesCultura.length > 0 ? (

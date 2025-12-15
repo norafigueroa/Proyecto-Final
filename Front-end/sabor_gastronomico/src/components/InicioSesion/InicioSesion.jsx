@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 import { postLogin } from '../../services/ServicesLogin';
 import { useAuth } from '../../context/AuthContext';
 import { getRestaurantes } from '../../services/ServicesRestaurantes';
@@ -155,6 +155,8 @@ function InicioSesion() {
         <button className="login-button" onClick={manejarLogin} disabled={cargando}>
           {cargando ? 'Cargando...' : 'Iniciar Sesión'}
         </button>
+        <br />
+        <Link to="/RegisterUsuario">¿No tienes cuenta? Registrate</Link>
       </div>
     </div>
   </div>

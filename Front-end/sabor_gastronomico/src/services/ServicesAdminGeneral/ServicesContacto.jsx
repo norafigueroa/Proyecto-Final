@@ -16,7 +16,9 @@ export const obtenerMensajes = async () => {
 // Obtener un mensaje por ID
 export const obtenerMensajeDetalle = async (id) => {
   try {
-    const response = await axios.get(`${API_URL}/${id}`);
+    const response = await axios.get(`${API_URL}/${id}`, {
+      withCredentials: true
+    });
     return response.data;
   } catch (error) {
     console.error('Error al obtener mensaje:', error);
@@ -27,7 +29,9 @@ export const obtenerMensajeDetalle = async (id) => {
 // Eliminar un mensaje
 export const eliminarMensaje = async (id) => {
   try {
-    const response = await axios.delete(`${API_URL}/${id}`);
+    const response = await axios.delete(`${API_URL}/${id}`, {
+      withCredentials: true
+    });
     return response.data;
   } catch (error) {
     console.error('Error al eliminar mensaje:', error);
