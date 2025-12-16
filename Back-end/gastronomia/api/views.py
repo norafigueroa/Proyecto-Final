@@ -6,6 +6,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.models import Group
 from rest_framework.decorators import action
+from rest_framework.views import APIView
+from django.db import transaction
+from django.shortcuts import get_object_or_404
 
 # --- USUARIOS ---
 class PerfilUsuarioListCreateView(ListCreateAPIView):
@@ -366,4 +369,77 @@ class VistaConfiguracionPlataforma(RetrieveUpdateAPIView):
         #        status=status.HTTP_403_FORBIDDEN
         #    )
         return super().partial_update(request, *args, **kwargs)
-        
+
+class ConfirmarPagoPayPalView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        order_id = request.data.get("orderID")
+        pedido_id = request.data.get("pedido_id")
+
+        if not order_id or not pedido_id:
+            return Response(
+                {"error": "orderID y pedido_id son requeridos"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Verificamos con PayPal
+        paypal_data = verify_order(order_id)
+
+        if paypal_data.get("status") != "COMPLETED":
+            return Response(
+                {"error": "Pago no completado"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        pedido = get_object_or_404(Pedido, id=pedido_id)
+
+        pedido.metodo_pago = "paypal"
+        pedido.estado_pedido = "en_proceso"
+        pedido.paypal_order_id = order_id
+        pedido.paypal_status = paypal_data["status"]
+        pedido.save()
+
+        return Response(
+            {"mensaje": "Pago PayPal confirmado correctamente"},
+            status=status.HTTP_200_OK
+        )        
+
+class CrearPedidoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @transaction.atomic
+    def post(self, request):
+        data = request.data
+        items = data.get("items", [])
+
+        if not items:
+            return Response(
+                {"error": "El pedido no tiene platillos"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        pedido = Pedido.objects.create(
+            usuario=request.user,
+            restaurante_id=data["restaurante"],
+            subtotal=data["subtotal"],
+            total=data["total"],
+            metodo_pago=data["metodo_pago"],
+            estado_pedido="pendiente"
+        )
+
+        for item in items:
+            platillo = get_object_or_404(Platillo, id=item["platillo"])
+
+            DetallePedido.objects.create(
+                pedido=pedido,
+                platillo=platillo,
+                cantidad=item["cantidad"],
+                precio_unitario=item["precio_unitario"],
+                subtotal=item["cantidad"] * item["precio_unitario"]
+            )
+
+        return Response(
+            {"pedido_id": pedido.id},
+            status=status.HTTP_201_CREATED
+        )        

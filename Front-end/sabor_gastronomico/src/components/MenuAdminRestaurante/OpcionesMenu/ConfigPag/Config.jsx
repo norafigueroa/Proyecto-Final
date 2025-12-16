@@ -52,7 +52,7 @@ function Config() {
         }
 
       } catch (err) {
-        console.error("❌ Error cargando config:", err);
+        console.error("Error cargando config:", err);
         setMensajeError("Error al cargar los datos del restaurante.");
       } finally {
         setCargando(false);

@@ -1,41 +1,77 @@
-import React, { createContext, useState } from "react";
+import { createContext, useState } from "react";
 
-// 🔹 Creamos el contexto
 export const CartContext = createContext();
 
-// 🔹 Creamos el proveedor del carrito
 export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
+  const [restauranteId, setRestauranteId] = useState(null);
 
-  // 👉 Agregar un plato al carrito
-const addToCart = (plato) => {
-  setCartItems((prevCart) => {
-    const existente = prevCart.find((item) => item.nombre === plato.nombre);
-    const cantidadNueva = plato.cantidad || 1; // por si no se definió
-
-    if (existente) {
-      // si ya existe, aumenta la cantidad seleccionada
-      return prevCart.map((item) =>
-        item.nombre === plato.nombre
-          ? { ...item, cantidad: item.cantidad + cantidadNueva }
-          : item
-      );
-    } else {
-      // si no existe, se agrega nuevo con la cantidad elegida
-      return [...prevCart, { ...plato, cantidad: cantidadNueva }];
+  function addToCart(item) {
+    // 🚫 Bloquear mezcla de restaurantes
+    if (restauranteId && restauranteId !== item.restaurante) {
+      alert("No puedes mezclar platillos de diferentes restaurantes");
+      return;
     }
-  });
-};
-  // 👉 Quitar un plato del carrito
-  const removeFromCart = (nombre) => {
-    setCartItems((prevCart) => prevCart.filter((item) => item.nombre !== nombre));
-  };
 
-  // 👉 Vaciar el carrito
-  const clearCart = () => setCartItems([]);
+    setRestauranteId(item.restaurante);
+
+    setCartItems((prev) => {
+      const existente = prev.find((p) => p.id === item.id);
+
+      if (existente) {
+        return prev.map((p) =>
+          p.id === item.id
+            ? { ...p, cantidad: p.cantidad + 1 }
+            : p
+        );
+      }
+
+      return [...prev, { ...item, cantidad: 1 }];
+    });
+  }
+
+  function incrementarCantidad(id) {
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? { ...item, cantidad: item.cantidad + 1 }
+          : item
+      )
+    );
+  }
+
+  function disminuirCantidad(id) {
+    setCartItems((prev) =>
+      prev
+        .map((item) =>
+          item.id === id
+            ? { ...item, cantidad: item.cantidad - 1 }
+            : item
+        )
+        .filter((item) => item.cantidad > 0)
+    );
+  }
+
+  function removeFromCart(id) {
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  }
+
+  function clearCart() {
+    setCartItems([]);
+    setRestauranteId(null);
+  }
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, clearCart }}>
+    <CartContext.Provider
+      value={{
+        cartItems,
+        addToCart,
+        incrementarCantidad,
+        disminuirCantidad,
+        removeFromCart,
+        clearCart,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

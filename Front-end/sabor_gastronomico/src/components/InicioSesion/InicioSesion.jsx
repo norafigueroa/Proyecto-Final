@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate,Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { postLogin } from '../../services/ServicesLogin';
 import { useAuth } from '../../context/AuthContext';
 import { getRestaurantes } from '../../services/ServicesRestaurantes';
@@ -15,6 +15,8 @@ function InicioSesion() {
 
   const { login, autenticado } = useAuth();
   const navegar = useNavigate();
+  const location = useLocation();
+  const redirectTo = location.state?.redirectTo || "/";
 
   // Bloquear flecha atrás del navegador cuando estés logueado
   useEffect(() => {
@@ -109,7 +111,7 @@ function InicioSesion() {
             return;
           }
 
-          navegar("/");
+          navegar(redirectTo);
         }, 1000);
       }
     } catch (error) {

@@ -167,6 +167,7 @@ class Pedido(models.Model):
         ('tarjeta', 'Tarjeta'),
         ('sinpe', 'SINPE Móvil'),
         ('transferencia', 'Transferencia'),
+        ('paypal', 'PayPal'),
     ]
 
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='pedidos')
@@ -177,6 +178,11 @@ class Pedido(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2)
     notas_especiales = models.CharField(max_length=255, blank=True, null=True)
     metodo_pago = models.CharField(max_length=20, choices=METODO_PAGO_CHOICES)
+
+    # 🔐 PayPal
+    paypal_order_id = models.CharField(max_length=255, blank=True, null=True)
+    paypal_status = models.CharField(max_length=50, blank=True, null=True)
+
 
     def _str_(self):
         return f"Pedido #{self.id} - {self.usuario.username}"

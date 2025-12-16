@@ -101,6 +101,17 @@ urlpatterns = [
 
     #Configuración
     path('configuracion/', VistaConfiguracionPlataforma.as_view(), name="obtener y actualizar configuracion"),
-]
+
+    # PayPal
+    # Pedidos
+    path('pedidos', PedidoListCreateView.as_view()),
+    path('pedidos/<int:pk>', PedidoDetailView.as_view()),
+
+    # 👇 NUEVA (carrito → pedido)
+    path('pedidos/crear/', CrearPedidoView.as_view()),
+
+    # PayPal
+    path("paypal/confirmar/", ConfirmarPagoPayPalView.as_view()),
+    ]
 
   
