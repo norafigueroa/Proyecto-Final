@@ -9,6 +9,8 @@ from rest_framework.decorators import action
 from rest_framework.views import APIView
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from .auth import CookieJWTAuthentication
 
 # --- USUARIOS ---
 class PerfilUsuarioListCreateView(ListCreateAPIView):
@@ -115,24 +117,43 @@ class ActualizarPromocionPlatillo(UpdateAPIView):
     serializer_class = PlatilloSerializer    
 
 # --- PEDIDOS ---
-class PedidoListCreateView(ListCreateAPIView):
-    queryset = Pedido.objects.all()
+class PedidoListAdminView(ListAPIView):
+    """
+    Vista para que el admin de un restaurante vea solo sus pedidos.
+    """
     serializer_class = PedidoSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Obtiene el restaurante del usuario logueado
+        restaurante_id = self.request.user.restaurante.id
+        return Pedido.objects.filter(restaurante_id=restaurante_id).order_by('-fecha_pedido')
+
+class PedidoListCreateView(ListCreateAPIView):
+    queryset = Pedido.objects.all().order_by('-fecha_pedido')
+    serializer_class = CrearPedidoSerializer
+    #authentication_classes = [CookieJWTAuthentication]
+    #permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Pedido.objects.filter(usuario=self.request.user).order_by('-fecha_pedido')
+
+    def perform_create(self, serializer):
+        serializer.save(usuario=self.request.user)
 
 class PedidoDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Pedido.objects.all()
     serializer_class = PedidoSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    #permission_classes = [IsAuthenticatedOrReadOnly]
 
-# --- DETALLE PEDIDO ---
+""" # --- DETALLE PEDIDO ---
 class DetallePedidoListCreateView(ListCreateAPIView):
     queryset = DetallePedido.objects.all()
     serializer_class = DetallePedidoSerializer
 
 class DetallePedidoDetailView(RetrieveUpdateDestroyAPIView):
     queryset = DetallePedido.objects.all()
-    serializer_class = DetallePedidoSerializer
+    serializer_class = DetallePedidoSerializer """
 
 # --- RESEÑAS ---
 class ResenaListCreateView(ListCreateAPIView):
@@ -217,10 +238,36 @@ class GaleriaComunitariaDetailView(RetrieveUpdateDestroyAPIView):
     serializer_class = GaleriaComunitariaSerializer
 
 # --- COMENTARIOS GALERÍA ---
+# 🔴 Lista de palabras ofensivas
+PALABRAS_OFENSIVAS = [
+    "idiota",
+    "estupido",
+    "estúpido",
+    "tonto",
+    "mierda",
+    "puta",
+    "pendejo",
+    "imbecil",
+    "imbécil",
+]
+
 class ComentariosGaleriaListCreateView(ListCreateAPIView):
-    queryset = ComentariosGaleria.objects.all()
+    queryset = ComentariosGaleria.objects.all().order_by("-fecha_comentario")
     serializer_class = ComentariosGaleriaSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        texto = self.request.data.get("comentario", "").lower()
+
+        # 🔎 Validación de lenguaje ofensivo
+        for palabra in PALABRAS_OFENSIVAS:
+            if palabra in texto:
+                raise ValidationError({
+                    "comentario": "Tu comentario contiene lenguaje ofensivo y no puede publicarse"
+                })
+
+        # ✅ Guardar comentario si pasa la validación
+        serializer.save(usuario=self.request.user)
 
 class ComentariosGaleriaDetailView(RetrieveUpdateDestroyAPIView):
     queryset = ComentariosGaleria.objects.all()
@@ -368,42 +415,7 @@ class VistaConfiguracionPlataforma(RetrieveUpdateAPIView):
         #        {'error': 'Solo Admin General puede actualizar la configuración'},
         #        status=status.HTTP_403_FORBIDDEN
         #    )
-        return super().partial_update(request, *args, **kwargs)
-
-class ConfirmarPagoPayPalView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        order_id = request.data.get("orderID")
-        pedido_id = request.data.get("pedido_id")
-
-        if not order_id or not pedido_id:
-            return Response(
-                {"error": "orderID y pedido_id son requeridos"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        # Verificamos con PayPal
-        paypal_data = verify_order(order_id)
-
-        if paypal_data.get("status") != "COMPLETED":
-            return Response(
-                {"error": "Pago no completado"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        pedido = get_object_or_404(Pedido, id=pedido_id)
-
-        pedido.metodo_pago = "paypal"
-        pedido.estado_pedido = "en_proceso"
-        pedido.paypal_order_id = order_id
-        pedido.paypal_status = paypal_data["status"]
-        pedido.save()
-
-        return Response(
-            {"mensaje": "Pago PayPal confirmado correctamente"},
-            status=status.HTTP_200_OK
-        )        
+        return super().partial_update(request, *args, **kwargs)      
 
 class CrearPedidoView(APIView):
     permission_classes = [IsAuthenticated]
@@ -414,32 +426,61 @@ class CrearPedidoView(APIView):
         items = data.get("items", [])
 
         if not items:
-            return Response(
-                {"error": "El pedido no tiene platillos"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "El pedido no tiene platillos"}, status=400)
+
+        restaurante_id = data.get("restaurante")
+        subtotal = data.get("subtotal")
+        total = data.get("total")
+        metodo_pago = data.get("metodo_pago", "simulado")
+
+        if not restaurante_id or subtotal is None or total is None:
+            return Response({"error": "Faltan campos obligatorios"}, status=400)
+
+        restaurante = get_object_or_404(Restaurante, id=restaurante_id)
 
         pedido = Pedido.objects.create(
             usuario=request.user,
-            restaurante_id=data["restaurante"],
-            subtotal=data["subtotal"],
-            total=data["total"],
-            metodo_pago=data["metodo_pago"],
+            restaurante=restaurante,
+            subtotal=subtotal,
+            total=total,
+            metodo_pago=metodo_pago,
             estado_pedido="pendiente"
         )
 
         for item in items:
-            platillo = get_object_or_404(Platillo, id=item["platillo"])
+            platillo_id = item.get("platillo")
+            cantidad = item.get("cantidad")
+            precio_unitario = item.get("precio_unitario")
 
+            if not platillo_id or cantidad is None or precio_unitario is None:
+                transaction.set_rollback(True)
+                return Response({"error": "Item incompleto"}, status=400)
+
+            platillo = get_object_or_404(Platillo, id=platillo_id)
             DetallePedido.objects.create(
                 pedido=pedido,
                 platillo=platillo,
-                cantidad=item["cantidad"],
-                precio_unitario=item["precio_unitario"],
-                subtotal=item["cantidad"] * item["precio_unitario"]
+                cantidad=cantidad,
+                precio_unitario=precio_unitario,
+                subtotal=cantidad * precio_unitario
             )
 
         return Response(
-            {"pedido_id": pedido.id},
-            status=status.HTTP_201_CREATED
-        )        
+            {"pedido_id": pedido.id, "mensaje": "Pedido simulado correctamente"},
+            status=201
+        )
+
+class PedidoListCreateView(ListCreateAPIView):
+    queryset = Pedido.objects.all().order_by('-fecha_pedido')
+    serializer_class = CrearPedidoSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Solo devuelve los pedidos del usuario logueado
+        return Pedido.objects.filter(usuario=self.request.user).order_by('-fecha_pedido')
+
+    @transaction.atomic
+    def perform_create(self, serializer):
+        # Guardar pedido y detalles en una transacción
+        serializer.save()
+    

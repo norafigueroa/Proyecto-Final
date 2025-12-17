@@ -9,17 +9,13 @@ import { obtenerConfiguracion } from "../../services/ServicesAdminGeneral/Servic
 
 import CartIcon from "../CartIcon/CartIcon";
 import Menu from '../Menu/Menu';
+import Swal from "sweetalert2";
 import "./InfoRestaurantes.css";
 
-//Iconos y recursos de redes
-import { 
-  FaFacebook, 
-  FaInstagram, 
-  FaTwitter, 
-  FaTiktok, 
-  FaYoutube, 
-  FaWhatsapp 
-} from "react-icons/fa";
+import Instagram from "../../assets/Instagram.png"
+import Facebook from "../../assets/Facebook.png"
+import Tiktok from "../../assets/Tiktok.png"
+import Whatsapp from "../../assets/Whatsapp.png"
 
 function InfoRestaurantes() {
   const { id } = useParams();
@@ -92,29 +88,47 @@ function InfoRestaurantes() {
 
 
   const enviarTestimonio = async () => {
-      if (!nombreCliente.trim() || !nuevoTestimonio.trim() || nuevaCalificacion === 0) {
-        return alert("Ingresa tu nombre, comentario y calificación.");
-      }
+    if (!nombreCliente.trim() || !nuevoTestimonio.trim() || nuevaCalificacion === 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campos incompletos",
+        text: "Ingresa tu nombre, comentario y calificación.",
+      });
+      return;
+    }
 
-      try {
-        await ServicesTestimonios.crearTestimonio({
-          restaurante: id,
-          nombre: nombreCliente,
-          comentario: nuevoTestimonio,
-          calificacion: nuevaCalificacion 
-        });
+    try {
+      await ServicesTestimonios.crearTestimonio({
+        restaurante: id,
+        nombre: nombreCliente,
+        comentario: nuevoTestimonio,
+        calificacion: nuevaCalificacion 
+      });
 
-        const res = await ServicesTestimonios.obtenerTestimonios(id);
-        setTestimonios(res.data);
+      const res = await ServicesTestimonios.obtenerTestimonios(id);
+      setTestimonios(res.data);
 
-        setNombreCliente("");
-        setNuevoTestimonio("");
-        setNuevaCalificacion(0);
-      } catch (error) {
-        console.log("Error enviando testimonio:", error);
-      }
-    };
+      setNombreCliente("");
+      setNuevoTestimonio("");
+      setNuevaCalificacion(0);
 
+      // Mensaje de éxito
+      Swal.fire({
+        icon: "success",
+        title: "¡Enviado!",
+        text: "Gracias por compartir tu experiencia.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    } catch (error) {
+      console.log("Error enviando testimonio:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo enviar tu testimonio. Intenta nuevamente.",
+      });
+    }
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -213,16 +227,6 @@ function InfoRestaurantes() {
       : platillosBD.filter((p) => p.categoria_menu === categoriaSeleccionada);
 /*   console.log("Platillos:", platillosBD); */
  
-
-const iconosRedes = {
-  facebook: FaFacebook,
-  instagram: FaInstagram,
-  tiktok: FaTiktok,
-  whatsapp: FaWhatsapp,
-  twitter: FaTwitter,
-  youtube: FaYoutube,
-};
-
   console.log(testimonios);
   
   return (
@@ -279,15 +283,32 @@ const iconosRedes = {
             <strong>Calificación:</strong>
 
             <div className="rating-promedio-box">
-              <EstrellasPromedio valor={restaurante.calificacion_promedio} />
+              {testimonios.length > 0 ? (
+                <>
+                  <EstrellasPromedio
+                    valor={
+                      testimonios.reduce((sum, t) => sum + t.calificacion, 0) /
+                      testimonios.length
+                    }
+                  />
 
-              <p className="rating-num">
-                {restaurante.calificacion_promedio.toFixed(1)} / 5
-              </p>
+                  <p className="rating-num">
+                    {(testimonios.reduce((sum, t) => sum + t.calificacion, 0) /
+                      testimonios.length
+                    ).toFixed(1)} / 5
+                  </p>
 
-              <p className="rating-total">
-                ({restaurante.total_resenas} reseñas)
-              </p>
+                  <p className="rating-total">
+                    ({testimonios.length} reseñas)
+                  </p>
+                </>
+              ) : (
+                <>
+                  <EstrellasPromedio valor={0} />
+                  <p className="rating-num">0 / 5</p>
+                  <p className="rating-total">(0 reseñas)</p>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -534,52 +555,33 @@ const iconosRedes = {
           </div>
           <div className="footer-col">
             <h3 className="footer-title">Redes Sociales</h3>
-            <div className="social-icons">
-
-              <div className="social-icons">
-
-                {restaurante.url_facebook && (
-                  <a href={restaurante.url_facebook} target="_blank" rel="noopener noreferrer" className="icon facebook">
-                    <FaFacebook />
-                  </a>
-                )}
-
-                {restaurante.url_instagram && (
-                  <a href={restaurante.url_instagram} target="_blank" rel="noopener noreferrer" className="icon instagram">
-                    <FaInstagram />
-                  </a>
-                )}
-
-                {restaurante.url_twitter && (
-                  <a href={restaurante.url_twitter} target="_blank" rel="noopener noreferrer" className="icon twitter">
-                    <FaTwitter />
-                  </a>
-                )}
-
-                {restaurante.url_tiktok && (
-                  <a href={restaurante.url_tiktok} target="_blank" rel="noopener noreferrer" className="icon tiktok">
-                    <FaTiktok />
-                  </a>
-                )}
-
-                {restaurante.url_youtube && (
-                  <a href={restaurante.url_youtube} target="_blank" rel="noopener noreferrer" className="icon youtube">
-                    <FaYoutube />
-                  </a>
-                )}
-
-                {restaurante.url_whatsapp && (
-                  <a 
-                    href={`https://wa.me/${restaurante.url_whatsapp.replace(/\D/g, "")}`} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="icon whatsapp"
-                  >
-                    <FaWhatsapp />
-                  </a>
-                )}
-              </div>
+            <div className="redes-icons">
+              {configuracion?.url_instagram && (
+                <a href={configuracion.url_instagram} target="_blank" rel="noopener noreferrer">
+                  <img src={Instagram} alt="Instagram" />
+                </a>
+              )}
+              {configuracion?.url_facebook && (
+                <a href={configuracion.url_facebook} target="_blank" rel="noopener noreferrer">
+                  <img src={Facebook} alt="Facebook" />
+                </a>
+              )}
             </div>
+            {configuracion?.url_tiktok && (
+              <a href={configuracion.url_tiktok} target="_blank" rel="noopener noreferrer">
+                <img src={Tiktok} alt="TikTok" />
+              </a>
+            )}
+
+            {configuracion?.url_whatsapp && (
+              <a 
+                href={`https://wa.me/${configuracion.url_whatsapp.replace(/\D/g, "")}`} 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                <img src={Whatsapp} alt="WhatsApp" />
+              </a>
+            )}
           </div>
         </div>
         <hr className="footer-divider" />

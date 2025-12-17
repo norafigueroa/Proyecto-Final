@@ -63,6 +63,9 @@ function InicioSesion() {
       const respuesta = await postLogin(credenciales);
       console.log(respuesta);
       
+      // ✅ GUARDAR TOKEN
+      localStorage.setItem("access", respuesta.access);
+      localStorage.setItem("refresh", respuesta.refresh);
 
       if (respuesta && respuesta.user) {
         const user = respuesta.user;

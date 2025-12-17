@@ -23,7 +23,9 @@ function FormularioRestaurante() {
   useEffect(() => {
     async function obtener() {
       const respuesta = await getCategorias();
-      setCate(respuesta);
+      console.log("respuesta getCategorias:", respuesta);
+      setCate(respuesta || []);
+      console.log("respuesta getCategorias:", respuesta);
     }
     obtener();
     setCargaCate(true);

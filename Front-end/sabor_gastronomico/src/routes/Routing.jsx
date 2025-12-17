@@ -15,7 +15,7 @@ import AdminRestaurante from '../pages/AdminRestaurante';
 import AdminGeneral from '../pages/AdminGeneral'; 
 import ProtectedRoute from './ProtectedRoute'; 
 import InfoRestaurantes from '../components/Restaurantes/InfoRestaurantes';
-import Checkout from '../components/MetodoPago/Checkout';
+import InfoPagoPedido from '../components/MetodoPago/InfoPagoPedido';
 
 
 function Routing() {
@@ -35,7 +35,7 @@ function Routing() {
             <Route path="/Beneficios" element={<Beneficios/>}/>
             <Route path="/Login" element={<Login/>}/>
             <Route path="/RestauranteRegister" element={<RestauranteRegister/>}/>
-            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/checkout" element={<InfoPagoPedido />} />
 
 
             {/* RUTAS PROTEGIDAS POR ROL */}

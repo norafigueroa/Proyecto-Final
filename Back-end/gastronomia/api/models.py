@@ -167,7 +167,6 @@ class Pedido(models.Model):
         ('tarjeta', 'Tarjeta'),
         ('sinpe', 'SINPE Móvil'),
         ('transferencia', 'Transferencia'),
-        ('paypal', 'PayPal'),
     ]
 
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='pedidos')
@@ -178,11 +177,6 @@ class Pedido(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2)
     notas_especiales = models.CharField(max_length=255, blank=True, null=True)
     metodo_pago = models.CharField(max_length=20, choices=METODO_PAGO_CHOICES)
-
-    # 🔐 PayPal
-    paypal_order_id = models.CharField(max_length=255, blank=True, null=True)
-    paypal_status = models.CharField(max_length=50, blank=True, null=True)
-
 
     def _str_(self):
         return f"Pedido #{self.id} - {self.usuario.username}"
@@ -286,7 +280,7 @@ class GaleriaComunitaria(models.Model):
     url_foto = CloudinaryField('foto_galeria')
     fecha_subida = models.DateTimeField(auto_now_add=True)
 
-    def _str_(self):
+    def __str__(self):
         return self.titulo
 
 
@@ -296,7 +290,7 @@ class ComentariosGaleria(models.Model):
     comentario = models.CharField(max_length=255)
     fecha_comentario = models.DateTimeField(auto_now_add=True)
 
-    def _str_(self):
+    def __str__(self):
         return f"Comentario de {self.usuario.username} en {self.foto_galeria}"
 
 
@@ -309,7 +303,7 @@ class LugaresTuristicos(models.Model):
     imagen_principal = CloudinaryField('foto_lugar', blank=True, null=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
 
-    def _str_(self):
+    def __str__(self):
         return self.nombre_lugar
 
 
@@ -319,7 +313,7 @@ class FotosLugares(models.Model):
     descripcion = models.CharField(max_length=255, blank=True, null=True)
     fecha_subida = models.DateTimeField(auto_now_add=True)
 
-    def _str_(self):
+    def __str__(self):
         return f"Foto de {self.lugar}"
 
 

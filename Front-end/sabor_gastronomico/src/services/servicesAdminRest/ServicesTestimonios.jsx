@@ -1,8 +1,8 @@
 import axios from "../AxiosConfig";
 
 export const ServicesTestimonios = {
-  obtenerTestimonios(restauranteId) {
-    return axios.get(`/testimonios/?restaurante=${restauranteId}`);
+  obtenerTestimonios: (restauranteId) => {
+    return axios.get(`testimonios/?restaurante=${restauranteId}`);
   },
 
   crearTestimonio(data) {

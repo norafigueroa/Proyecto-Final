@@ -1,19 +1,6 @@
-import axiosInstance from "./AxiosConfig";
+import API from "./AxiosConfig";
 
-export const crearPedido = async (pedidoData) => {
-  const response = await axiosInstance.post("/pedidos", pedidoData);
-  return response.data;
-};
-
-export const crearDetallePedido = async (detalle) => {
-  const response = await axiosInstance.post("/detalles-pedido", detalle);
-  return response.data;
-};
-
-export const confirmarPagoPayPal = async (orderID, pedido_id) => {
-  const response = await axiosInstance.post("/paypal/confirmar/", {
-    orderID,
-    pedido_id,
-  });
+export const crearPedido = async (data) => {
+  const response = await API.post("pedidos/", data, { withCredentials: true });
   return response.data;
 };

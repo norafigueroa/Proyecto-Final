@@ -2,27 +2,36 @@ import { useContext, useEffect } from "react";
 import { CartContext } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import PagoPayPal from "./PagoPayPal";
+//import PagoPayPal from "./PagoPayPal";
 
 function Checkout() {
-    const { cartItems } = useContext(CartContext);
-    const { usuario } = useAuth();
-    const navigate = useNavigate();
+  const { cartItems } = useContext(CartContext);
+  const { usuario, cargando } = useAuth();
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        if (!usuario) {
-            navigate("/login", { state: { redirectTo: "/checkout" } });
-        }
-        }, [usuario]);
+  console.log("Usuario en Checkout:", usuario);
+  console.log(cargando);
+  
+  
 
-    if (cartItems.length === 0) {
-        return <h2>Tu carrito está vacío</h2>;
+  useEffect(() => {
+    if (!cargando && !usuario) {
+      navigate("/", { state: { redirectTo: "/checkout" } });
     }
+  }, [usuario, cargando, navigate]);
 
-    const total = cartItems.reduce(
-        (acc, item) => acc + item.precio * item.cantidad,
-        0
-    );
+  if (cargando) {
+    return <p>Cargando...</p>;
+  }
+
+  if (cartItems.length === 0) {
+    return <h2>Tu carrito está vacío</h2>;
+  }
+
+  const total = cartItems.reduce(
+    (acc, item) => acc + item.precio * item.cantidad,
+    0
+  );
 
   return (
     <div className="checkout-container">
@@ -39,8 +48,6 @@ function Checkout() {
       ))}
 
       <h3>Total: ₡{total.toLocaleString("es-CR")}</h3>
-
-      <PagoPayPal total={total} />
     </div>
   );
 }
