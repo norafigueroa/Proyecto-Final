@@ -12,7 +12,6 @@ import GaleriaAdmin from "./OpcionesMenu/GaleriaAdmin/GaleriaAdmin";
 import Perfil from "./OpcionesMenu/Perfil/Perfil";
 import Pedidos from "./OpcionesMenu/Pedidos/Pedidos";
 import Resenas from "./OpcionesMenu/Resenas/Resenas";
-import Stats from "./OpcionesMenu/Stats/Stats";
 import Config from "./OpcionesMenu/ConfigPag/Config";
 
 function MenuAdminRest() {
@@ -83,7 +82,6 @@ const handleLogout = async () => {
         { clave: "perfil", label: "Mi Perfil", icon: "👤", descripcion: "Tu información." },
         { clave: "pedidos", label: "Pedidos", icon: "🛒", descripcion: "Gestión de pedidos." },
         { clave: "resenas", label: "Reseñas", icon: "⭐", descripcion: "Opiniones de clientes." },
-        { clave: "stats", label: "Estadísticas", icon: "📊", descripcion: "Datos del negocio." },
         { clave: "config", label: "Configuración", icon: "⚙️", descripcion: "Ajustes del sistema." },
     ];
 
@@ -96,7 +94,6 @@ const handleLogout = async () => {
             case "perfil": return <Perfil idRestaurante={id} />;
             case "pedidos": return <Pedidos idRestaurante={id} />;
             case "resenas": return <Resenas idRestaurante={id} />;
-            case "stats": return <Stats idRestaurante={id} />;
             case "config": return <Config idRestaurante={id} />;
             default: return <Inicio idRestaurante={id} />;
         }

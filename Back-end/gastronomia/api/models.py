@@ -280,7 +280,7 @@ class GaleriaComunitaria(models.Model):
     url_foto = CloudinaryField('foto_galeria')
     fecha_subida = models.DateTimeField(auto_now_add=True)
 
-    def _str_(self):
+    def __str__(self):
         return self.titulo
 
 
@@ -290,7 +290,7 @@ class ComentariosGaleria(models.Model):
     comentario = models.CharField(max_length=255)
     fecha_comentario = models.DateTimeField(auto_now_add=True)
 
-    def _str_(self):
+    def __str__(self):
         return f"Comentario de {self.usuario.username} en {self.foto_galeria}"
 
 
@@ -303,7 +303,7 @@ class LugaresTuristicos(models.Model):
     imagen_principal = CloudinaryField('foto_lugar', blank=True, null=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
 
-    def _str_(self):
+    def __str__(self):
         return self.nombre_lugar
 
 
@@ -313,7 +313,7 @@ class FotosLugares(models.Model):
     descripcion = models.CharField(max_length=255, blank=True, null=True)
     fecha_subida = models.DateTimeField(auto_now_add=True)
 
-    def _str_(self):
+    def __str__(self):
         return f"Foto de {self.lugar}"
 
 

@@ -156,26 +156,57 @@ class PlatilloSerializer(serializers.ModelSerializer):
         return data
 
 
-class PedidoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Pedido
-        fields = '__all__'
-
-    def validate_total(self, value):
-        if value < 0:
-            raise serializers.ValidationError("El total no puede ser negativo.")
-        return value
-
-
 class DetallePedidoSerializer(serializers.ModelSerializer):
+    platillo_nombre = serializers.CharField(source='platillo.nombre', read_only=True)
+
     class Meta:
         model = DetallePedido
-        fields = '__all__'
+        fields = ['id', 'platillo', 'platillo_nombre', 'cantidad', 'precio_unitario', 'subtotal']
 
-    def validate_cantidad(self, value):
-        if value <= 0:
-            raise serializers.ValidationError("La cantidad debe ser mayor a 0.")
-        return value
+class PedidoSerializer(serializers.ModelSerializer):
+    detalles = DetallePedidoSerializer(source='detallepedido_set', many=True, read_only=True)
+    usuario_nombre = serializers.CharField(source='usuario.username', read_only=True)
+
+    class Meta:
+        model = Pedido
+        fields = ['id', 'usuario', 'usuario_nombre', 'restaurante', 'subtotal', 'total', 'metodo_pago', 'estado_pedido', 'detalles', 'fecha_pedido']
+
+class CrearDetallePedidoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DetallePedido
+        fields = ['platillo', 'cantidad', 'precio_unitario']
+
+class CrearPedidoSerializer(serializers.ModelSerializer):
+    items = CrearDetallePedidoSerializer(many=True, write_only=True)
+    usuario_nombre = serializers.CharField(source='usuario.username', read_only=True)
+    restaurante_nombre = serializers.CharField(source='restaurante.nombre_restaurante', read_only=True)
+
+    class Meta:
+        model = Pedido
+        fields = ['id', 'usuario', 'usuario_nombre', 'restaurante', 'restaurante_nombre',
+                  'subtotal', 'total', 'metodo_pago', 'estado_pedido', 'items', 'fecha_pedido']
+        read_only_fields = ['id', 'estado_pedido', 'fecha_pedido', 'usuario']
+
+    def create(self, validated_data):
+        items_data = validated_data.pop('items')
+        usuario = self.context['request'].user
+        validated_data['usuario'] = usuario
+        validated_data['estado_pedido'] = 'pendiente'
+
+        pedido = Pedido.objects.create(**validated_data)
+
+        for item in items_data:
+            print(item)
+            platillo = item['platillo']
+            DetallePedido.objects.create(
+                pedido=pedido,
+                platillo=platillo,
+                cantidad=item['cantidad'],
+                precio_unitario=item['precio_unitario'],
+                subtotal=item['cantidad'] * item['precio_unitario']
+            )
+
+        return pedido
 
 
 class FotosResenaSerializer(serializers.ModelSerializer):

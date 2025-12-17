@@ -40,10 +40,9 @@ urlpatterns = [
 
 
     # Pedidos
-    path('pedidos', PedidoListCreateView.as_view(), name="crear y listar pedidos"),
+    path('pedidos/', PedidoListCreateView.as_view(), name="crear y listar pedidos"),
     path('pedidos/<int:pk>', PedidoDetailView.as_view(), name="actualizar y eliminar pedido"),
-    path('detalles-pedido', DetallePedidoListCreateView.as_view(), name="crear y listar detalles de pedido"),
-    path('detalles-pedido/<int:pk>', DetallePedidoDetailView.as_view(), name="actualizar y eliminar detalle de pedido"),
+    path('pedidos/admin/', PedidoListAdminView.as_view(), name='pedidos-admin'),
 
     # Reseñas
     path('resenas/', ResenaListCreateView.as_view(), name='resenas'),

@@ -228,14 +228,48 @@ function Config() {
             />
           </div>
 
-          {/* Sitio Web */}
+          {/* Redes Sociales */}
           <div className="config-group">
-            <label className="config-label">Sitio Web</label>
+            <label className="config-label">Instagram</label>
             <input
               className="config-input"
-              name="sitio_web"
-              value={restaurante.sitio_web || ""}
+              name="url_instagram"
+              value={restaurante.url_instagram || ""}
               onChange={handleChange}
+              placeholder="https://www.instagram.com/usuario"
+            />
+          </div>
+
+          <div className="config-group">
+            <label className="config-label">Facebook</label>
+            <input
+              className="config-input"
+              name="url_facebook"
+              value={restaurante.url_facebook || ""}
+              onChange={handleChange}
+              placeholder="https://www.facebook.com/usuario"
+            />
+          </div>
+
+          <div className="config-group">
+            <label className="config-label">TikTok</label>
+            <input
+              className="config-input"
+              name="url_tiktok"
+              value={restaurante.url_tiktok || ""}
+              onChange={handleChange}
+              placeholder="https://www.tiktok.com/@usuario"
+            />
+          </div>
+
+          <div className="config-group">
+            <label className="config-label">WhatsApp</label>
+            <input
+              className="config-input"
+              name="url_whatsapp"
+              value={restaurante.url_whatsapp || ""}
+              onChange={handleChange}
+              placeholder="Ej: +50612345678"
             />
           </div>
 

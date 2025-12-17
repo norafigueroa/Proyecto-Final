@@ -1,18 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { obtenerPedidos, actualizarEstadoPedido } from "../../../../services/servicesAdminRest/ServicesPedidos";
+import {
+  obtenerPedidos,
+  actualizarPedido,
+  eliminarPedido,
+} from "../../../../services/servicesAdminRest/ServicesPedidos";
+import Swal from "sweetalert2";
 import "./Pedidos.css";
+
 function Pedidos() {
   const [pedidos, setPedidos] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
 
+  // Cargar pedidos al inicio
   useEffect(() => {
     const cargarPedidos = async () => {
       try {
-        const data = await obtenerPedidos(idRestaurante);
+        const data = await obtenerPedidos();
         setPedidos(data);
-      } catch (error) {
+      } catch (err) {
         setError("Error al cargar los pedidos");
+        console.error(err);
       } finally {
         setCargando(false);
       }
@@ -21,17 +29,60 @@ function Pedidos() {
     cargarPedidos();
   }, []);
 
+  // Cambiar estado del pedido
   const cambiarEstado = async (id, estado) => {
     try {
-      await actualizarEstadoPedido(id, estado);
-
+      await actualizarPedido(id, { estado_pedido: estado });
       setPedidos((prev) =>
-        prev.map((p) =>
-          p.id === id ? { ...p, estado_pedido: estado } : p
-        )
+        prev.map((p) => (p.id === id ? { ...p, estado_pedido: estado } : p))
       );
+
+      Swal.fire({
+        icon: "success",
+        title: "Estado actualizado",
+        text: `El pedido ${id} ahora está ${estado.replace("_", " ")}`,
+        timer: 1500,
+        showConfirmButton: false,
+      });
     } catch (err) {
-      console.log("Error actualizando el estado del pedido");
+      console.error(err);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo actualizar el estado del pedido",
+      });
+    }
+  };
+
+  // Eliminar pedido
+  const handleEliminar = async (id) => {
+    const confirm = await Swal.fire({
+      title: "¿Eliminar pedido?",
+      text: `Se eliminará el pedido ${id}`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (confirm.isConfirmed) {
+      try {
+        await eliminarPedido(id);
+        setPedidos((prev) => prev.filter((p) => p.id !== id));
+        Swal.fire({
+          icon: "success",
+          title: "Pedido eliminado",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } catch (err) {
+        console.error(err);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "No se pudo eliminar el pedido",
+        });
+      }
     }
   };
 
@@ -41,7 +92,6 @@ function Pedidos() {
   return (
     <section className="pedidos-section">
       <h2>Pedidos Recibidos</h2>
-
       {pedidos.length === 0 ? (
         <p>No hay pedidos en este momento.</p>
       ) : (
@@ -58,37 +108,41 @@ function Pedidos() {
               <th>Acción</th>
             </tr>
           </thead>
-
           <tbody>
             {pedidos.map((pedido) => (
               <tr key={pedido.id}>
                 <td>{pedido.id}</td>
-                <td>{pedido.usuario}</td>
+                <td>{pedido.usuario.username}</td>
                 <td>{new Date(pedido.fecha_pedido).toLocaleString()}</td>
-
                 <td>
-                  {pedido.detalles?.map((item) => (
+                  {pedido.detalles.map((item) => (
                     <div key={item.id}>
-                      {item.cantidad}x {item.platillo} ₡{item.subtotal}
+                      {item.cantidad}x {item.platillo.nombre} — ₡
+                      {item.subtotal.toLocaleString("es-CR")}
                     </div>
                   ))}
                 </td>
-
-                <td>₡{pedido.total}</td>
+                <td>₡{pedido.total.toLocaleString("es-CR")}</td>
                 <td>{pedido.metodo_pago}</td>
-
-                <td>{pedido.estado_pedido}</td>
-
+                <td>{pedido.estado_pedido.replace("_", " ")}</td>
                 <td>
                   <select
                     value={pedido.estado_pedido}
-                    onChange={(e) => cambiarEstado(pedido.id, e.target.value)}
+                    onChange={(e) =>
+                      cambiarEstado(pedido.id, e.target.value)
+                    }
                   >
                     <option value="pendiente">Pendiente</option>
                     <option value="en_proceso">En proceso</option>
                     <option value="entregado">Entregado</option>
                     <option value="cancelado">Cancelado</option>
                   </select>
+                  <button
+                    className="btn-eliminar"
+                    onClick={() => handleEliminar(pedido.id)}
+                  >
+                    Eliminar
+                  </button>
                 </td>
               </tr>
             ))}
