@@ -301,7 +301,7 @@ class MensajesContactoListCreateView(ListCreateAPIView):
 class MensajesContactoDetailView(RetrieveUpdateDestroyAPIView):
     queryset = MensajesContacto.objects.all()
     serializer_class = MensajesContactoSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     
     def retrieve(self, request, *args, **kwargs):
         # Marcar como leído cuando se visualiza
