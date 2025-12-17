@@ -9,9 +9,9 @@ function PagCultura() {
   const [articulos, setArticulos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [cargando, setCargando] = useState(true);
-  const [seccionesCultura, setSeccionesCultura] = useState([]);
   const [modalAbierto, setModalAbierto] = useState(false);
   const [articuloSeleccionado, setArticuloSeleccionado] = useState(null);
+  const [filtroCategoria, setFiltroCategoria] = useState('todos');
 
   // Limpiar URL de imagen
   const limpiarUrlImagen = (url) => {
@@ -38,7 +38,7 @@ function PagCultura() {
       const articulosArray = Array.isArray(articulosData) ? articulosData : articulosData.results || [];
       const categoriasArray = Array.isArray(categoriasData) ? categoriasData : categoriasData.results || [];
 
-      // Filtrar solo artículos publicados (no borradores ni inactivos)
+      // Filtrar solo artículos publicados
       const articulosPublicados = articulosArray.filter(a => a.estado === 'publicado');
 
       // Limpiar URLs de imágenes
@@ -49,26 +49,9 @@ function PagCultura() {
 
       setArticulos(articulosLimpios);
       setCategorias(categoriasArray);
-
-      // Organizar artículos por categoría
-      const seccionesOrganizadas = categoriasArray.map(categoria => ({
-        id: categoria.id,
-        titulo: categoria.nombre_categoria,
-        texto: categoria.descripcion || 'Artículos sobre ' + categoria.nombre_categoria,
-        imagenes: articulosLimpios
-          .filter(art => art.categoria_blog === categoria.id)
-          .map(art => ({
-            id: art.id,
-            src: art.imagen_portada || `https://via.placeholder.com/600x400?text=${encodeURIComponent(art.titulo)}`,
-            leyenda: art.titulo,
-            articulo: art,
-          })),
-      })).filter(seccion => seccion.imagenes.length > 0);
-
-      setSeccionesCultura(seccionesOrganizadas);
     } catch (error) {
       console.error('Error al cargar datos:', error);
-      setSeccionesCultura([]);
+      setArticulos([]);
     } finally {
       setCargando(false);
     }
@@ -88,6 +71,11 @@ function PagCultura() {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(fecha).toLocaleDateString('es-ES', options);
   };
+
+  // Filtrar artículos según categoría seleccionada
+  const articulosFiltrados = filtroCategoria === 'todos' 
+    ? articulos 
+    : articulos.filter(art => art.categoria_blog === parseInt(filtroCategoria));
 
   if (cargando) {
     return (
@@ -111,42 +99,65 @@ function PagCultura() {
         <p>El corazón del Pacífico costarricense</p>
       </header>
 
-      {seccionesCultura.length > 0 ? (
-        seccionesCultura.map((seccion, index) => (
-          <section key={index} className="cultura-section">
-            <h2>{seccion.titulo}</h2>
-            <p>{seccion.texto}</p>
+      {/* SELECT FILTRO CATEGORÍAS */}
+      <div className="cultura-filtro-contenedor">
+        <select 
+          value={filtroCategoria} 
+          onChange={(e) => setFiltroCategoria(e.target.value)}
+          className="cultura-select-filtro"
+        >
+          <option value="todos">Ver todas las categorías</option>
+          {categorias.map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {cat.nombre_categoria}
+            </option>
+          ))}
+        </select>
+      </div>
 
-            {seccion.imagenes.length > 0 ? (
-              <Carousel
-                autoPlay
-                infiniteLoop
-                showThumbs={false}
-                showStatus={false}
-                interval={3000}
-                className="cultura-carousel"
-              >
-                {seccion.imagenes.map((img, i) => (
-                  <div 
-                    key={i} 
-                    onClick={() => handleAbrirArticulo(img.articulo)}
-                    style={{cursor: 'pointer'}}
-                    title="Click para leer el artículo completo"
+      {/* TARJETAS DE ARTÍCULOS */}
+      {articulosFiltrados.length > 0 ? (
+        <div className="cultura-articulos-contenedor">
+          {articulosFiltrados.map((articulo) => (
+            <div key={articulo.id} className="cultura-tarjeta-articulo">
+              <div className="cultura-tarjeta-imagen-contenedor">
+                <img 
+                  src={articulo.imagen_portada || `https://via.placeholder.com/600x400?text=${encodeURIComponent(articulo.titulo)}`}
+                  alt={articulo.titulo}
+                  className="cultura-tarjeta-imagen"
+                />
+                <div className="cultura-tarjeta-overlay">
+                  <button 
+                    className="cultura-btn-leer-mas"
+                    onClick={() => handleAbrirArticulo(articulo)}
                   >
-                    <img src={img.src} alt={img.leyenda} />
-                    <p className="legend">{img.leyenda}</p>
-                  </div>
-                ))}
-              </Carousel>
-            ) : (
-              <p style={{textAlign: 'center', color: '#999'}}>Sin imágenes disponibles</p>
-            )}
-          </section>
-        ))
+                    Leer más
+                  </button>
+                </div>
+              </div>
+
+              <div className="cultura-tarjeta-contenido">
+                <h3 className="cultura-tarjeta-titulo">{articulo.titulo}</h3>
+                
+                <div className="cultura-tarjeta-info">
+                  <span className="cultura-info-item">
+                    📅 {formatearFecha(articulo.fecha_publicacion)}
+                  </span>
+                  <span className="cultura-info-item">
+                    👁️ {articulo.vistas} vistas
+                  </span>
+                  {articulo.destacado && (
+                    <span className="cultura-info-item">⭐ Destacado</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       ) : (
         <section className="cultura-section">
           <p style={{textAlign: 'center', color: '#999', fontSize: '1.1rem'}}>
-            No hay contenido disponible en este momento. Por favor intenta más tarde.
+            No hay artículos en esta categoría. Por favor intenta más tarde.
           </p>
         </section>
       )}

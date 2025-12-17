@@ -16,9 +16,7 @@ export const obtenerMensajes = async () => {
 // Obtener un mensaje por ID
 export const obtenerMensajeDetalle = async (id) => {
   try {
-    const response = await axios.get(`${API_URL}/${id}`, {
-      withCredentials: true
-    });
+    const response = await axios.get(`${API_URL}/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error al obtener mensaje:', error);
